@@ -1,0 +1,116 @@
+.event-entry {
+  background-color: $blue;
+  width: calc(13% - 6px);
+  position: absolute;
+  border-radius: 5px;
+
+  display: flex;
+  flex-direction: row;
+
+  .sidebar {
+    flex: 0 0 4px;
+    background-color: $blue-entry-sidebar;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+  }
+  .content {
+    flex: 0 1 auto;
+  }
+}
+
+$day-increment-precent: 13%;
+$base: 9%;
+
+.Sun {
+  left: calc(#{$base} + 2px);
+}
+
+.Mon {
+  left: calc(#{$base} + 1 * #{$day-increment-precent} + 2px);
+}
+
+.Tue {
+  left: calc(#{$base} + 2 * #{$day-increment-precent} + 2px);
+}
+
+.Wed {
+  left: calc(#{$base} + 3 * #{$day-increment-precent} + 2px);
+}
+
+.Thu {
+  left: calc(#{$base} + 4 * #{$day-increment-precent} + 2px);
+}
+
+.Fri {
+  left: calc(#{$base} + 5 * #{$day-increment-precent} + 2px);
+}
+
+.Sat {
+  left: calc(#{$base} + 6 * #{$day-increment-precent} + 2px);
+}
+
+$half-hour-increment: 35px;
+// 2px and another 35px because the top row of cells is empty
+$entry-top-margin: 37px;
+
+.start-7 {
+  top: 0 * $half-hour-increment + $entry-top-margin;
+}
+
+.start-730 {
+  top: 1 * $half-hour-increment + $entry-top-margin;
+}
+
+.start-8 {
+  top: 2 * $half-hour-increment + $entry-top-margin;
+}
+
+.start-830 {
+  top: 3 * $half-hour-increment + $entry-top-margin;
+}
+
+.start-9 {
+  top: 4 * $half-hour-increment + $entry-top-margin;
+}
+
+.start-930 {
+  top: 5 * $half-hour-increment + $entry-top-margin;
+}
+
+.start-10 {
+  top: 6 * $half-hour-increment + $entry-top-margin;
+}
+
+.start-1030 {
+  top: 7 * $half-hour-increment + $entry-top-margin;
+}
+
+$half-hour-height: 35px;
+
+.length-5 {
+  height: calc(1 * #{$half-hour-height} + 2px);
+}
+
+.length-10 {
+  height: calc(2 * #{$half-hour-height} + 2px);
+}
+
+.length-15 {
+  height: calc(3 * #{$half-hour-height} + 2px);
+}
+
+.length-20 {
+  height: calc(4 * #{$half-hour-height} + 2px);
+}
+
+.length-25 {
+  height: calc(5 * #{$half-hour-height} + 2px);
+}
+
+.length-30 {
+  height: calc(6 * #{$half-hour-height} + 2px);
+}
+
+.length-35 {
+  height: calc(7 * #{$half-hour-height} + 2px);
+}

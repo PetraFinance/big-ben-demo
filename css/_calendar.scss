@@ -1,4 +1,113 @@
 .calendar-container {
-  height: 300px;
-  width: 300px;
+  padding-top: 1.5rem;
+  display: flex;
+  flex-flow: column;
+  height: calc(100% - 55px - 1.5rem);
+}
+
+.column-headers {
+  flex: 0 0 35px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-bottom: 1px solid $grey-border;
+  padding-bottom: 0.5rem;
+  .item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 13%;
+  }
+}
+
+.time {
+  width: 9%;
+  color: #37474F;
+  opacity: 0.6;
+  font-size: 0.8rem;
+  height: 35px;
+}
+
+.all-day-events {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  background-color: white;
+  box-shadow: 0px 1px 2px 0px rgba(0,0,0,0.10), 0px 2px 6px 0px rgba(0,0,0,0.06);
+  border-bottom: 1px solid $light-grey-border;
+
+  .time {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .item {
+    width: 13%;
+    height: 35px;
+    border-left: 1px solid $grey-border;
+  }
+}
+
+.main-calendar {
+  flex: 0 1 auto;
+  overflow-y: auto;
+  border-bottom: 1px solid $grey-border;
+  position: relative;
+  .row {
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    .time {
+      position: relative;
+      span {
+        position: absolute;
+        bottom: -7px;
+        right: 10px;
+      }
+    }
+    .item {
+      width: 13%;
+      height: 35px;
+      border-left: 1px solid $grey-border;
+      border-bottom: 1px solid $light-grey-border;
+    }
+  }
+}
+
+.event-entry {
+  background-color: #03A9F4;
+  height: 70px;
+  width: calc(13% - 4px);
+  position: absolute;
+  border-radius: 5px;
+}
+
+.integrations-calendar {
+  flex: 0 0 auto;
+  overflow-y: auto;
+  .row {
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    .plugin {
+      width: 9%;
+      color: #37474F;
+      opacity: 0.6;
+      font-size: 0.8rem;
+      height: 45px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .item {
+      width: 13%;
+      height: 45px;
+      border-left: 1px solid $grey-border;
+      border-bottom: 1px solid $light-grey-border;
+    }
+  }
 }
