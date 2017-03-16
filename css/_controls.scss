@@ -1,0 +1,86 @@
+.cal-controls-container {
+  height: $header-container-height;
+  border-bottom: 1px solid $grey-border;
+
+  @extend .flex-row-valign;
+}
+
+
+.left-side {
+  flex: 1;
+
+  @extend .flex-row-valign;
+  padding-left: 1rem;
+  .month-year {
+    padding: 0rem 1rem;
+  }
+}
+
+.right-side {
+  flex: 1;
+
+  @extend .flex-row-valign;
+  justify-content: flex-end;
+  padding-right: 1rem;
+}
+
+.day-control-buttons {
+  @extend .flex-row-valign;
+  border: 1px solid $grey-border;
+  border-radius: 5px;
+  .go-to-today {
+    padding: 0.25rem 1rem;
+    border-left: 1px solid $grey-border;
+    border-right: 1px solid $grey-border;
+    span {
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+  }
+  .arrow {
+    padding: 0.25rem 0.5rem;
+    img {
+      height: 10px;
+      width: auto;
+    }
+  }
+  .back, {
+    border-right: none;
+  }
+  .forward, {
+    border-left: none;
+  }
+}
+
+.week-month-buttons {
+  @extend .flex-row-valign;
+  border: 1px solid $grey-border;
+  border-radius: 5px;
+  font-weight: bold;
+  .select-button {
+    width: 65px;
+    text-align: center;
+    padding: 0.25rem 0.75rem;
+    span {
+      font-size: 0.75rem;
+      height: 10px;
+    }
+  }
+  .select-week {
+    @extend .select-button;
+    border-right: 0.5px solid $grey-border;
+  }
+  .select-month {
+    @extend .select-button;
+    border-left: 0.5px solid $grey-border;
+  }
+}
+
+.settings {
+  height: 30px;
+  margin-left: 2rem;
+  img {
+    height: 100%;
+    width: auto;
+  }
+}

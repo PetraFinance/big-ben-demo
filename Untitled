@@ -1,0 +1,10 @@
+$pure-white: #FFFFFF;
+
+$light-grey: #FAFAFA;
+$border-grey: #E0E0E0;
+
+
+$font-stack: "Helvetica Neue", Arial, sans-serif;
+
+
+$header-container-height: 50px;
