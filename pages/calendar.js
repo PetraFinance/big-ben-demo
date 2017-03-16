@@ -50,12 +50,9 @@ export default class Calendar extends React.Component {
       for (let event of events) {
         const day = event.day;
         const length = Math.abs(event.endValue - event.startValue) * 10;
-        const start = event.startTime.replace(":", "").split(" ")[0];
+        const start = event.startTime.replace(":", "").replace(" ", "");
         const className = 'event-entry start-' + start + ' ' + day + ' ' + 'length-' + length.toString();
-        console.log(className);
-
         const key = className + ' ' + event.name;
-
         const jsx = (
           <div
             draggable="true"
@@ -65,22 +62,20 @@ export default class Calendar extends React.Component {
             <div className="sidebar">
             </div>
             <div className="content">
-              {event.name}
+              <div className="title">
+                {event.name}
+              </div>
             </div>
           </div>
         );
-
         eventsList.push(jsx);
       }
-      console.log("break")
       return eventsList;
     }
 
     const times = genTimeMap();
 
-
-
-    const columns = [
+    const dummy_columns = [
       (<div key={1} className="item"></div>),
       (<div key={2} className="item"></div>),
       (<div key={3} className="item"></div>),
@@ -90,7 +85,7 @@ export default class Calendar extends React.Component {
       (<div key={7} className="item"></div>),
     ];
 
-    const headers = days.map((day, i) => (
+    const row_headers = days.map((day, i) => (
       <div className="item" key={i}><span>{day}</span></div>
     ));
 
@@ -141,31 +136,31 @@ export default class Calendar extends React.Component {
 
             <div
               className="item"
-              onClick={() => createEvent("Sun", timeObj.value)}
+              onClick={() => createEvent("Sun", timeObj.value + 0.5)}
             ></div>
             <div
               className="item"
-              onClick={() => createEvent("Mon", timeObj.value)}
+              onClick={() => createEvent("Mon", timeObj.value + 0.5)}
             ></div>
             <div
               className="item"
-              onClick={() => createEvent("Tue", timeObj.value)}
+              onClick={() => createEvent("Tue", timeObj.value + 0.5)}
             ></div>
             <div
               className="item"
-              onClick={() => createEvent("Wed", timeObj.value)}
+              onClick={() => createEvent("Wed", timeObj.value + 0.5)}
             ></div>
             <div
               className="item"
-              onClick={() => createEvent("Thu", timeObj.value)}
+              onClick={() => createEvent("Thu", timeObj.value + 0.5)}
             ></div>
             <div
               className="item"
-              onClick={() => createEvent("Fri", timeObj.value)}
+              onClick={() => createEvent("Fri", timeObj.value + 0.5)}
             ></div>
             <div
               className="item"
-              onClick={() => createEvent("Sat", timeObj.value)}
+              onClick={() => createEvent("Sat", timeObj.value + 0.5)}
             ></div>
 
           </div>
@@ -178,7 +173,7 @@ export default class Calendar extends React.Component {
         <div className="plugin">
           <span>{plugin}</span>
         </div>
-        {columns}
+        {dummy_columns}
       </div>
     ));
 
@@ -186,13 +181,13 @@ export default class Calendar extends React.Component {
       <div className="calendar-container">
         <div className="column-headers">
           <div className="time"></div>
-          {headers}
+          {row_headers}
         </div>
         <div className="all-day-events">
           <div className="time">
             <span>ALL DAY</span>
           </div>
-          {columns}
+          {dummy_columns}
         </div>
         <div className="main-calendar">
           {rows}

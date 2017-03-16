@@ -61,11 +61,12 @@
     flex-direction: row;
     align-items: center;
     .time {
-      position: relative;
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-end;
       span {
-        position: absolute;
-        bottom: -7px;
-        right: 10px;
+        padding-right: 1rem;
+        padding-top: 0.15rem;
       }
     }
     .item {
