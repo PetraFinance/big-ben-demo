@@ -1,18 +1,27 @@
 import React from 'react'
-import { genTimeMap, computeTimeFromValue } from './helpers';
+
+import { genSimpleCells } from './calendar/simpleCells';
+import { genSmartCells } from './calendar/smartCells';
+import { genEvents } from './calendar/events';
+import { genTimeMap, computeTimeFromValue } from './calendar/helpers';
+import $ from "jquery";
 
 export default class Calendar extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
+      beingDragged: null,
+      next_id: 1,
       events: [
         {
+          id: 0,
           name: "Stat 101 Lecture",
+          calendar: "Google",
           startTime: "7 AM",
-          endTime: "8:30 AM",
+          endTime: "9:00 AM",
           startValue: 7,
-          endValue: 8.5,
+          endValue: 9,
           day: "Mon",
         },
       ],
@@ -20,162 +29,76 @@ export default class Calendar extends React.Component {
   }
 
   render () {
-    const days = [
-      "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"
-    ]
-    const plugins = [
-      "Trello", "Todoist"
-    ];
+    const plugins = [ "Trello", "Todoist" ];
+    const integrations = plugins.map((plugin, i) => (
+      <div className="row" key={i}>
+        <div className="plugin">
+          <span>{plugin}</span>
+        </div>
+        {genSimpleCells()}
+      </div>
+    ));
+    const days = [ "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" ];
+    const row_headers = days.map((day, i) => (
+      <div className="item" key={i}><span>{day}</span></div>
+    ));
+
+    const handleDragBehavior = (event) => {
+      this.setState({ draggedObj: event });
+    }
+    const events = genEvents(this.state.events, handleDragBehavior);
+    const possibleEvent = this.state.possibleEvent;
+
     const createEvent = (day, startValue) => {
-      const endValue = startValue + 0.5;
+      const id = this.state.next_id;
+      let next_id = id + 1;
+      this.setState({ next_id });
+      const endValue = startValue + 0.5 ;
       const startTime = computeTimeFromValue(startValue);
       const endTime = computeTimeFromValue(endValue);
       const name = "default";
-
+      const calendar = "Google";
       const eventObj = {
+        id,
         name,
+        calendar,
         startTime,
         endTime,
         startValue,
         endValue,
         day
       };
-
       this.setState({events: this.state.events.concat([eventObj])});
     }
 
-    const genEvents = () => {
-      let eventsList = [];
-      const events = this.state.events;
-      for (let event of events) {
-        const day = event.day;
-        const length = Math.abs(event.endValue - event.startValue) * 10;
-        const start = event.startTime.replace(":", "").replace(" ", "");
-        const className = 'event-entry start-' + start + ' ' + day + ' ' + 'length-' + length.toString();
-        const key = className + ' ' + event.name;
-        const jsx = (
-          <div
-            draggable="true"
-            className={className}
-            key={key}
-          >
-            <div className="sidebar">
-            </div>
-            <div className="content">
-              <div className="title">
-                {event.name}
-              </div>
-            </div>
-          </div>
-        );
-        eventsList.push(jsx);
+    const checkDropElement = (day, startValue) => {
+      const dragged = this.state.draggedObj;
+      if (!dragged) {
+        return;
       }
-      return eventsList;
+      const id = dragged.id;
+      const events = this.state.events;
+      const filtered = events.filter(event => event.id !== id);
+      const endValue = startValue + Math.abs(dragged.startValue - dragged.endValue);
+      const startTime = computeTimeFromValue(startValue);
+      const endTime = computeTimeFromValue(endValue);
+      const name = dragged.name;
+      const calendar = dragged.calendar;
+      const eventObj = {
+        id,
+        name,
+        calendar,
+        startTime,
+        endTime,
+        startValue,
+        endValue,
+        day
+      };
+      this.setState({ events: filtered.concat([eventObj]) });
+      this.setState({ draggedObj: null });
     }
 
-    const times = genTimeMap();
-
-    const dummy_columns = [
-      (<div key={1} className="item"></div>),
-      (<div key={2} className="item"></div>),
-      (<div key={3} className="item"></div>),
-      (<div key={4} className="item"></div>),
-      (<div key={5} className="item"></div>),
-      (<div key={6} className="item"></div>),
-      (<div key={7} className="item"></div>),
-    ];
-
-    const row_headers = days.map((day, i) => (
-      <div className="item" key={i}><span>{day}</span></div>
-    ));
-
-    const hours = times.filter(timeObj => !timeObj.time.includes(":30"));
-
-    const rows = hours.map((timeObj, i) => {
-
-      return (
-        <div key={i}>
-          <div className="row">
-            <div className="time">
-              <span>{timeObj.time}</span>
-            </div>
-
-            <div
-              className="item"
-              onClick={() => createEvent("Sun", timeObj.value)}
-            ></div>
-            <div
-              className="item"
-              onClick={() => createEvent("Mon", timeObj.value)}
-            ></div>
-            <div
-              className="item"
-              onClick={() => createEvent("Tue", timeObj.value)}
-            ></div>
-            <div
-              className="item"
-              onClick={() => createEvent("Wed", timeObj.value)}
-            ></div>
-            <div
-              className="item"
-              onClick={() => createEvent("Thu", timeObj.value)}
-            ></div>
-            <div
-              className="item"
-              onClick={() => createEvent("Fri", timeObj.value)}
-            ></div>
-            <div
-              className="item"
-              onClick={() => createEvent("Sat", timeObj.value)}
-            ></div>
-
-          </div>
-          <div className="row half-hour">
-            <div className="time">
-            </div>
-
-            <div
-              className="item"
-              onClick={() => createEvent("Sun", timeObj.value + 0.5)}
-            ></div>
-            <div
-              className="item"
-              onClick={() => createEvent("Mon", timeObj.value + 0.5)}
-            ></div>
-            <div
-              className="item"
-              onClick={() => createEvent("Tue", timeObj.value + 0.5)}
-            ></div>
-            <div
-              className="item"
-              onClick={() => createEvent("Wed", timeObj.value + 0.5)}
-            ></div>
-            <div
-              className="item"
-              onClick={() => createEvent("Thu", timeObj.value + 0.5)}
-            ></div>
-            <div
-              className="item"
-              onClick={() => createEvent("Fri", timeObj.value + 0.5)}
-            ></div>
-            <div
-              className="item"
-              onClick={() => createEvent("Sat", timeObj.value + 0.5)}
-            ></div>
-
-          </div>
-        </div>
-      );
-    });
-
-    const integrations = plugins.map((plugin, i) => (
-      <div className="row" key={i}>
-        <div className="plugin">
-          <span>{plugin}</span>
-        </div>
-        {dummy_columns}
-      </div>
-    ));
+    const rows = genSmartCells(createEvent, checkDropElement);
 
     return (
       <div className="calendar-container">
@@ -187,16 +110,17 @@ export default class Calendar extends React.Component {
           <div className="time">
             <span>ALL DAY</span>
           </div>
-          {dummy_columns}
+          {genSimpleCells()}
         </div>
         <div className="main-calendar">
           {rows}
-          {genEvents()}
+          {events}
+          {possibleEvent}
         </div>
         <div className="integrations-calendar">
           {integrations}
         </div>
       </div>
-    )
+    );
   }
 }

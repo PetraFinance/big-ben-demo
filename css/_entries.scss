@@ -24,6 +24,10 @@
   }
 }
 
+.possible-event-entry {
+  opacity: 0.5;
+}
+
 $day-increment-precent: 13%;
 $base: 9%;
 
@@ -146,34 +150,32 @@ $entry-top-margin: 1px;
   top: 20 * $half-hour-increment + 20 * $entry-top-margin + 1px;
 }
 
-$starting-block-height: 35px;
 $half-hour-block-height: 35px;
 
-
 .length-5 {
-  height: $starting-block-height;
+  height: calc(1 * #{$half-hour-block-height});
 }
 
 .length-10 {
-  height: calc(1 * #{$half-hour-block-height} + $starting-block-height);
+  height: calc(2 * #{$half-hour-block-height} + 1px);
 }
 
 .length-15 {
-  height: calc(2 * #{$half-hour-block-height} + $starting-block-height);
+  height: calc(3 * #{$half-hour-block-height} + 2px);
 }
 
 .length-20 {
-  height: calc(3 * #{$half-hour-block-height} + $starting-block-height);
+  height: calc(4 * #{$half-hour-block-height} + 3px);
 }
 
 .length-25 {
-  height: calc(4 * #{$half-hour-block-height} + $starting-block-height);
+  height: calc(5 * #{$half-hour-block-height} + 4px);
 }
 
 .length-30 {
-  height: calc(5 * #{$half-hour-block-height} + $starting-block-height);
+  height: calc(6 * #{$half-hour-block-height} + 5px);
 }
 
 .length-35 {
-  height: calc(6 * #{$half-hour-block-height} + $starting-block-height);
+  height: calc(7 * #{$half-hour-block-height} + 6px);
 }
