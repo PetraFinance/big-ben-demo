@@ -11,11 +11,34 @@ export default class Calendar extends React.Component {
       beingDragged: null,
       next_id: 1,
       editorPosition: null,
+      calendarMap: {
+        "Google": {
+          "School": {
+            color: "#009688",
+            accent: "#008A7D",
+          },
+          "IEEE": {
+            color: "#F44336",
+            accent: "#E03D31",
+          },
+          "Innovative Design": {
+            color: "#03A9F4",
+            accent: "#029BE0",
+          },
+        },
+        "Facebook": {
+          "Events I'm Attending": {
+            color: "#39579A",
+            accent: "#39579A",
+          },
+        },
+      },
       events: [
         {
           id: 0,
-          name: "Stat 101 Lecture",
-          calendar: "Google",
+          name: "Innod Meeting",
+          category: "Google",
+          calendar: "Innovative Design",
           startTime: "7 AM",
           endTime: "9:00 AM",
           startValue: 7,
@@ -34,10 +57,12 @@ export default class Calendar extends React.Component {
     const startTime = computeTimeFromValue(startValue);
     const endTime = computeTimeFromValue(endValue);
     const name = "default";
-    const calendar = "Google";
+    const category = "Google";
+    const calendar= "Innovative Design";
     const eventObj = {
       id,
       name,
+      category,
       calendar,
       startTime,
       endTime,
@@ -55,7 +80,7 @@ export default class Calendar extends React.Component {
       return;
     }
     // create the event, recreate the className to select the new event
-
+    // need to wait for the state to update first
     const promiseEventObj = (self) => (
       new Promise(function(resolve, reject) {
         const eventObj = self.createEvent(day, startValue);
@@ -74,7 +99,7 @@ export default class Calendar extends React.Component {
       const className = 'event-entry start-' + start + ' ' + day + ' ' + 'length-' + length.toString();
       const eventEntryDOMs = document.getElementsByClassName('event-entry');
       const mostRecentEventEntryDOM = eventEntryDOMs[eventEntryDOMs.length - 1];
-      this.toggleEditor(day, eventObj.startValue, eventObj, mostRecentEventEntryDOM);
+      this.toggleEditor(eventObj, mostRecentEventEntryDOM);
     }, (error) => {
       console.log(error);
     });
@@ -93,9 +118,11 @@ export default class Calendar extends React.Component {
     const endTime = computeTimeFromValue(endValue);
     const name = dragged.name;
     const calendar = dragged.calendar;
+    const category = dragged.category;
     const eventObj = {
       id,
       name,
+      category,
       calendar,
       startTime,
       endTime,
@@ -120,7 +147,9 @@ export default class Calendar extends React.Component {
     this.setState({ editorPosition: null });
   }
 
-  toggleEditor = (day, startValue, eventObj, eventEntryDOM) => {
+  toggleEditor = (eventObj, eventEntryDOM) => {
+    const day = eventObj.day;
+    const startTime = eventObj.startTime;
     const calendarWidth = document.getElementById('main-calendar').clientWidth;
     const calendarHeight = document.getElementById('main-calendar').clientHeight;
     let eventEntry = eventEntryDOM;
@@ -249,6 +278,9 @@ export default class Calendar extends React.Component {
     }
 
     const events = this.state.events;
+    const calendarMap = this.state.calendarMap;
+    console.log(calendarMap);
+
     let eventsList = [];
     for (let eventObj of events) {
       const day = eventObj.day;
@@ -256,15 +288,30 @@ export default class Calendar extends React.Component {
       const start = eventObj.startTime.replace(":", "").replace(" ", "");
       const className = 'event-entry start-' + start + ' ' + day + ' ' + 'length-' + length.toString();
       const key = eventObj.id;
+      const color = calendarMap[eventObj.category][eventObj.calendar]["color"];
+      console.log(color);
+      const accent = calendarMap[eventObj.category][eventObj.calendar]["accent"];
+
+      const eventEntryStyle = {
+        backgroundColor: color,
+      }
+      const eventSideBarStyle = {
+        backgroundColor: accent,
+      }
+
       const eventjsx = (
         <div
           key={key}
           draggable="true"
           className={className}
+          style={eventEntryStyle}
           onDragStart={() => this.handleDragBehavior(eventObj)}
-          onClick={(evt) => this.toggleEditor(day, eventObj.startValue, eventObj, evt.target)}
+          onClick={(evt) => this.toggleEditor(eventObj, evt.target)}
         >
-          <div className="sidebar">
+          <div
+            className="sidebar"
+            style={eventSideBarStyle}
+          >
           </div>
           <div className="content">
             <div className="title">
