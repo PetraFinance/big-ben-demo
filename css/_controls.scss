@@ -29,7 +29,7 @@
   border: 1px solid $grey-border;
   border-radius: 5px;
   .go-to-today {
-    padding: 0.25rem 1rem;
+    padding: 0.15rem 1rem 0.35rem 1rem;
     border-left: 1px solid $grey-border;
     border-right: 1px solid $grey-border;
     span {
@@ -60,7 +60,7 @@
   .select-button {
     width: 65px;
     text-align: center;
-    padding: 0.25rem 0.75rem;
+    padding: 0.15rem 0.75rem 0.35rem 0.75rem;
     span {
       font-size: 0.75rem;
       height: 10px;

@@ -1,4 +1,6 @@
 import React from 'react'
+
+import Editor from './editor';
 import { genSimpleCells } from './calendar/simpleCells';
 import { genTimeMap, computeTimeFromValue } from './calendar/helpers';
 import $ from "jquery";
@@ -248,30 +250,10 @@ export default class Calendar extends React.Component {
         }
         const eventObj = editorPosition.eventObj;
         return (
-          <div className="editor-panel" style={eventEditorStyle}>
-            <div className="top-bar">
-            </div>
-            <div className="header">
-              <div className="dot-container">
-                <div className="dot">
-                </div>
-              </div>
-              <div className="title">
-                <span>{eventObj.name}</span>
-              </div>
-            </div>
-            <div className="info">
-              <div className="item">
-                <span className="key">Calendar</span>
-                <span className="value">School</span>
-                <img className="arrow-icon" src="./assets/grey-down-arrow.png" />
-              </div>
-              <div className="item">
-                <span className="key">Location</span>
-                <span className="value">Dwinelle 140</span>
-              </div>
-            </div>
-          </div>
+          <Editor
+            eventObj={eventObj}
+            eventEditorStyle={eventEditorStyle}
+          />
         );
       }
       return ( <div /> );
@@ -279,7 +261,6 @@ export default class Calendar extends React.Component {
 
     const events = this.state.events;
     const calendarMap = this.state.calendarMap;
-    console.log(calendarMap);
 
     let eventsList = [];
     for (let eventObj of events) {
@@ -289,16 +270,13 @@ export default class Calendar extends React.Component {
       const className = 'event-entry start-' + start + ' ' + day + ' ' + 'length-' + length.toString();
       const key = eventObj.id;
       const color = calendarMap[eventObj.category][eventObj.calendar]["color"];
-      console.log(color);
       const accent = calendarMap[eventObj.category][eventObj.calendar]["accent"];
-
       const eventEntryStyle = {
         backgroundColor: color,
       }
       const eventSideBarStyle = {
         backgroundColor: accent,
       }
-
       const eventjsx = (
         <div
           key={key}
