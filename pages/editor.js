@@ -5,9 +5,14 @@ export default class Editor extends React.Component {
   constructor(props) {
     super(props);
     const eventObj = this.props.eventObj;
+    const newEvent = this.props.newEvent;
+    let editingField = null;
+    if (newEvent) {
+      editingField="name";
+    }
     this.state = {
-      editingField: null,
-      title: eventObj.name,
+      editingField,
+      editableEventObj: eventObj,
     };
   }
 
@@ -16,30 +21,45 @@ export default class Editor extends React.Component {
   }
 
   setEditableFieldValue = (field, evt) => {
-    if (field === "title") {
-      this.setState({ title: evt.target.value });
-    }
+    let cp = this.state.editableEventObj;
+    cp[field] = evt.target.value;
+    console.log("This is the copy");
+    console.log(cp);
+    this.setState({ editableEventObj: cp });
   }
 
   finishEditing = () => {
     this.setState({ editingField: null });
+    this.props.updateEditedEventObj(this.state.editableEventObj);
+  }
+
+  finishEditingOnEnter = (evt) => {
+    if (evt.keyCode == '13') {
+      this.setState({ editingField: null });
+      this.props.updateEditedEventObj(this.state.editableEventObj);
+    }
   }
 
   render () {
 
-    const eventObj = this.props.eventObj;
+    const eventObj = this.state.editableEventObj;
     const eventEditorStyle = this.props.eventEditorStyle;
 
-    const titleValue = this.state.title;
+    const name = eventObj.name;
+    const location = eventObj.location;
+    const calendarMap = this.props.calendarMap;
+
+    let calendarList = [];
+
 
     const form = {
-      title: [(
+      name: [(
         <div
-          key={"title"}
-          className="title"
-          onClick={() => this.setEditableField("title")}
+          key={"name"}
+          className="name"
+          onClick={() => this.setEditableField("name")}
         >
-          <span>{titleValue}</span>
+          <span>{name}</span>
         </div>
       )],
       location: [(
@@ -48,35 +68,37 @@ export default class Editor extends React.Component {
           className="location"
           onClick={() => this.setEditableField("location")}
         >
-          <span className="value">Dwinelle 140</span>
+          <span className="value">{location}</span>
         </div>
       )],
     }
 
     const editableForm = {
-      title: [(
+      name: [(
         <input
           autoFocus
           key={"title"}
-          className="title-input"
-          onChange={(evt) => this.setEditableFieldValue("title", evt)}
+          className="name-input"
+          onChange={(evt) => this.setEditableFieldValue("name", evt)}
           onBlur={() => this.finishEditing()}
-          placeholder={titleValue}
+          onKeyUp={(evt) => this.finishEditingOnEnter(evt)}
+          placeholder={name}
         />
       )],
       location: [(
         <input
-          key={"title"}
-          className="location-input"
+          autoFocus
+          key={"location"}
+          className="value"
           onChange={(evt) => this.setEditableFieldValue("location", evt)}
           onBlur={() => this.finishEditing()}
-          placeholder="Dwinelle 140"
+          onKeyUp={(evt) => this.finishEditingOnEnter(evt)}
+          placeholder={location}
         />
       )],
     }
 
     const editingField = this.state.editingField;
-    console.log(editingField);
 
     return (
       <div className="editor-panel" style={eventEditorStyle}>
@@ -87,17 +109,29 @@ export default class Editor extends React.Component {
             <div className="dot">
             </div>
           </div>
-          { editingField === "title" ? editableForm["title"] : form["title"]}
+          { editingField === "name" ? editableForm["name"] : form["name"]}
         </div>
         <div className="info">
-          <div className="item">
+          <div className="item cal">
+            <img className="icon" src="./assets/calendar-icon.png" />
             <span className="key">Calendar</span>
-            <span className="value calendar">School</span>
-            <img className="arrow-icon" src="./assets/grey-down-arrow.png" />
+            <select
+              dir="rtl"
+              className="value"
+              key={"calendar"}
+              className="calendar"
+              onClick={() => this.setEditableField("calendar")}
+            >
+              <option value="volvo">Volvo</option>
+              <option value="saab">Saab</option>
+              <option value="mercedes">Mercedes</option>
+              <option value="audi">Audi</option>
+            </select>
           </div>
           <div className="item">
+            <img className="icon" src="./assets/location-icon.png" />
             <span className="key">Location</span>
-            {form["location"]}
+            { editingField === "location" ? editableForm["location"] : form["location"]}
           </div>
         </div>
       </div>

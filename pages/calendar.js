@@ -41,6 +41,7 @@ export default class Calendar extends React.Component {
           name: "Innod Meeting",
           category: "Google",
           calendar: "Innovative Design",
+          location: "Dwinelle 140",
           startTime: "7 AM",
           endTime: "9:00 AM",
           startValue: 7,
@@ -55,17 +56,19 @@ export default class Calendar extends React.Component {
     const id = this.state.next_id;
     let next_id = id + 1;
     this.setState({ next_id });
-    const endValue = startValue + 0.5 ;
+    const endValue = startValue + 0.5;
     const startTime = computeTimeFromValue(startValue);
     const endTime = computeTimeFromValue(endValue);
     const name = "default";
     const category = "Google";
-    const calendar= "Innovative Design";
+    const calendar = "Innovative Design";
+    const location = "Dwinelle 140";
     const eventObj = {
       id,
       name,
       category,
       calendar,
+      location,
       startTime,
       endTime,
       startValue,
@@ -76,9 +79,14 @@ export default class Calendar extends React.Component {
     return eventObj;
   }
 
-  handleClick = (day, startValue, evt) => {
+  dismissEditor = () => {
+    this.setState({ editorPosition: null });
+  }
+
+  handleCellClick = (day, startValue, evt) => {
     if (this.state.editorPosition) {
-      this.setState({ editorPosition: null });
+      // turn editor off if clicking outside the editor
+      this.dismissEditor();
       return;
     }
     // create the event, recreate the className to select the new event
@@ -101,7 +109,7 @@ export default class Calendar extends React.Component {
       const className = 'event-entry start-' + start + ' ' + day + ' ' + 'length-' + length.toString();
       const eventEntryDOMs = document.getElementsByClassName('event-entry');
       const mostRecentEventEntryDOM = eventEntryDOMs[eventEntryDOMs.length - 1];
-      this.toggleEditor(eventObj, mostRecentEventEntryDOM);
+      this.toggleEditor(eventObj, mostRecentEventEntryDOM, true);
     }, (error) => {
       console.log(error);
     });
@@ -112,6 +120,7 @@ export default class Calendar extends React.Component {
     // check if element is being dragged
     const dragged = this.state.draggedObj;
     if (!dragged) { return; }
+    // copy the contents of the element being dropped and then remove it from the events list, re-add the new event
     const id = dragged.id;
     const events = this.state.events;
     const filtered = events.filter(event => event.id !== id);
@@ -121,10 +130,12 @@ export default class Calendar extends React.Component {
     const name = dragged.name;
     const calendar = dragged.calendar;
     const category = dragged.category;
+    const location = dragged.location;
     const eventObj = {
       id,
       name,
       category,
+      location,
       calendar,
       startTime,
       endTime,
@@ -142,14 +153,14 @@ export default class Calendar extends React.Component {
 
   handleDragBehavior = (eventObj) => {
     this.setState({ draggedObj: eventObj });
-    this.setState({ editorPosition: null });
+    // turn the editor off if it's on during a drag
+    this.dismissEditor();
   }
 
-  dismissEditor = () => {
-    this.setState({ editorPosition: null });
-  }
-
-  toggleEditor = (eventObj, eventEntryDOM) => {
+  // in order to bring up the editor, we need to know the object we are editing and its position on the page, so we can appropriately position the editor relative to it
+  // you must pass in the eventObj and the eventEntryDOM for jQuery offset() to use
+  toggleEditor = (eventObj, eventEntryDOM, newEvent) => {
+    // first calculate the editor position
     const day = eventObj.day;
     const startTime = eventObj.startTime;
     const calendarWidth = document.getElementById('main-calendar').clientWidth;
@@ -167,6 +178,7 @@ export default class Calendar extends React.Component {
         top: eventPos.top - calendarPos.top,
         left: eventPos.left - calendarPos.left
     }
+    // checks if the editor is above or below a certain threshold on the screen and adjusts accordingly
     left = ((eventOffset.left + eventWidth + 15) / calendarWidth) * 100;
     if (left > 65) {
       left = ((eventOffset.left + eventWidth - 265 - (calendarWidth * 0.13)) / calendarWidth) * 100;
@@ -177,11 +189,11 @@ export default class Calendar extends React.Component {
       top = top + 15;
     }
     top = top.toString() + 'px';
-
     this.setState({
       editorPosition: {
         left,
         top,
+        newEvent,
         eventObj: eventObj,
       }
     });
@@ -211,7 +223,7 @@ export default class Calendar extends React.Component {
           key={i}
           className="item"
           onMouseUp={() => this.handleMouseUp(day, timeObj.value)}
-          onClick={() => this.handleClick(day, timeObj.value)}
+          onClick={() => this.handleCellClick(day, timeObj.value)}
         >
         </div>
       ));
@@ -221,7 +233,7 @@ export default class Calendar extends React.Component {
           key={i}
           className="item"
           onMouseUp={() => this.handleMouseUp(day, increment)}
-          onClick={() => this.handleClick(day, increment)}
+          onClick={() => this.handleCellClick(day, increment)}
         >
         </div>
       ));
@@ -241,18 +253,32 @@ export default class Calendar extends React.Component {
       );
     });
 
+    const updateEditedEventObj = (editedEventObj) => {
+      console.log("called more")
+      console.log(editedEventObj);
+      const id = editedEventObj.id;
+      const filtered = events.filter(event => event.id !== id);
+      this.setState({ events: filtered.concat([editedEventObj])});
+    }
+
     const genEventEditor = () => {
       const editorPosition = this.state.editorPosition;
+      const calendarMap = this.state.calendarMap;
+
       if (editorPosition) {
         const eventEditorStyle = {
           top: editorPosition.top,
-          left: editorPosition. left,
+          left: editorPosition.left,
         }
         const eventObj = editorPosition.eventObj;
+        const newEvent = editorPosition.newEvent;
         return (
           <Editor
             eventObj={eventObj}
+            newEvent={newEvent}
             eventEditorStyle={eventEditorStyle}
+            updateEditedEventObj={updateEditedEventObj}
+            calendarMap={calendarMap}
           />
         );
       }
@@ -265,6 +291,8 @@ export default class Calendar extends React.Component {
     let eventsList = [];
     for (let eventObj of events) {
       const day = eventObj.day;
+      const startTime = eventObj.startTime;
+      const endTime = eventObj.endTime;
       const length = Math.abs(eventObj.endValue - eventObj.startValue) * 10;
       const start = eventObj.startTime.replace(":", "").replace(" ", "");
       const className = 'event-entry start-' + start + ' ' + day + ' ' + 'length-' + length.toString();
@@ -284,7 +312,7 @@ export default class Calendar extends React.Component {
           className={className}
           style={eventEntryStyle}
           onDragStart={() => this.handleDragBehavior(eventObj)}
-          onClick={(evt) => this.toggleEditor(eventObj, evt.target)}
+          onClick={(evt) => this.toggleEditor(eventObj, evt.target, false)}
         >
           <div
             className="sidebar"
@@ -294,6 +322,12 @@ export default class Calendar extends React.Component {
           <div className="content">
             <div className="title">
               {eventObj.name}
+            </div>
+            <div className="start-end-times">
+              {startTime.replace(" ", "").toLowerCase()}-{endTime.replace(" ", "").toLowerCase()}
+            </div>
+            <div className="location">
+              {eventObj.location}
             </div>
           </div>
         </div>

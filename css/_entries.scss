@@ -3,6 +3,8 @@
   position: absolute;
   border-radius: 5px;
 
+  overflow-y: hidden;
+
   display: flex;
   flex-direction: row;
 
@@ -16,8 +18,20 @@
     padding: 0.5rem;
     font-family: $font-stack;
     color: white;
+
+    display: flex;
+    flex-direction: column;
+
     .title {
       font-weight: bold;
+      height: auto;
+      padding-bottom: 0.5rem;
+    }
+    .start-end-times,
+    .location {
+      height: auto;
+      padding-bottom: 0.25rem;
+      font-size: 0.9rem;
     }
   }
 }
