@@ -15,7 +15,7 @@
   }
   .content {
     flex: 0 1 auto;
-    padding: 0.25rem;
+    padding: 0.5rem;
     font-family: $font-stack;
     color: white;
     .title {
@@ -24,7 +24,7 @@
   }
 }
 
-.possible-event-entry {
+.preview-event {
   opacity: 0.5;
 }
 

@@ -2,7 +2,7 @@ import React from 'react';
 
 export const genTimeMap = () => {
   const list = [];
-  for (let i = 7; i <= 23.5; i+=0.5) {
+  for (let i = 7; i <= 17; i+=0.5) {
     const time = computeTimeFromValue(i);
     const nextValue = i + 0.5;
     const nextTime = computeTimeFromValue(nextValue);
@@ -30,6 +30,9 @@ export const computeTimeFromValue = (i) => {
   }
   if (temp === 0) {
     temp = 12;
+  }
+  if (temp === 0.5) {
+    temp = 12.5;
   }
   temp = temp.toString();
   if (temp.includes(".5")) {
