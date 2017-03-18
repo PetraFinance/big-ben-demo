@@ -14,25 +14,21 @@ export default class Calendar extends React.Component {
       next_id: 1,
       editorPosition: null,
       calendarMap: {
-        "Google": {
-          "School": {
-            color: "#009688",
-            accent: "#008A7D",
-          },
-          "IEEE": {
-            color: "#F44336",
-            accent: "#E03D31",
-          },
-          "Innovative Design": {
-            color: "#03A9F4",
-            accent: "#029BE0",
-          },
+        "Innovative Design": {
+          color: "#009688",
+          accent: "#008A7D",
         },
-        "Facebook": {
-          "Events I'm Attending": {
-            color: "#39579A",
-            accent: "#39579A",
-          },
+        "IEEE": {
+          color: "#F44336",
+          accent: "#E03D31",
+        },
+        "School": {
+          color: "#03A9F4",
+          accent: "#029BE0",
+        },
+        "Events I'm Attending": {
+          color: "#39579A",
+          accent: "#39579A",
         },
       },
       events: [
@@ -194,7 +190,7 @@ export default class Calendar extends React.Component {
         left,
         top,
         newEvent,
-        eventObj: eventObj,
+        eventObj,
       }
     });
   }
@@ -254,8 +250,6 @@ export default class Calendar extends React.Component {
     });
 
     const updateEditedEventObj = (editedEventObj) => {
-      console.log("called more")
-      console.log(editedEventObj);
       const id = editedEventObj.id;
       const filtered = events.filter(event => event.id !== id);
       this.setState({ events: filtered.concat([editedEventObj])});
@@ -266,19 +260,26 @@ export default class Calendar extends React.Component {
       const calendarMap = this.state.calendarMap;
 
       if (editorPosition) {
-        const eventEditorStyle = {
+        const eventEditorPosition = {
           top: editorPosition.top,
           left: editorPosition.left,
         }
         const eventObj = editorPosition.eventObj;
         const newEvent = editorPosition.newEvent;
+
+        const color = calendarMap[eventObj.calendar]["color"];
+        const editorColor = {
+          backgroundColor: color,
+        }
+
         return (
           <Editor
             eventObj={eventObj}
             newEvent={newEvent}
-            eventEditorStyle={eventEditorStyle}
+            eventEditorPosition={eventEditorPosition}
             updateEditedEventObj={updateEditedEventObj}
             calendarMap={calendarMap}
+            editorColor={editorColor}
           />
         );
       }
@@ -297,8 +298,8 @@ export default class Calendar extends React.Component {
       const start = eventObj.startTime.replace(":", "").replace(" ", "");
       const className = 'event-entry start-' + start + ' ' + day + ' ' + 'length-' + length.toString();
       const key = eventObj.id;
-      const color = calendarMap[eventObj.category][eventObj.calendar]["color"];
-      const accent = calendarMap[eventObj.category][eventObj.calendar]["accent"];
+      const color = calendarMap[eventObj.calendar]["color"];
+      const accent = calendarMap[eventObj.calendar]["accent"];
       const eventEntryStyle = {
         backgroundColor: color,
       }
