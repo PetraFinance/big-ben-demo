@@ -7,7 +7,7 @@ export default class Editor extends React.Component {
     super(props);
     const eventObj = this.props.eventObj;
     const newEvent = this.props.newEvent;
-    let editingField = null;
+    let editingField = {};
     if (newEvent) { editingField="name"; }
     this.state = {
       editingField,
@@ -23,13 +23,13 @@ export default class Editor extends React.Component {
   }
 
   finishEditing = () => {
-    this.setState({ editingField: null });
+    this.setState({ editingField: {} });
     this.props.updateEditedEventObj(this.state.editableEventObj);
   }
 
   finishEditingOnEnter = (evt) => {
     if (evt.keyCode == '13') {
-      this.setState({ editingField: null });
+      this.setState({ editingField: {} });
       this.props.updateEditedEventObj(this.state.editableEventObj);
     }
   }

@@ -1,5 +1,9 @@
 import React from 'react';
 
+export const isEmpty = (obj) => {
+  return Object.keys(obj).length === 0;
+}
+
 export const genTimeMap = () => {
   const list = [];
   for (let i = 7; i <= 17; i+=0.5) {

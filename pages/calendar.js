@@ -2,7 +2,7 @@ import React from 'react'
 
 import Editor from './editor';
 import { genSimpleCells } from './calendar/simpleCells';
-import { genTimeMap, computeTimeFromValue } from './calendar/helpers';
+import { genTimeMap, computeTimeFromValue, isEmpty } from './calendar/helpers';
 import $ from "jquery";
 
 export default class Calendar extends React.Component {
@@ -10,10 +10,10 @@ export default class Calendar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      resizeObj: null,
-      draggedObj: null,
+      resizeObj: {},
+      draggedObj: {},
       next_id: 3,
-      editorPosition: null,
+      editorPosition: {},
       calendarMap: {
         "Innovative Design": {
           color: "#009688",
@@ -85,9 +85,7 @@ export default class Calendar extends React.Component {
   handleMouseEnter = (day, startValue, evt) => {
     const draggedObj = this.state.draggedObj;
     const resizeObj = this.state.resizeObj;
-    console.log(startValue);
-    console.log(resizeObj);
-    if (resizeObj) {
+    if (!isEmpty(resizeObj)) {
       const id = resizeObj.id;
       const events = this.state.events;
       const filtered = events.filter(event => event.id !== id);
@@ -119,7 +117,7 @@ export default class Calendar extends React.Component {
       const newEventsList = filtered.concat([eventObj]);
       this.setState({ events: newEventsList });
     }
-    if (draggedObj) {
+    if (!isEmpty(draggedObj)) {
       const id = draggedObj.id;
       const events = this.state.events;
       const filtered = events.filter(event => event.id !== id);
@@ -197,7 +195,7 @@ export default class Calendar extends React.Component {
   }
 
   dismissEditor = () => {
-    this.setState({ editorPosition: null });
+    this.setState({ editorPosition: {} });
   }
 
   handleCellClick = (day, startValue) => {
@@ -230,7 +228,7 @@ export default class Calendar extends React.Component {
   shouldEventDrop = (day, startValue) => {
     const draggedObj = this.state.draggedObj;
     if (draggedObj) {
-      this.setState({ draggedObj: null }, () => {
+      this.setState({ draggedObj: {} }, () => {
         const numEvents = this.state.next_id;
         for (let id=0; id < numEvents; id++) {
           const dummyEvent = { id };
@@ -244,7 +242,7 @@ export default class Calendar extends React.Component {
   shouldEndResize = () => {
     const resizeObj = this.state.resizeObj;
     if (resizeObj) {
-      this.setState({ resizeObj: null }, () => {
+      this.setState({ resizeObj: {} }, () => {
         const numEvents = this.state.next_id;
         for (let id=0; id < numEvents; id++) {
           const dummyEvent = { id };
@@ -388,7 +386,7 @@ export default class Calendar extends React.Component {
       const editorPosition = this.state.editorPosition;
       const calendarMap = this.state.calendarMap;
 
-      if (editorPosition) {
+      if (!isEmpty(editorPosition)) {
         const eventEditorPosition = {
           top: editorPosition.top,
           left: editorPosition.left,
@@ -427,7 +425,6 @@ export default class Calendar extends React.Component {
       const length = Math.abs(eventObj.endValue - eventObj.startValue) * 10;
       const start = eventObj.startTime.replace(":", "").replace(" ", "");
       const className = 'event-entry start-' + start + ' ' + day + ' ' + 'length-' + length.toString();
-
       const color = calendarMap[eventObj.calendar]["color"];
       const accent = calendarMap[eventObj.calendar]["accent"];
       const eventEntryStyle = {
