@@ -199,7 +199,7 @@ export default class Calendar extends React.Component {
   }
 
   handleCellClick = (day, startValue) => {
-    if (this.state.editorPosition) {
+    if (!isEmpty(this.state.editorPosition)) {
       // turn editor off if clicking outside the editor
       this.dismissEditor();
       return;
