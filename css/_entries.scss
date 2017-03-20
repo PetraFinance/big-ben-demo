@@ -7,6 +7,8 @@
   display: flex;
   flex-direction: row;
 
+  resize: vertical;
+
   .sidebar {
     flex: 0 0 4px;
     border-top-left-radius: 5px;

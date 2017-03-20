@@ -172,9 +172,12 @@ export default class Calendar extends React.Component {
     const draggedObj = this.state.draggedObj;
     if (draggedObj) {
       this.setState({ draggedObj: null }, () => {
-        const eventEntryDOM = this.getEventEntryDOM(draggedObj);
-        // restore pointer events for the item
-        $(eventEntryDOM).css("pointer-events", "");
+        const numEvents = this.state.next_id;
+        for (let id=0; id < numEvents; id++) {
+          const dummyEvent = { id };
+          const eventEntryDOM = this.getEventEntryDOM(dummyEvent);
+          $(eventEntryDOM).css("pointer-events", "");
+        }
       });
     }
   }
@@ -190,7 +193,12 @@ export default class Calendar extends React.Component {
     this.setState({ draggedObj: eventObj }, () => {
       // async disable pointer events on the target
       // allows you to move an event into a cell which it covers
-      $(target).css("pointer-events", "none");
+      const numEvents = this.state.next_id;
+      for (let id=0; id < numEvents; id++) {
+        const dummyEvent = { id };
+        const eventEntryDOM = this.getEventEntryDOM(dummyEvent);
+        $(eventEntryDOM).css("pointer-events", "none");
+      }
     });
     // turn the editor off if it's on during a drag
     this.dismissEditor();
