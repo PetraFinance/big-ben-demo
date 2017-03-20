@@ -95,6 +95,9 @@ export default class Calendar extends React.Component {
       const endValue = startValue + 0.5;
       startValue = resizeObj.startValue;
       day = resizeObj.day;
+      if (endValue < startValue) {
+        return;
+      }
       const startTime = resizeObj.startTime;
       const endTime = computeTimeFromValue(endValue);
       const name = resizeObj.name;
@@ -474,7 +477,7 @@ export default class Calendar extends React.Component {
           <div className="resizer"
             draggable="true"
             style={eventEntryStyle}
-            onDragStart={(evt) => this.startResize(eventObj, evt)}
+            onMouseDown={(evt) => this.startResize(eventObj, evt)}
           >
             <div
               className="sidebar"
