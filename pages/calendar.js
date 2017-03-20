@@ -244,8 +244,16 @@ export default class Calendar extends React.Component {
     }
     left = left.toString() + '%';
     top = Math.abs(eventOffset.top);
-    if (top < 10) {
+    console.log(top);
+    if (top < 20) {
       top = top + 15;
+    }
+    else if (top < 75) {
+      top = eventPos.top;
+      console.log(top);
+    }
+    if (top > 450) {
+      top = eventOffset.top;
     }
     top = top.toString() + 'px';
     this.setState({
