@@ -362,13 +362,13 @@ export default class Calendar extends React.Component {
         backgroundColor: accent,
       }
       const timeInfo = (
-        <div className="start-end-times">
+        <div className="start-end-times item">
           {startTime.replace(" ", "").toLowerCase()}-{endTime.replace(" ", "").toLowerCase()}
         </div>
       );
 
       const locationInfo = (
-        <div className="location">
+        <div className="location item">
           {eventObj.location}
         </div>
       );
@@ -389,7 +389,7 @@ export default class Calendar extends React.Component {
           >
           </div>
           <div className="content">
-            <div className="title">
+            <div className="title item">
               {eventObj.name}
             </div>
             { length >= 10 ? timeInfo : (<div />)}
