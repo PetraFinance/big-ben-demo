@@ -55,6 +55,11 @@
   overflow-y: auto;
   border-bottom: 1px solid $grey-border;
   position: relative;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
   .row {
     height: 100%;
     display: flex;
@@ -114,7 +119,8 @@
 }
 
 .editor-panel {
-  height: 215px;
+  min-height: 215px;
+  height: auto;
   width: 250px;
   position: absolute;
   border-radius: 5px;
@@ -228,7 +234,7 @@
     background-color: white;
     border: 1px solid $grey-border;
     z-index: 2;
-    overflow-y: auto;
+    cursor: pointer;
     .item {
       display: flex;
       align-items: center;

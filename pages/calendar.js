@@ -10,8 +10,8 @@ export default class Calendar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      beingDragged: null,
-      next_id: 1,
+      draggedObj: null,
+      next_id: 2,
       editorPosition: null,
       calendarMap: {
         "Innovative Design": {
@@ -44,8 +44,28 @@ export default class Calendar extends React.Component {
           endValue: 9,
           day: "Mon",
         },
+        {
+          id: 1,
+          name: "IEEE Meeting",
+          category: "Google",
+          calendar: "IEEE",
+          location: "Dwinelle 140",
+          startTime: "10 AM",
+          endTime: "11 AM",
+          startValue: 10,
+          endValue: 11,
+          day: "Wed",
+        },
       ],
     }
+    this.createEvent = this.createEvent.bind(this);
+    this.dismissEditor = this.dismissEditor.bind(this);
+    this.handleCellClick = this.handleCellClick.bind(this);
+    this.handleMouseUp = this.handleMouseUp.bind(this);
+    this.handleDragBehavior = this.handleDragBehavior.bind(this);
+    this.checkElementShouldDrop = this.checkElementShouldDrop.bind(this);
+    this.toggleEditor = this.toggleEditor.bind(this);
+    this.handleMouseEnter = this.handleMouseEnter.bind(this);
   }
 
   createEvent = (day, startValue) => {
@@ -79,7 +99,48 @@ export default class Calendar extends React.Component {
     this.setState({ editorPosition: null });
   }
 
-  handleCellClick = (day, startValue, evt) => {
+  handleMouseEnter = (day, startValue, evt) => {
+    const draggedObj = this.state.draggedObj;
+    if (draggedObj) {
+      console.log(draggedObj);
+      console.log(day);
+      console.log(startValue);
+      const id = draggedObj.id;
+      const events = this.state.events;
+      const filtered = events.filter(event => event.id !== id);
+      const endValue = startValue + Math.abs(draggedObj.startValue - draggedObj.endValue);
+      const startTime = computeTimeFromValue(startValue);
+      const endTime = computeTimeFromValue(endValue);
+      const name = draggedObj.name;
+      const calendar = draggedObj.calendar;
+      const category = draggedObj.category;
+      const location = draggedObj.location;
+      const eventObj = {
+        id,
+        name,
+        category,
+        location,
+        calendar,
+        startTime,
+        endTime,
+        startValue,
+        endValue,
+        day
+      };
+      const newEventsList = filtered.concat([eventObj]);
+      this.setState({ events: newEventsList });
+    }
+  }
+
+
+  // every event has its id number to be its id in the DOM for easy access
+  getEventEntryDOM = (eventObj) => {
+    const id = eventObj.id.toString();
+    const eventEntryDOM = document.getElementById(id);
+    return eventEntryDOM;
+  }
+
+  handleCellClick = (day, startValue) => {
     if (this.state.editorPosition) {
       // turn editor off if clicking outside the editor
       this.dismissEditor();
@@ -99,56 +160,38 @@ export default class Calendar extends React.Component {
     );
 
     promiseEventObj(this).then((eventObj) => {
-      const length = Math.abs(eventObj.endValue - eventObj.startValue) * 10;
-      const start = eventObj.startTime.replace(":", "").replace(" ", "");
-      const key = eventObj.id;
-      const className = 'event-entry start-' + start + ' ' + day + ' ' + 'length-' + length.toString();
-      const eventEntryDOMs = document.getElementsByClassName('event-entry');
-      const mostRecentEventEntryDOM = eventEntryDOMs[eventEntryDOMs.length - 1];
-      this.toggleEditor(eventObj, mostRecentEventEntryDOM, true);
+      // reconstruct the classname and grab the obj from the dom to pass to the editor
+      const eventEntryDOM = this.getEventEntryDOM(eventObj);
+      this.toggleEditor(eventObj, eventEntryDOM, true);
     }, (error) => {
       console.log(error);
     });
   }
 
-
   checkElementShouldDrop = (day, startValue) => {
-    // check if element is being dragged
-    const dragged = this.state.draggedObj;
-    if (!dragged) { return; }
-    // copy the contents of the element being dropped and then remove it from the events list, re-add the new event
-    const id = dragged.id;
-    const events = this.state.events;
-    const filtered = events.filter(event => event.id !== id);
-    const endValue = startValue + Math.abs(dragged.startValue - dragged.endValue);
-    const startTime = computeTimeFromValue(startValue);
-    const endTime = computeTimeFromValue(endValue);
-    const name = dragged.name;
-    const calendar = dragged.calendar;
-    const category = dragged.category;
-    const location = dragged.location;
-    const eventObj = {
-      id,
-      name,
-      category,
-      location,
-      calendar,
-      startTime,
-      endTime,
-      startValue,
-      endValue,
-      day
-    };
-    this.setState({ events: filtered.concat([eventObj]) });
-    this.setState({ draggedObj: null });
+    const draggedObj = this.state.draggedObj;
+    if (draggedObj) {
+      this.setState({ draggedObj: null }, () => {
+        const eventEntryDOM = this.getEventEntryDOM(draggedObj);
+        // restore pointer events for the item
+        $(eventEntryDOM).css("pointer-events", "");
+      });
+    }
   }
 
-  handleMouseUp = (day, startValue) => {
+  handleMouseUp = (day, startValue, target) => {
     this.checkElementShouldDrop(day, startValue);
   }
 
-  handleDragBehavior = (eventObj) => {
-    this.setState({ draggedObj: eventObj });
+  // called on drag start
+  handleDragBehavior = (eventObj, evt, target) => {
+    // need to prevent default of sometimes mouse up doesn't fire when the element is dropped
+    evt.preventDefault();
+    this.setState({ draggedObj: eventObj }, () => {
+      // async disable pointer events on the target
+      // allows you to move an event into a cell which it covers
+      $(target).css("pointer-events", "none");
+    });
     // turn the editor off if it's on during a drag
     this.dismissEditor();
   }
@@ -196,6 +239,7 @@ export default class Calendar extends React.Component {
   }
 
   render () {
+
     const plugins = [ "Trello", "Todoist" ];
     const integrations = plugins.map((plugin, i) => (
       <div className="row" key={i}>
@@ -214,11 +258,12 @@ export default class Calendar extends React.Component {
     const times = genTimeMap();
     const hours = times.filter(timeObj => !timeObj.time.includes(":30"));
     const rows = hours.map((timeObj, i) => {
-      const hours_jsx = days.map((day, i) => (
+      const whole_hours_jsx = days.map((day, i) => (
         <div
           key={i}
-          className="item"
-          onMouseUp={() => this.handleMouseUp(day, timeObj.value)}
+          className={"item " + day.toString() + timeObj.value.toString()}
+          onMouseEnter={(evt) => this.handleMouseEnter(day, timeObj.value, evt)}
+          onMouseUp={(evt) => this.handleMouseUp(day, timeObj.value, evt.target)}
           onClick={() => this.handleCellClick(day, timeObj.value)}
         >
         </div>
@@ -227,8 +272,9 @@ export default class Calendar extends React.Component {
       const half_hours_jsx = days.map((day, i) => (
         <div
           key={i}
-          className="item"
-          onMouseUp={() => this.handleMouseUp(day, increment)}
+          className={"item " + day.toString() + increment.toString()}
+          onMouseEnter={(evt) => this.handleMouseEnter(day, increment, evt)}
+          onMouseUp={(evt) => this.handleMouseUp(day, increment, evt.target)}
           onClick={() => this.handleCellClick(day, increment)}
         >
         </div>
@@ -239,7 +285,7 @@ export default class Calendar extends React.Component {
             <div className="time">
               <span>{timeObj.time}</span>
             </div>
-            {hours_jsx}
+            {whole_hours_jsx}
           </div>
           <div className="row half-hour">
             <div className="time"></div>
@@ -291,13 +337,14 @@ export default class Calendar extends React.Component {
 
     let eventsList = [];
     for (let eventObj of events) {
+      const key = eventObj.id;
       const day = eventObj.day;
       const startTime = eventObj.startTime;
       const endTime = eventObj.endTime;
       const length = Math.abs(eventObj.endValue - eventObj.startValue) * 10;
       const start = eventObj.startTime.replace(":", "").replace(" ", "");
       const className = 'event-entry start-' + start + ' ' + day + ' ' + 'length-' + length.toString();
-      const key = eventObj.id;
+
       const color = calendarMap[eventObj.calendar]["color"];
       const accent = calendarMap[eventObj.calendar]["accent"];
       const eventEntryStyle = {
@@ -306,13 +353,26 @@ export default class Calendar extends React.Component {
       const eventSideBarStyle = {
         backgroundColor: accent,
       }
+      const timeInfo = (
+        <div className="start-end-times">
+          {startTime.replace(" ", "").toLowerCase()}-{endTime.replace(" ", "").toLowerCase()}
+        </div>
+      );
+
+      const locationInfo = (
+        <div className="location">
+          {eventObj.location}
+        </div>
+      );
+
       const eventjsx = (
         <div
           key={key}
+          id={key.toString()}
           draggable="true"
           className={className}
           style={eventEntryStyle}
-          onDragStart={() => this.handleDragBehavior(eventObj)}
+          onDragStart={(evt) => this.handleDragBehavior(eventObj, evt, evt.target)}
           onClick={(evt) => this.toggleEditor(eventObj, evt.target, false)}
         >
           <div
@@ -324,12 +384,8 @@ export default class Calendar extends React.Component {
             <div className="title">
               {eventObj.name}
             </div>
-            <div className="start-end-times">
-              {startTime.replace(" ", "").toLowerCase()}-{endTime.replace(" ", "").toLowerCase()}
-            </div>
-            <div className="location">
-              {eventObj.location}
-            </div>
+            { length >= 10 ? timeInfo : (<div />)}
+            { length >= 15 ? locationInfo : (<div />)}
           </div>
         </div>
       );

@@ -1,9 +1,8 @@
 .event-entry {
+  max-width: calc(13% - 6px);
   width: calc(13% - 6px);
   position: absolute;
   border-radius: 5px;
-
-  overflow-y: hidden;
 
   display: flex;
   flex-direction: row;
