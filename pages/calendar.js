@@ -10,6 +10,7 @@ export default class Calendar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      resizeObj: null,
       draggedObj: null,
       next_id: 3,
       editorPosition: null,
@@ -78,11 +79,43 @@ export default class Calendar extends React.Component {
     this.shouldEventDrop = this.shouldEventDrop.bind(this);
     this.toggleEditor = this.toggleEditor.bind(this);
     this.handleMouseEnter = this.handleMouseEnter.bind(this);
-    this.handleResizeEvent = this.handleResizeEvent.bind(this);
+    this.startResize = this.startResize.bind(this);
   }
 
   handleMouseEnter = (day, startValue, evt) => {
     const draggedObj = this.state.draggedObj;
+    const resizeObj = this.state.resizeObj;
+    console.log(startValue);
+    console.log(resizeObj);
+    if (resizeObj) {
+      const id = resizeObj.id;
+      const events = this.state.events;
+      const filtered = events.filter(event => event.id !== id);
+      // the value that this cell represents should be the one the event now ends at
+      const endValue = startValue + 0.5;
+      startValue = resizeObj.startValue;
+      day = resizeObj.day;
+      const startTime = resizeObj.startTime;
+      const endTime = computeTimeFromValue(endValue);
+      const name = resizeObj.name;
+      const calendar = resizeObj.calendar;
+      const category = resizeObj.category;
+      const location = resizeObj.location;
+      const eventObj = {
+        id,
+        name,
+        category,
+        location,
+        calendar,
+        startTime,
+        endTime,
+        startValue,
+        endValue,
+        day
+      };
+      const newEventsList = filtered.concat([eventObj]);
+      this.setState({ events: newEventsList });
+    }
     if (draggedObj) {
       const id = draggedObj.id;
       const events = this.state.events;
@@ -109,6 +142,21 @@ export default class Calendar extends React.Component {
       const newEventsList = filtered.concat([eventObj]);
       this.setState({ events: newEventsList });
     }
+  }
+
+  startResize = (eventObj, evt) => {
+    evt.preventDefault();
+    this.setState({ resizeObj: eventObj }, () => {
+      // async disable pointer events on the target
+      // allows you to move an event into a cell which it covers
+      const numEvents = this.state.next_id;
+      for (let id=0; id < numEvents; id++) {
+        const dummyEvent = { id };
+        const eventEntryDOM = this.getEventEntryDOM(dummyEvent);
+        $(eventEntryDOM).css("pointer-events", "none");
+      }
+    });
+    this.dismissEditor();
   }
 
   createEvent = (day, startValue) => {
@@ -167,7 +215,6 @@ export default class Calendar extends React.Component {
         }
       })
     );
-
     promiseEventObj(this).then((eventObj) => {
       // grab the obj from the dom to pass to the editor
       const eventEntryDOM = this.getEventEntryDOM(eventObj);
@@ -191,8 +238,23 @@ export default class Calendar extends React.Component {
     }
   }
 
+  shouldEndResize = () => {
+    const resizeObj = this.state.resizeObj;
+    if (resizeObj) {
+      this.setState({ resizeObj: null }, () => {
+        const numEvents = this.state.next_id;
+        for (let id=0; id < numEvents; id++) {
+          const dummyEvent = { id };
+          const eventEntryDOM = this.getEventEntryDOM(dummyEvent);
+          $(eventEntryDOM).css("pointer-events", "");
+        }
+      });
+    }
+  }
+
   handleMouseUp = (day, startValue, target) => {
     this.shouldEventDrop(day, startValue);
+    this.shouldEndResize();
   }
 
   // called on drag start
@@ -213,16 +275,10 @@ export default class Calendar extends React.Component {
     this.dismissEditor();
   }
 
-  handleResizeEvent = (eventObj, evt) => {
-    console.log(evt);
-  }
-
-
   // in order to bring up the editor, we need to know the object we are editing and its position on the page, so we can appropriately position the editor relative to it
   // you must pass in the eventObj and the eventEntryDOM for jQuery offset() to use
   toggleEditor = (eventObj, eventEntryDOM, newEvent) => {
     // first calculate the editor position
-    console.log(eventEntryDOM);
     const day = eventObj.day;
     const startTime = eventObj.startTime;
     const calendarWidth = document.getElementById('main-calendar').clientWidth;
@@ -416,7 +472,9 @@ export default class Calendar extends React.Component {
             </div>
           </div>
           <div className="resizer"
+            draggable="true"
             style={eventEntryStyle}
+            onDragStart={(evt) => this.startResize(eventObj, evt)}
           >
             <div
               className="sidebar"
