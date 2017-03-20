@@ -11,7 +11,7 @@ export default class Calendar extends React.Component {
     super(props);
     this.state = {
       draggedObj: null,
-      next_id: 2,
+      next_id: 3,
       editorPosition: null,
       calendarMap: {
         "Innovative Design": {
@@ -55,6 +55,18 @@ export default class Calendar extends React.Component {
           startValue: 10,
           endValue: 11,
           day: "Wed",
+        },
+        {
+          id: 2,
+          name: "Dank Party",
+          category: "Facebook",
+          calendar: "Events I'm Attending",
+          location: "2231 Dwight Way",
+          startTime: "12 PM",
+          endTime: "12:30 PM",
+          startValue: 12,
+          endValue: 12.5,
+          day: "Thu",
         },
       ],
     }
@@ -362,13 +374,13 @@ export default class Calendar extends React.Component {
         backgroundColor: accent,
       }
       const timeInfo = (
-        <div className="start-end-times item">
+        <div className="start-end-times">
           {startTime.replace(" ", "").toLowerCase()}-{endTime.replace(" ", "").toLowerCase()}
         </div>
       );
 
       const locationInfo = (
-        <div className="location item">
+        <div className="location">
           {eventObj.location}
         </div>
       );
@@ -389,11 +401,11 @@ export default class Calendar extends React.Component {
           >
           </div>
           <div className="content">
-            <div className="title item">
+            <div className="title">
               {eventObj.name}
             </div>
-            { length >= 10 ? timeInfo : (<div />)}
-            { length >= 15 ? locationInfo : (<div />)}
+            { length > 5 ? timeInfo : (<div />)}
+            { length > 5 ? locationInfo : (<div />)}
           </div>
         </div>
       );
