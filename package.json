@@ -1,9 +1,12 @@
 {
   "scripts": {
     "build": "rollup -c rollup-config/rollup.config.client.js && rollup -c rollup-config/rollup.config.server.js",
+    "build-css": "node-sass css/main.scss dist/css/main.css",
+    "go": "npm run watch & npm run watch-css & npm run serve",
     "lint": "eslint client.js server.js app",
-    "serve": "nodemon server-bundle.js",
-    "watch": "rollup -w -c rollup-config/rollup.config.client.js & rollup -w -c rollup-config/rollup.config.server.js"
+    "serve": "nodemon --delay 2.5 server-bundle.js",
+    "watch": "rollup -w -c rollup-config/rollup.config.client.js & rollup -w -c rollup-config/rollup.config.server.js",
+    "watch-css": "node-sass css/main.scss dist/css/main.css"
   },
   "dependencies": {
     "express": "^4.15.2",

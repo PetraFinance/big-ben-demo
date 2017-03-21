@@ -16,6 +16,7 @@ function renderFullPage(html, preloadedState) {
     <html>
       <head>
         <title>Big Ben Demo</title>
+        <link rel="stylesheet" href="/css/main.css">
       </head>
       <body>
         <div id="root">${html}</div>
@@ -30,7 +31,7 @@ function renderFullPage(html, preloadedState) {
     `;
 }
 
-function handleRender(req, res) {
+app.get('/', function handleRender(req, res) {
   // Create a new Redux store instance
   const store = configureStore();
 
@@ -46,9 +47,6 @@ function handleRender(req, res) {
 
   // Send the rendered page back to the client
   res.send(renderFullPage(html, preloadedState));
-}
-
-// This is fired every time the server side receives a request
-app.use(handleRender);
+})
 
 app.listen(port);
