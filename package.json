@@ -6,7 +6,7 @@
     "lint": "eslint client.js server.js app",
     "serve": "nodemon --delay 2.5 server-bundle.js",
     "watch": "rollup -w -c rollup-config/rollup.config.client.js & rollup -w -c rollup-config/rollup.config.server.js",
-    "watch-css": "node-sass css/main.scss dist/css/main.css"
+    "watch-css": "node-sass --watch css/main.scss dist/css/main.css"
   },
   "dependencies": {
     "express": "^4.15.2",
