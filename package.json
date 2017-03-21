@@ -9,8 +9,10 @@
     "watch-css": "node-sass --watch css/main.scss dist/css/main.css"
   },
   "dependencies": {
+    "babel-polyfill": "^6.23.0",
     "express": "^4.15.2",
     "immutable": "^3.8.1",
+    "jquery": "^3.2.1",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
     "react-redux": "^5.0.3",
@@ -27,8 +29,12 @@
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-jsx-a11y": "^4.0.0",
     "eslint-plugin-react": "^6.10.3",
+    "moment": "^2.18.0",
     "node-sass": "^4.5.0",
     "nodemon": "^1.11.0",
+    "object.entries": "^1.0.4",
+    "react-addons-shallow-compare": "^15.4.2",
+    "react-dates": "^8.2.1",
     "rollup": "^0.41.6",
     "rollup-plugin-babel": "^2.7.1",
     "rollup-plugin-commonjs": "^8.0.2",

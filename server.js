@@ -1,3 +1,4 @@
+import 'babel-polyfill';
 import Express from 'express';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
@@ -16,6 +17,7 @@ function renderFullPage(html, preloadedState) {
     <html>
       <head>
         <title>Big Ben Demo</title>
+        <link rel="stylesheet" href="/css/_datepicker.css">
         <link rel="stylesheet" href="/css/main.css">
       </head>
       <body>

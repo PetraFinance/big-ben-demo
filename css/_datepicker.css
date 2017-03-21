@@ -1,0 +1,41 @@
+.datepicker-container {
+  min-height: 350px;
+  height: auto;
+  width: 100%;
+
+  .arrow-icon {
+    height: 15px;
+    width: auto;
+  }
+
+  // overrides
+  .DayPicker, .DayPicker--horizontal, .CalendarMonthGrid, .CalendarMonthGrid--horizontal {
+    background-color: $light-grey !important;
+    background: $light-grey !important;
+    box-shadow: none !important;
+    color: #616161 !important;
+  }
+
+  .DayPicker__week-header li small {
+    font-weight: bold;
+  }
+
+  .CalendarMonth__caption {
+    font-size: 1rem;
+    margin-bottom: 15px !important;
+  }
+
+  .CalendarDay {
+    border: none;
+    font-size: 0.9rem;
+    &:active {
+      background-color: $light-grey !important;
+    }
+  }
+
+  .active {
+    background-color: $blue;
+    color: white;
+    border-radius: 50px;
+  }
+}

@@ -1,7 +1,6 @@
 import React from 'react'
 import Editor from './editor';
-import { genSimpleCells } from './calendar/simpleCells';
-import { genTimeMap, computeTimeFromValue, isEmpty } from './calendar/helpers';
+import { genTimeMap, computeTimeFromValue, isEmpty, genSimpleCells } from '../helpers/helpers';
 import $ from "jquery";
 
 export default class Calendar extends React.Component {
@@ -81,7 +80,7 @@ export default class Calendar extends React.Component {
     this.startResize = this.startResize.bind(this);
   }
 
-  handleMouseEnter = (day, startValue, evt) => {
+  handleMouseEnter(day, startValue, evt) {
     const draggedObj = this.state.draggedObj;
     const resizeObj = this.state.resizeObj;
     if (!isEmpty(resizeObj)) {
@@ -144,7 +143,7 @@ export default class Calendar extends React.Component {
     }
   }
 
-  startResize = (eventObj, evt) => {
+  startResize(eventObj, evt) {
     evt.preventDefault();
     this.setState({ resizeObj: eventObj }, () => {
       // async disable pointer events on the target
@@ -159,7 +158,7 @@ export default class Calendar extends React.Component {
     this.dismissEditor();
   }
 
-  createEvent = (day, startValue) => {
+  createEvent(day, startValue) {
     const id = this.state.next_id;
     let next_id = id + 1;
     this.setState({ next_id });
@@ -187,17 +186,17 @@ export default class Calendar extends React.Component {
   }
 
   // every event has its id number to be its id in the DOM for easy access
-  getEventEntryDOM = (eventObj) => {
+  getEventEntryDOM(eventObj) {
     const id = eventObj.id.toString();
     const eventEntryDOM = document.getElementById(id);
     return eventEntryDOM;
   }
 
-  dismissEditor = () => {
+  dismissEditor() {
     this.setState({ editorPosition: {} });
   }
 
-  handleCellClick = (day, startValue) => {
+  handleCellClick(day, startValue) {
     if (!isEmpty(this.state.editorPosition)) {
       // turn editor off if clicking outside the editor
       this.dismissEditor();
@@ -224,7 +223,7 @@ export default class Calendar extends React.Component {
     });
   }
 
-  shouldEventDrop = (day, startValue) => {
+  shouldEventDrop(day, startValue) {
     const draggedObj = this.state.draggedObj;
     if (draggedObj) {
       this.setState({ draggedObj: {} }, () => {
@@ -238,7 +237,7 @@ export default class Calendar extends React.Component {
     }
   }
 
-  shouldEndResize = () => {
+  shouldEndResize() {
     const resizeObj = this.state.resizeObj;
     if (resizeObj) {
       this.setState({ resizeObj: {} }, () => {
@@ -252,13 +251,13 @@ export default class Calendar extends React.Component {
     }
   }
 
-  handleMouseUp = (day, startValue, target) => {
+  handleMouseUp(day, startValue, target) {
     this.shouldEventDrop(day, startValue);
     this.shouldEndResize();
   }
 
   // called on drag start
-  handleDragStart = (eventObj, target, evt) => {
+  handleDragStart(eventObj, target, evt) {
     // need to prevent default of sometimes mouse up doesn't fire when the element is dropped
     evt.preventDefault();
     this.setState({ draggedObj: eventObj }, () => {
@@ -277,7 +276,7 @@ export default class Calendar extends React.Component {
 
   // in order to bring up the editor, we need to know the object we are editing and its position on the page, so we can appropriately position the editor relative to it
   // you must pass in the eventObj and the eventEntryDOM for jQuery offset() to use
-  toggleEditor = (eventObj, eventEntryDOM, newEvent) => {
+  toggleEditor(eventObj, eventEntryDOM, newEvent) {
     // first calculate the editor position
     const day = eventObj.day;
     const startTime = eventObj.startTime;

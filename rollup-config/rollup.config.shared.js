@@ -35,6 +35,9 @@ const options = {
         'node_modules/react-dom/server.js': [
           'renderToString',
         ],
+        'node_modules/react-dates/index.js': [
+          'DayPicker',
+        ],
       }
     }),
   ],
