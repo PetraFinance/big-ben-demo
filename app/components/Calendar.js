@@ -1,7 +1,10 @@
 import React from 'react'
-import Editor from './editor';
-import { genTimeMap, computeTimeFromValue, isEmpty, genSimpleCells, getEventEntryDOM, getMapValues } from '../helpers/helpers';
-import $ from "jquery";
+import Editor from './editor'
+import { genTimeMap, computeTimeFromValue, isEmpty, genSimpleCells, getEventEntryDOM, getMapValues } from '../helpers/helpers'
+import { getEventPosition } from '../helpers/position'
+import $ from "jquery"
+import _ from "lodash"
+import moment from 'moment'
 
 export default class Calendar extends React.Component {
 
@@ -10,21 +13,14 @@ export default class Calendar extends React.Component {
     this.state = {
       resizeObj: {},
       draggedObj: {},
-      editorPosition: {},
     }
-    this.dismissEditor = this.dismissEditor.bind(this);
     this.handleCellClick = this.handleCellClick.bind(this);
     this.handleMouseUp = this.handleMouseUp.bind(this);
     this.handleDragStart = this.handleDragStart.bind(this);
     this.shouldEventDrop = this.shouldEventDrop.bind(this);
-    this.toggleEditor = this.toggleEditor.bind(this);
     this.handleMouseEnter = this.handleMouseEnter.bind(this);
     this.startResize = this.startResize.bind(this);
-  }
-
-  // Dismisses the editor
-  dismissEditor() {
-    this.setState({ editorPosition: {} });
+    this.handleEventClick = this.handleEventClick.bind(this);
   }
 
   handleMouseEnter(day, startValue, evt) {
@@ -92,18 +88,17 @@ export default class Calendar extends React.Component {
       // allows you to move an event into a cell which it covers
       const numEvents = this.props.nextAvaliableId;
       for (let id=0; id < numEvents; id++) {
-        const dummyEvent = { id };
-        const eventEntryDOM = getEventEntryDOM(dummyEvent);
+        const eventEntryDOM = getEventEntryDOM(id);
         $(eventEntryDOM).css("pointer-events", "none");
       }
     });
-    this.dismissEditor();
+    this.props.editorOff();
   }
 
   handleCellClick(day, startValue) {
-    if (!isEmpty(this.state.editorPosition)) {
+    if (this.props.editor !== -1) {
       // turn editor off if clicking outside the editor
-      this.dismissEditor();
+      this.props.editorOff();
       return;
     }
     // create a new event
@@ -142,8 +137,7 @@ export default class Calendar extends React.Component {
       this.setState({ draggedObj: {} }, () => {
         const numEvents = this.props.nextAvaliableId;
         for (let id=0; id < numEvents; id++) {
-          const dummyEvent = { id };
-          const eventEntryDOM = getEventEntryDOM(dummyEvent);
+          const eventEntryDOM = getEventEntryDOM(id);
           $(eventEntryDOM).css("pointer-events", "");
         }
       });
@@ -157,8 +151,7 @@ export default class Calendar extends React.Component {
       this.setState({ resizeObj: {} }, () => {
         const numEvents = this.props.nextAvaliableId;
         for (let id=0; id < numEvents; id++) {
-          const dummyEvent = { id };
-          const eventEntryDOM = getEventEntryDOM(dummyEvent);
+          const eventEntryDOM = getEventEntryDOM(id);
           $(eventEntryDOM).css("pointer-events", "");
         }
       });
@@ -174,63 +167,20 @@ export default class Calendar extends React.Component {
       // allows you to move an event into a cell which it covers
       const numEvents = this.props.nextAvaliableId;
       for (let id=0; id < numEvents; id++) {
-        const dummyEvent = { id };
-        const eventEntryDOM = getEventEntryDOM(dummyEvent);
+        const eventEntryDOM = getEventEntryDOM(id);
         $(eventEntryDOM).css("pointer-events", "none");
       }
     });
     // turn the editor off if it's on during a drag
-    this.dismissEditor();
+    this.props.editorOff();
   }
 
-
-  // in order to bring up the editor, we need to know the object we are editing and its position on the page, so we can appropriately position the editor relative to it
-  // you must pass in the eventObj and the eventEntryDOM for jQuery offset() to use
-  toggleEditor(eventObj, eventEntryDOM, newEvent) {
-    // first calculate the editor position
-    const day = eventObj.day;
-    const startTime = eventObj.startTime;
-    const calendarWidth = document.getElementById('main-calendar').clientWidth;
-    const calendarHeight = document.getElementById('main-calendar').clientHeight;
-    let eventEntry = eventEntryDOM;
-    // iterate up the DOM to the event entry parent
-    while (!$(eventEntry).attr('class').includes('event-entry')) {
-      eventEntry = $(eventEntry).parent();
-    }
-    let left, top;
-    const eventWidth = $(eventEntry).width();
-    const eventHeight = $(eventEntry).height();
-    const eventPos = $(eventEntry).offset();
-    const calendarPos = $(eventEntry).parent().offset();
-    const eventOffset = {
-        top: eventPos.top - calendarPos.top,
-        left: eventPos.left - calendarPos.left
-    }
-    // checks if the editor is above or below a certain threshold on the screen and adjusts accordingly
-    left = ((eventOffset.left + eventWidth + 15) / calendarWidth) * 100;
-    if (left > 65) {
-      left = ((eventOffset.left + eventWidth - 265 - (calendarWidth * 0.13)) / calendarWidth) * 100;
-    }
-    left = left.toString() + '%';
-    top = Math.abs(eventOffset.top);
-    if (top < 15) {
-      top = top + 15;
-    }
-    top = top.toString() + 'px';
-    this.setState({
-      editorPosition: {
-        left,
-        top,
-        newEvent,
-        eventObj,
-      }
-    });
+  // Turn the editor on by passing it the event id to edit
+  handleEventClick(eventObj) {
+    this.props.editorOn(eventObj.id);
   }
 
   render () {
-
-    const calendarMap = this.props.calendarMap;
-
     const plugins = [ "Trello", "Todoist" ];
     const integrations = plugins.map((plugin, i) => (
       <div className="row" key={i}>
@@ -241,9 +191,9 @@ export default class Calendar extends React.Component {
       </div>
     ));
 
-    const days = [ "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" ];
+    const days = moment.weekdays();
     const rowHeaders = days.map((day, i) => (
-      <div className="item" key={i}><span>{day}</span></div>
+      <div className="item" key={i}><span>{day.slice(0, 3)}</span></div>
     ));
 
     const times = genTimeMap();
@@ -252,7 +202,7 @@ export default class Calendar extends React.Component {
       const whole_hours_jsx = days.map((day, i) => (
         <div
           key={i}
-          className={"item " + day.toString() + timeObj.value.toString()}
+          className={"item " + day.toString() + ' ' + timeObj.value.toString()}
           onMouseEnter={(evt) => this.handleMouseEnter(day, timeObj.value, evt)}
           onMouseUp={(evt) => this.handleMouseUp(day, timeObj.value, evt.target)}
           onClick={() => this.handleCellClick(day, timeObj.value)}
@@ -263,7 +213,7 @@ export default class Calendar extends React.Component {
       const half_hours_jsx = days.map((day, i) => (
         <div
           key={i}
-          className={"item " + day.toString() + increment.toString()}
+          className={"item " + day.toString() + ' ' + increment.toString()}
           onMouseEnter={(evt) => this.handleMouseEnter(day, increment, evt)}
           onMouseUp={(evt) => this.handleMouseUp(day, increment, evt.target)}
           onClick={() => this.handleCellClick(day, increment)}
@@ -286,60 +236,23 @@ export default class Calendar extends React.Component {
       );
     });
 
-    const updateEditedEventObj = (editedEventObj) => {
-      const id = editedEventObj.id;
-      const filtered = events.filter(event => event.id !== id);
-      this.setState({ events: filtered.concat([editedEventObj])});
-    }
-
-    const genEventEditor = () => {
-      const editorPosition = this.state.editorPosition;
-
-      if (!isEmpty(editorPosition)) {
-        const eventEditorPosition = {
-          top: editorPosition.top,
-          left: editorPosition.left,
-        }
-        const eventObj = editorPosition.eventObj;
-        const newEvent = editorPosition.newEvent;
-
-        const color = calendarMap[eventObj.calendar]["color"];
-        const editorColor = {
-          backgroundColor: color,
-        }
-
-        return (
-          <Editor
-            eventObj={eventObj}
-            newEvent={newEvent}
-            eventEditorPosition={eventEditorPosition}
-            updateEditedEventObj={updateEditedEventObj}
-            calendarMap={calendarMap}
-            editorColor={editorColor}
-          />
-        );
-      }
-      return ( <div /> );
-    }
-
+    const calendarMap = this.props.calendarMap;
     const packagedEvents = Object.entries(this.props.eventsMap);
     const eventsJSX = packagedEvents.map((packagedEvent) => {
       const id = packagedEvent[0];
       const eventObj = packagedEvent[1];
-      const day = eventObj.day;
       const startTime = eventObj.startTime;
       const endTime = eventObj.endTime;
       const length = Math.abs(eventObj.endValue - eventObj.startValue) * 10;
       const start = eventObj.startTime.replace(":", "").replace(" ", "");
-      const className = 'event-entry start-' + start + ' ' + day + ' ' + 'length-' + length.toString();
-      const color = calendarMap[eventObj.calendar]["color"];
-      const accent = calendarMap[eventObj.calendar]["accent"];
-      const eventEntryStyle = {
-        backgroundColor: color,
-      }
-      const eventSideBarStyle = {
-        backgroundColor: accent,
-      }
+
+      const color = { backgroundColor: calendarMap[eventObj.calendar]["color"] };
+      const accent = { backgroundColor: calendarMap[eventObj.calendar]["accent"] };
+      const eventEntryStyle = Object.assign(
+        getEventPosition(eventObj),
+        color
+      );
+
       const timeInfo = (
         <div className="start-end-times">
           {startTime.replace(" ", "").toLowerCase()}-{endTime.replace(" ", "").toLowerCase()}
@@ -354,18 +267,18 @@ export default class Calendar extends React.Component {
         <div
           key={id}
           id={id.toString()}
-          className={className}
+          className="event-entry"
           style={eventEntryStyle}
         >
           <div
             className="content-wrapper"
             draggable="true"
             onDragStart={(evt) => this.handleDragStart(eventObj, evt.target, evt)}
-            onClick={(evt) => this.toggleEditor(eventObj, evt.target, false)}
+            onClick={() => this.handleEventClick(eventObj)}
           >
             <div
               className="sidebar"
-              style={eventSideBarStyle}
+              style={accent}
             >
             </div>
             <div className="content">
@@ -378,16 +291,15 @@ export default class Calendar extends React.Component {
           </div>
           <div className="resizer"
             draggable="true"
-            style={eventEntryStyle}
             onMouseDown={(evt) => this.startResize(eventObj, evt)}
           >
             <div
               className="sidebar"
-              style={eventSideBarStyle}
+              style={accent}
             />
             <div
               className="filler"
-              style={eventEntryStyle}
+              style={color}
             />
           </div>
         </div>
@@ -409,7 +321,12 @@ export default class Calendar extends React.Component {
         <div id="main-calendar" className="main-calendar">
           {rows}
           {eventsJSX}
-          {genEventEditor()}
+          <Editor
+            id={this.props.editor}
+            calendarMap={this.props.calendarMap}
+            eventsMap={this.props.eventsMap}
+            updateEvent={this.props.updateEvent}
+          />
         </div>
         <div className="integrations-calendar">
           {integrations}

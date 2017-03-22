@@ -1,76 +1,78 @@
 import React from 'react'
 import $ from "jquery"
+import { getEventEntryDOM, isEmpty } from '../helpers/helpers'
+import { getEditorPosition } from '../helpers/position'
 
 export default class Editor extends React.Component {
 
   constructor(props) {
     super(props);
-    const eventObj = this.props.eventObj;
-    const newEvent = this.props.newEvent;
-    let editingField = {};
-    if (newEvent) { editingField="name"; }
     this.state = {
-      editingField,
-      editableEventObj: eventObj,
+      editingField: {},
+      editedEventObj: {},
     };
   }
 
-  // if you click on a different event, you need to update the state to have the new event entry you're trying to edit
   componentWillReceiveProps(nextProps) {
-    if (this.state.editableEventObj !== nextProps.eventObj) {
-      this.setState({ editableEventObj: nextProps.eventObj });
+    const id = nextProps.id;
+    const eventsMap = nextProps.eventsMap;
+    if (this.state.editedEventObj !== eventsMap[id]) {
+      this.setState({ editedEventObj: eventsMap[id] });
     }
   }
 
   finishEditing() {
     this.setState({ editingField: {} });
-    this.props.updateEditedEventObj(this.state.editableEventObj);
+    this.props.updateEvent(this.state.editedEventObj);
   }
 
   finishEditingOnEnter(evt) {
     if (evt.keyCode == '13') {
-      this.setState({ editingField: {} });
-      this.props.updateEditedEventObj(this.state.editableEventObj);
+      this.finishEditing();
     }
   }
 
-  setEditableField(field) {
+  setEditingField(field) {
     this.setState({ editingField: field });
   }
 
-  handleSetCalendar(evt) {
-    this.setEditableFieldValue("calendar", evt);
-    this.finishEditing();
-  }
-
-  setEditableFieldValue(field, evt) {
-    let cp = this.state.editableEventObj;
-    let value;
-    if (field == "calendar") {
-      value = $(evt.target).text();
+  setEditingFieldValue(field, evt) {
+    let copy = this.state.editedEventObj;
+    if (field === "calendar") {
+      copy[field] = $(evt.target).text();
+      this.setState({ editedEventObj: copy }, () => {
+        this.finishEditing();
+      });
     } else {
-      value = evt.target.value
+      copy[field] = evt.target.value;
+      this.setState({ editedEventObj: copy });
     }
-    cp[field] = value;
-    this.setState({ editableEventObj: cp });
   }
 
   render () {
-    const eventObj = this.state.editableEventObj;
-    const calendarMap = this.props.calendarMap;
-    const calendarList = Object.keys(calendarMap);
-    const eventEditorPosition = this.props.eventEditorPosition;
+    const id = this.props.id;
+    if (id === -1) {
+      return ( < div/> );
+    }
 
+    // the Editor uses its own copy of the event, edits it, and then updates the event in the store on exiting
+    const eventObj = this.state.editedEventObj;
     const name = eventObj.name;
     const location = eventObj.location;
     const calendar = eventObj.calendar;
+
+    const editingField = this.state.editingField;
+
+    const editorPosition = getEditorPosition(this.props.eventsMap[id]);
+    const calendarMap = this.props.calendarMap;
+    const editorColor = { backgroundColor: calendarMap[calendar]["color"] };
 
     const form = {
       name: [(
         <div
           key={"name"}
           className="name"
-          onClick={() => this.setEditableField("name")}
+          onClick={() => this.setEditingField("name")}
         >
           <span>{name}</span>
         </div>
@@ -79,7 +81,7 @@ export default class Editor extends React.Component {
         <div
           key={"location"}
           className="location"
-          onClick={() => this.setEditableField("location")}
+          onClick={() => this.setEditingField("location")}
         >
           <span className="value">{location}</span>
         </div>
@@ -88,7 +90,7 @@ export default class Editor extends React.Component {
         <div
           key={"calendar"}
           className="calendar"
-          onClick={() => this.setEditableField("calendar")}
+          onClick={() => this.setEditingField("calendar")}
         >
           <span className="value">{calendar}</span>
           <img className="arrow-icon" src={"./assets/grey-down-arrow.png"} />
@@ -102,7 +104,7 @@ export default class Editor extends React.Component {
           autoFocus
           key={"title"}
           className="name-input"
-          onChange={(evt) => this.setEditableFieldValue("name", evt)}
+          onChange={(evt) => this.setEditingFieldValue("name", evt)}
           onBlur={() => this.finishEditing()}
           onKeyUp={(evt) => this.finishEditingOnEnter(evt)}
           placeholder={name}
@@ -113,7 +115,7 @@ export default class Editor extends React.Component {
           autoFocus
           key={"location"}
           className="location"
-          onChange={(evt) => this.setEditableFieldValue("location", evt)}
+          onChange={(evt) => this.setEditingFieldValue("location", evt)}
           onBlur={() => this.finishEditing()}
           onKeyUp={(evt) => this.finishEditingOnEnter(evt)}
           placeholder={location}
@@ -121,11 +123,28 @@ export default class Editor extends React.Component {
       )],
     }
 
-    const editingField = this.state.editingField;
-    const editorColor = this.props.editorColor;
+    const calendarsJSX = [];
+    const calendars = Object.keys(calendarMap);
+    for (let calendar of calendars) {
+      const style = { backgroundColor: calendarMap[calendar]["color"] };
+      const jsx = (
+        <div
+          key={calendar}
+          className="item"
+          onClick={(evt) => this.setEditingFieldValue("calendar", evt)}
+        >
+          <div className="calendar-dot" style={style}>
+          </div>
+          <div className="name">
+            {calendar}
+          </div>
+        </div>
+      );
+      calendarsJSX.push(jsx);
+    }
 
     const mainEditor = (
-      <div className="editor-panel" style={eventEditorPosition}>
+      <div className="editor-panel" style={editorPosition}>
         <div className="top-bar" style={editorColor}>
         </div>
         <div className="header">
@@ -150,35 +169,14 @@ export default class Editor extends React.Component {
       </div>
     );
 
-    const calendarListJSX = calendarList.map((calendar, i) => {
-
-      const backgroundColor = calendarMap[calendar]["color"];
-      const style = {
-        backgroundColor
-      };
-      return (
-        <div
-          key={i}
-          className="item"
-          onClick={(evt) => this.handleSetCalendar(evt)}
-        >
-          <div className="calendar-dot" style={style}>
-          </div>
-          <div className="name">
-            {calendar}
-          </div>
-        </div>
-      );
-    });
-
     if (editingField === "calendar") {
       return (
-        <div className="editor-panel" style={eventEditorPosition}>
+        <div className="editor-panel" style={editorPosition}>
           <div
             key={"calendar"}
             className="calendar-input"
           >
-            {calendarListJSX}
+            {calendarsJSX}
           </div>
         </div>
       );

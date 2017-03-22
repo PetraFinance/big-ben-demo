@@ -8,19 +8,22 @@
   .calendar-list-header {
     display: flex;
     flex-direction: row;
-    align-items: center;
     margin-bottom: 12px;
+
+    align-items: center;
     span {
-      flex: 1;
-      font-family: $font-stack;
       font-weight: bold;
+      font-family: $font-stack;
+
+      flex: 1;
     }
     .arrow-img {
-      flex: 0 0 25px;
       cursor: pointer;
+
+      flex: 0 0 25px;
       img {
-        height: 10px;
         width: auto;
+        height: 10px;
       }
     }
   }
@@ -29,15 +32,17 @@
 .calendar-list-item {
   display: flex;
   flex-direction: row;
-  align-items: center;
-  height: 20px;
   margin-bottom: 8px;
+  height: 20px;
+
+  align-items: center;
 
   .dot-container {
+    padding-right: 5px;
+
     flex: 0 0 25px;
     justify-content: center;
     align-items: center;
-    padding-right: 5px;
 
     .dot {
       width: 10px;
@@ -46,7 +51,7 @@
     }
   }
   .title {
-    font-family: $font-stack;
     font-size: 0.85rem;
+    font-family: $font-stack;
   }
 }

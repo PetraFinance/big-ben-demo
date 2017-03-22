@@ -13,3 +13,18 @@ export function updateEvent(eventObj) {
     eventObj
   };
 }
+
+export const EDITOR_ON = Symbol('EDITOR_ON');
+export function editorOn(id) {
+  return {
+    type: EDITOR_ON,
+    id
+  };
+}
+
+export const EDITOR_OFF = Symbol('EDITOR_OFF');
+export function editorOff() {
+  return {
+    type: EDITOR_OFF,
+  };
+}

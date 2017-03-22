@@ -13,9 +13,8 @@ export const genSimpleCells = () => (
 );
 
 // every event has its id number to be its id in the DOM for easy access
-export const getEventEntryDOM = (eventObj) => {
-  const id = eventObj.id.toString();
-  const eventEntryDOM = document.getElementById(id);
+export const getEventEntryDOM = (id) => {
+  const eventEntryDOM = document.getElementById(id.toString());
   return eventEntryDOM;
 }
 

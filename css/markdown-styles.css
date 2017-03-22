@@ -1,11 +1,11 @@
 .warning {
-  color: #9F6000;
-  background-color: #FEEFB3;
   padding: 18px;
+  background-color: #FEEFB3;
+  color: #9F6000;
 }
 .warning:before {
-  content:'\26A0';
   margin-right: 9px;
+  content:'\26A0';
 }
 
 .rfc-page pre {

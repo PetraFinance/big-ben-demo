@@ -1,33 +1,35 @@
 html {
-  color: #424242;
-  height: 100%;
   overflow: hidden;
+  height: 100%;
+  color: #424242;
 }
 
 .app-container {
-  display: flex;
-  flex-direction: row;
   position: absolute;
   top: 0;
+  right: 0;
   bottom: 0;
   left: 0;
-  right: 0;
+  display: flex;
+  flex-direction: row;
   overflow: auto;
 }
 
 .side-panel {
-  flex: 0 0 215px;
-  height: calc(100vh - $header-container-height);
   margin-top: $header-container-height;
-  background-color: $light-grey;
+  height: calc(100vh - $header-container-height);
   border-top: 1px solid $grey-border;
+  background-color: $light-grey;
+
+  flex: 0 0 215px;
 }
 
 .calendar-panel {
-  flex: 1;
   height: 100vh;
-  background-color: $white;
   border-left: 1px solid $grey-border;
+  background-color: $white;
+
+  flex: 1;
 }
 
 .calendar-list-container{

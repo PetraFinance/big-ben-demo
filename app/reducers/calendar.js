@@ -5,6 +5,7 @@ import Immutable from 'immutable';
 
 const defaultState = Immutable.fromJS({
   nextAvaliableId: 1,
+  editor: -1,
   eventsMap: {
     0: {
       id: 0,
@@ -16,7 +17,7 @@ const defaultState = Immutable.fromJS({
       endTime: "9:00 AM",
       startValue: 7,
       endValue: 9,
-      day: "Mon",
+      day: "Monday",
     },
   },
   calendarMap: {
@@ -45,9 +46,14 @@ export default function (state = defaultState, action) {
       const id = state.get('nextAvaliableId');
       const event = Immutable.Map([[id, Immutable.Map(action.eventObj)]]);
       return state.mergeIn(['eventsMap'], event)
-                  .set('nextAvaliableId', id + 1);
+                  .set('nextAvaliableId', id + 1)
+                  .set('editor', id);
     case ActionType.UPDATE_EVENT:
       return state.setIn(['eventsMap', action.eventObj.id], action.eventObj);
+    case ActionType.EDITOR_ON:
+      return state.set('editor', action.id);
+    case ActionType.EDITOR_OFF:
+      return state.set('editor', -1);
     default:
       return state;
   }
