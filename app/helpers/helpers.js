@@ -12,6 +12,19 @@ export const genSimpleCells = () => (
   ]
 );
 
+// every event has its id number to be its id in the DOM for easy access
+export const getEventEntryDOM = (eventObj) => {
+  const id = eventObj.id.toString();
+  const eventEntryDOM = document.getElementById(id);
+  return eventEntryDOM;
+}
+
+export const getMapValues = (map) => {
+  const values = Object.entries(map).map((item) => (
+    item[1]
+  ));
+  return values;
+}
 
 export const isEmpty = (obj) => {
   return Object.keys(obj).length === 0;

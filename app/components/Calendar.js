@@ -1,6 +1,6 @@
 import React from 'react'
 import Editor from './editor';
-import { genTimeMap, computeTimeFromValue, isEmpty, genSimpleCells } from '../helpers/helpers';
+import { genTimeMap, computeTimeFromValue, isEmpty, genSimpleCells, getEventEntryDOM, getMapValues } from '../helpers/helpers';
 import $ from "jquery";
 
 export default class Calendar extends React.Component {
@@ -10,66 +10,8 @@ export default class Calendar extends React.Component {
     this.state = {
       resizeObj: {},
       draggedObj: {},
-      next_id: 3,
       editorPosition: {},
-      calendarMap: {
-        "Innovative Design": {
-          color: "#009688",
-          accent: "#008A7D",
-        },
-        "IEEE": {
-          color: "#F44336",
-          accent: "#E03D31",
-        },
-        "School": {
-          color: "#03A9F4",
-          accent: "#029BE0",
-        },
-        "Events I'm Attending": {
-          color: "#39579A",
-          accent: "#39579A",
-        },
-      },
-      events: [
-        {
-          id: 0,
-          name: "Innod Meeting",
-          category: "Google",
-          calendar: "Innovative Design",
-          location: "Dwinelle 140",
-          startTime: "7 AM",
-          endTime: "9:00 AM",
-          startValue: 7,
-          endValue: 9,
-          day: "Mon",
-        },
-        {
-          id: 1,
-          name: "IEEE Meeting",
-          category: "Google",
-          calendar: "IEEE",
-          location: "Dwinelle 140",
-          startTime: "10 AM",
-          endTime: "11 AM",
-          startValue: 10,
-          endValue: 11,
-          day: "Wed",
-        },
-        {
-          id: 2,
-          name: "Dank Party",
-          category: "Facebook",
-          calendar: "Events I'm Attending",
-          location: "2231 Dwight Way",
-          startTime: "12 PM",
-          endTime: "12:30 PM",
-          startValue: 12,
-          endValue: 12.5,
-          day: "Thu",
-        },
-      ],
     }
-    this.createEvent = this.createEvent.bind(this);
     this.dismissEditor = this.dismissEditor.bind(this);
     this.handleCellClick = this.handleCellClick.bind(this);
     this.handleMouseUp = this.handleMouseUp.bind(this);
@@ -80,17 +22,21 @@ export default class Calendar extends React.Component {
     this.startResize = this.startResize.bind(this);
   }
 
+  // Dismisses the editor
+  dismissEditor() {
+    this.setState({ editorPosition: {} });
+  }
+
   handleMouseEnter(day, startValue, evt) {
     const draggedObj = this.state.draggedObj;
     const resizeObj = this.state.resizeObj;
     if (!isEmpty(resizeObj)) {
       const id = resizeObj.id;
-      const events = this.state.events;
-      const filtered = events.filter(event => event.id !== id);
       // the value that this cell represents should be the one the event now ends at
       const endValue = startValue + 0.5;
       startValue = resizeObj.startValue;
       day = resizeObj.day;
+      // prevent an event from ending before it starts in case the user drags above the event
       if (endValue < startValue) {
         return;
       }
@@ -112,13 +58,10 @@ export default class Calendar extends React.Component {
         endValue,
         day
       };
-      const newEventsList = filtered.concat([eventObj]);
-      this.setState({ events: newEventsList });
+      this.props.updateEvent(eventObj);
     }
     if (!isEmpty(draggedObj)) {
       const id = draggedObj.id;
-      const events = this.state.events;
-      const filtered = events.filter(event => event.id !== id);
       const endValue = startValue + Math.abs(draggedObj.startValue - draggedObj.endValue);
       const startTime = computeTimeFromValue(startValue);
       const endTime = computeTimeFromValue(endValue);
@@ -138,8 +81,7 @@ export default class Calendar extends React.Component {
         endValue,
         day
       };
-      const newEventsList = filtered.concat([eventObj]);
-      this.setState({ events: newEventsList });
+      this.props.updateEvent(eventObj);
     }
   }
 
@@ -148,27 +90,31 @@ export default class Calendar extends React.Component {
     this.setState({ resizeObj: eventObj }, () => {
       // async disable pointer events on the target
       // allows you to move an event into a cell which it covers
-      const numEvents = this.state.next_id;
+      const numEvents = this.props.nextAvaliableId;
       for (let id=0; id < numEvents; id++) {
         const dummyEvent = { id };
-        const eventEntryDOM = this.getEventEntryDOM(dummyEvent);
+        const eventEntryDOM = getEventEntryDOM(dummyEvent);
         $(eventEntryDOM).css("pointer-events", "none");
       }
     });
     this.dismissEditor();
   }
 
-  createEvent(day, startValue) {
-    const id = this.state.next_id;
-    let next_id = id + 1;
-    this.setState({ next_id });
+  handleCellClick(day, startValue) {
+    if (!isEmpty(this.state.editorPosition)) {
+      // turn editor off if clicking outside the editor
+      this.dismissEditor();
+      return;
+    }
+    // create a new event
     const endValue = startValue + 0.5;
     const startTime = computeTimeFromValue(startValue);
     const endTime = computeTimeFromValue(endValue);
-    const name = "default";
+    const name = "New Event";
     const category = "Google";
     const calendar = "Innovative Design";
     const location = "Dwinelle 140";
+    const id = this.props.nextAvaliableId;
     const eventObj = {
       id,
       name,
@@ -181,74 +127,7 @@ export default class Calendar extends React.Component {
       endValue,
       day
     };
-    this.setState({events: this.state.events.concat([eventObj])});
-    return eventObj;
-  }
-
-  // every event has its id number to be its id in the DOM for easy access
-  getEventEntryDOM(eventObj) {
-    const id = eventObj.id.toString();
-    const eventEntryDOM = document.getElementById(id);
-    return eventEntryDOM;
-  }
-
-  dismissEditor() {
-    this.setState({ editorPosition: {} });
-  }
-
-  handleCellClick(day, startValue) {
-    if (!isEmpty(this.state.editorPosition)) {
-      // turn editor off if clicking outside the editor
-      this.dismissEditor();
-      return;
-    }
-    // create the event
-    // need to wait for the state to update first
-    const promiseEventObj = (self) => (
-      new Promise(function(resolve, reject) {
-        const eventObj = self.createEvent(day, startValue);
-        if (eventObj) {
-          resolve(eventObj);
-        } else {
-          reject(new Error(eventObj));
-        }
-      })
-    );
-    promiseEventObj(this).then((eventObj) => {
-      // grab the obj from the dom to pass to the editor
-      const eventEntryDOM = this.getEventEntryDOM(eventObj);
-      this.toggleEditor(eventObj, eventEntryDOM, true);
-    }, (error) => {
-      console.log(error);
-    });
-  }
-
-  shouldEventDrop(day, startValue) {
-    const draggedObj = this.state.draggedObj;
-    if (draggedObj) {
-      this.setState({ draggedObj: {} }, () => {
-        const numEvents = this.state.next_id;
-        for (let id=0; id < numEvents; id++) {
-          const dummyEvent = { id };
-          const eventEntryDOM = this.getEventEntryDOM(dummyEvent);
-          $(eventEntryDOM).css("pointer-events", "");
-        }
-      });
-    }
-  }
-
-  shouldEndResize() {
-    const resizeObj = this.state.resizeObj;
-    if (resizeObj) {
-      this.setState({ resizeObj: {} }, () => {
-        const numEvents = this.state.next_id;
-        for (let id=0; id < numEvents; id++) {
-          const dummyEvent = { id };
-          const eventEntryDOM = this.getEventEntryDOM(dummyEvent);
-          $(eventEntryDOM).css("pointer-events", "");
-        }
-      });
-    }
+    this.props.addEvent(eventObj);
   }
 
   handleMouseUp(day, startValue, target) {
@@ -256,23 +135,54 @@ export default class Calendar extends React.Component {
     this.shouldEndResize();
   }
 
-  // called on drag start
+  // checks if an element should be dropped on MouseUp event
+  shouldEventDrop(day, startValue) {
+    const draggedObj = this.state.draggedObj;
+    if (draggedObj) {
+      this.setState({ draggedObj: {} }, () => {
+        const numEvents = this.props.nextAvaliableId;
+        for (let id=0; id < numEvents; id++) {
+          const dummyEvent = { id };
+          const eventEntryDOM = getEventEntryDOM(dummyEvent);
+          $(eventEntryDOM).css("pointer-events", "");
+        }
+      });
+    }
+  }
+
+  // checks if an alement should end resizing on MouseUp event
+  shouldEndResize() {
+    const resizeObj = this.state.resizeObj;
+    if (resizeObj) {
+      this.setState({ resizeObj: {} }, () => {
+        const numEvents = this.props.nextAvaliableId;
+        for (let id=0; id < numEvents; id++) {
+          const dummyEvent = { id };
+          const eventEntryDOM = getEventEntryDOM(dummyEvent);
+          $(eventEntryDOM).css("pointer-events", "");
+        }
+      });
+    }
+  }
+
+  // Fired on DragStart event, used to set the draggedObj in state
   handleDragStart(eventObj, target, evt) {
     // need to prevent default of sometimes mouse up doesn't fire when the element is dropped
     evt.preventDefault();
     this.setState({ draggedObj: eventObj }, () => {
       // async disable pointer events on the target
       // allows you to move an event into a cell which it covers
-      const numEvents = this.state.next_id;
+      const numEvents = this.props.nextAvaliableId;
       for (let id=0; id < numEvents; id++) {
         const dummyEvent = { id };
-        const eventEntryDOM = this.getEventEntryDOM(dummyEvent);
+        const eventEntryDOM = getEventEntryDOM(dummyEvent);
         $(eventEntryDOM).css("pointer-events", "none");
       }
     });
     // turn the editor off if it's on during a drag
     this.dismissEditor();
   }
+
 
   // in order to bring up the editor, we need to know the object we are editing and its position on the page, so we can appropriately position the editor relative to it
   // you must pass in the eventObj and the eventEntryDOM for jQuery offset() to use
@@ -318,6 +228,8 @@ export default class Calendar extends React.Component {
   }
 
   render () {
+
+    const calendarMap = this.props.calendarMap;
 
     const plugins = [ "Trello", "Todoist" ];
     const integrations = plugins.map((plugin, i) => (
@@ -382,7 +294,6 @@ export default class Calendar extends React.Component {
 
     const genEventEditor = () => {
       const editorPosition = this.state.editorPosition;
-      const calendarMap = this.state.calendarMap;
 
       if (!isEmpty(editorPosition)) {
         const eventEditorPosition = {
@@ -411,12 +322,10 @@ export default class Calendar extends React.Component {
       return ( <div /> );
     }
 
-    const events = this.state.events;
-    const calendarMap = this.state.calendarMap;
-
-    let eventsList = [];
-    for (let eventObj of events) {
-      const key = eventObj.id;
+    const packagedEvents = Object.entries(this.props.eventsMap);
+    const eventsJSX = packagedEvents.map((packagedEvent) => {
+      const id = packagedEvent[0];
+      const eventObj = packagedEvent[1];
       const day = eventObj.day;
       const startTime = eventObj.startTime;
       const endTime = eventObj.endTime;
@@ -436,17 +345,15 @@ export default class Calendar extends React.Component {
           {startTime.replace(" ", "").toLowerCase()}-{endTime.replace(" ", "").toLowerCase()}
         </div>
       );
-
       const locationInfo = (
         <div className="location">
           {eventObj.location}
         </div>
       );
-
-      const eventjsx = (
+      return (
         <div
-          key={key}
-          id={key.toString()}
+          key={id}
+          id={id.toString()}
           className={className}
           style={eventEntryStyle}
         >
@@ -485,8 +392,7 @@ export default class Calendar extends React.Component {
           </div>
         </div>
       );
-      eventsList.push(eventjsx);
-    }
+    });
 
     return (
       <div className="calendar-container">
@@ -502,7 +408,7 @@ export default class Calendar extends React.Component {
         </div>
         <div id="main-calendar" className="main-calendar">
           {rows}
-          {eventsList}
+          {eventsJSX}
           {genEventEditor()}
         </div>
         <div className="integrations-calendar">

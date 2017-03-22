@@ -1,8 +1,7 @@
-import React from 'react';
+import React from 'react'
 import CalendarsList from '../components/CalendarsList'
 import CalendarControls from '../components/CalendarControls'
-import DatePicker from '../components/DatePicker'
-import Calendar from '../components/Calendar'
+import Calendar from './Calendar'
 
 function App() {
   return (
@@ -10,7 +9,6 @@ function App() {
       <div className="side-panel">
         <div className="spacer">
         </div>
-        <DatePicker />
         <CalendarsList />
       </div>
       <div className="calendar-panel">

@@ -1,7 +1,7 @@
 import React from 'react'
-import moment from 'moment';
-import { DayPicker } from 'react-dates';
-import { isEmpty } from '../helpers/helpers';
+import moment from 'moment'
+import { DayPicker } from 'react-dates'
+import { isEmpty } from '../helpers/helpers'
 
 class DatePicker extends React.Component {
   constructor(props) {
