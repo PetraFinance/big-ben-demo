@@ -2,6 +2,7 @@ import React from 'react'
 import $ from "jquery"
 import { getEventEntryDOM, isEmpty } from '../helpers/helpers'
 import { getEditorPosition } from '../helpers/position'
+import _ from 'lodash'
 
 export default class Editor extends React.Component {
 
@@ -16,7 +17,7 @@ export default class Editor extends React.Component {
   componentWillReceiveProps(nextProps) {
     const id = nextProps.id;
     const eventsMap = nextProps.eventsMap;
-    if (this.state.editedEventObj !== eventsMap[id]) {
+    if (!_.isEqual(this.state.editedEventObj, eventsMap[id])) {
       this.setState({ editedEventObj: eventsMap[id] });
     }
   }

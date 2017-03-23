@@ -88,14 +88,11 @@ export const getEditorPosition = (eventObj) => {
       left = convertToPercent(62);
       break;
   }
-
+  
   let top = eventPosition.top;
-  let regex = /calc\((.*)\)/;
-  let eventHeight = eventPosition.height.match(regex)[1];
-  console.log(eventHeight);
+  let eventHeight = eventPosition.height.match(/calc\((.*)\)/)[1];
   if (eventObj.startValue > 15) {
     top = top.replace(")", " - " + height + " + " + eventHeight + " )");
-    console.log(top);
   }
 
   const editorPosition = {
@@ -103,6 +100,5 @@ export const getEditorPosition = (eventObj) => {
     left,
     height,
   }
-  console.log(editorPosition);
   return editorPosition;
 }

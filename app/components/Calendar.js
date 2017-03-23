@@ -21,6 +21,13 @@ export default class Calendar extends React.Component {
     this.handleMouseEnter = this.handleMouseEnter.bind(this);
     this.startResize = this.startResize.bind(this);
     this.handleEventClick = this.handleEventClick.bind(this);
+    this.handleEditorUpdates = this.handleEditorUpdates.bind(this);
+  }
+
+  handleEditorUpdates(eventObj) {
+    this.props.updateEvent(eventObj);
+    // the editor changed the eventsMap, need to update this component
+    this.forceUpdate();
   }
 
   handleMouseEnter(day, startValue, evt) {
@@ -237,7 +244,8 @@ export default class Calendar extends React.Component {
     });
 
     const calendarMap = this.props.calendarMap;
-    const packagedEvents = Object.entries(this.props.eventsMap);
+    const eventsMap = this.props.eventsMap;
+    const packagedEvents = Object.entries(eventsMap);
     const eventsJSX = packagedEvents.map((packagedEvent) => {
       const id = packagedEvent[0];
       const eventObj = packagedEvent[1];
@@ -325,7 +333,7 @@ export default class Calendar extends React.Component {
             id={this.props.editor}
             calendarMap={this.props.calendarMap}
             eventsMap={this.props.eventsMap}
-            updateEvent={this.props.updateEvent}
+            updateEvent={this.handleEditorUpdates}
           />
         </div>
         <div className="integrations-calendar">
