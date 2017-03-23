@@ -28,3 +28,11 @@ export function editorOff() {
     type: EDITOR_OFF,
   };
 }
+
+export const SET_ACTIVE_DATE = Symbol('SET_ACTIVE_DATE');
+export function setActiveDate(date) {
+  return {
+    type: SET_ACTIVE_DATE,
+    date,
+  };
+}

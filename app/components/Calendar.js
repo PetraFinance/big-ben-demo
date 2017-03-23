@@ -198,9 +198,22 @@ export default class Calendar extends React.Component {
       </div>
     ));
 
+    const activeDate = moment(this.props.activeDate);
+    let dateObj = activeDate.clone();
+    dateObj.subtract(activeDate.day(), 'days');
+    const currentWeekDays = [];
+    for (let i=0; i < 7; i++) {
+      let formatted = moment(dateObj).format('MM/DD');
+      if (formatted[0] === '0') {
+        formatted = formatted.slice(1);
+      }
+      currentWeekDays.push(formatted);
+      dateObj.add(1, 'days');
+    }
+
     const days = moment.weekdays();
     const rowHeaders = days.map((day, i) => (
-      <div className="item" key={i}><span>{day.slice(0, 3)}</span></div>
+      <div className="item" key={i}><span>{day.slice(0, 3) + ' ' + currentWeekDays[i]}</span></div>
     ));
 
     const times = genTimeMap();
@@ -271,6 +284,7 @@ export default class Calendar extends React.Component {
           {eventObj.location}
         </div>
       );
+
       return (
         <div
           key={id}

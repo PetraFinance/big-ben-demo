@@ -79,16 +79,16 @@ export const getEditorPosition = (eventObj) => {
       left = convertToPercent(62);
       break;
     case "Thursday":
-      left = convertToPercent(36);
+      left = convertToPercent(42);
       break;
     case "Friday":
-      left = convertToPercent(49);
+      left = convertToPercent(55);
       break;
     case "Saturday":
-      left = convertToPercent(62);
+      left = convertToPercent(68);
       break;
   }
-  
+
   let top = eventPosition.top;
   let eventHeight = eventPosition.height.match(/calc\((.*)\)/)[1];
   if (eventObj.startValue > 15) {

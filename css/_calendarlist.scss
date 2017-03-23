@@ -1,14 +1,13 @@
-.all-calendar-list-container {
-  display: flex;
-  flex-direction: column;
+.calendar-list-container{
+  padding: 0rem 2rem;
 }
 
 .calendar-list {
-  margin-bottom: 20px;
+  margin-bottom: 2rem;
   .calendar-list-header {
     display: flex;
     flex-direction: row;
-    margin-bottom: 12px;
+    margin-bottom: 1rem;
 
     align-items: center;
     span {
@@ -18,6 +17,7 @@
       flex: 1;
     }
     .arrow-img {
+      text-align: right;
       cursor: pointer;
 
       flex: 0 0 25px;

@@ -7,12 +7,14 @@ const mapStateToProps = (state) => {
   const calendarMap = cpState.calendarMap;
   const eventsMap = cpState.eventsMap;
   const editor = cpState.editor;
+  const activeDate = cpState.activeDate;
   const nextAvaliableId = cpState.nextAvaliableId;
   return {
     calendarMap,
     eventsMap,
     nextAvaliableId,
     editor,
+    activeDate,
   };
 };
 

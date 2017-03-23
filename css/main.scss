@@ -4,17 +4,11 @@
 
 // The primary containers for the page
 @import "layout";
-
-@import "tags";
-
+@import "calendarlist";
 @import "calendar";
-
 @import "controls";
-
 @import "datepicker";
-
 @import "entries";
-
 @import "editor";
 
 html {

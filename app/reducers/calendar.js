@@ -1,9 +1,9 @@
 import * as ActionType from '../actions/calendar';
 import Immutable from 'immutable';
-
-// an eventsObj uses its id for as its key in the eventsMap, but also keeps the value stored internally
+import moment from 'moment';
 
 const defaultState = Immutable.fromJS({
+  activeDate: {},
   nextAvaliableId: 1,
   editor: -1,
   eventsMap: {
@@ -54,6 +54,8 @@ export default function (state = defaultState, action) {
       return state.set('editor', action.id);
     case ActionType.EDITOR_OFF:
       return state.set('editor', -1);
+    case ActionType.SET_ACTIVE_DATE:
+      return state.set('activeDate', action.date);
     default:
       return state;
   }

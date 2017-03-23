@@ -6,21 +6,20 @@ import { isEmpty } from '../helpers/helpers'
 class DatePicker extends React.Component {
   constructor(props) {
     super(props);
-    const today = moment();
     this.state = {
-      date: '',
-      activeDate: {},
-      today,
+      highlightedDOM: {},
     }
+    this.props.setActiveDate(moment());
   }
 
   handleDateClick(date, target) {
-    const activeDate = this.state.activeDate;
-    if (!isEmpty(activeDate)) {
-      activeDate.className = activeDate.className.replace(" active", "");
+    this.props.setActiveDate(date);
+    const highlightedDOM = this.state.highlightedDOM;
+    if (!isEmpty(highlightedDOM)) {
+      highlightedDOM.className =  highlightedDOM.className.replace(" active", "");
     }
     this.setState({ date });
-    this.setState({ activeDate: target });
+    this.setState({ highlightedDOM: target });
     target.className += " active";
   }
 
