@@ -1,7 +1,7 @@
 import React from 'react'
-import $ from "jquery"
-import { getEventEntryDOM, isEmpty } from '../helpers/helpers'
+import { isEmpty } from '../helpers/objects'
 import { getEditorPosition } from '../helpers/position'
+import $ from "jquery"
 import _ from 'lodash'
 
 export default class Editor extends React.Component {
@@ -9,62 +9,45 @@ export default class Editor extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      editingField: {},
-      editedEventObj: {},
-    };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const id = nextProps.id;
-    const eventsMap = nextProps.eventsMap;
-    if (!_.isEqual(this.state.editedEventObj, eventsMap[id])) {
-      this.setState({ editedEventObj: eventsMap[id] });
+      editingField: "",
+      showErrorMessage: "",
     }
   }
 
-  finishEditing() {
-    this.setState({ editingField: {} });
-    this.props.updateEvent(this.state.editedEventObj);
-  }
-
-  finishEditingOnEnter(evt) {
-    if (evt.keyCode == '13') {
-      this.finishEditing();
-    }
-  }
-
-  setEditingField(field) {
+  setEditorField(field) {
     this.setState({ editingField: field });
   }
 
-  setEditingFieldValue(field, evt) {
-    let copy = this.state.editedEventObj;
+  updateEventObj(field, evt) {
+    const editorObjId = this.props.editorObj.id;
+    const eventObj = this.props.eventsMap[editorObjId];
     if (field === "calendar") {
-      copy[field] = $(evt.target).text();
-      this.setState({ editedEventObj: copy }, () => {
-        this.finishEditing();
-      });
+      eventObj[field] = $(evt.target).text();
+      this.props.updateEvent(eventObj);
+      this.setEditorField("");
     } else {
-      copy[field] = evt.target.value;
-      this.setState({ editedEventObj: copy });
+      eventObj[field] = evt.target.value;
+      this.props.updateEvent(eventObj);
     }
   }
 
   render () {
-    const id = this.props.id;
-    if (id === -1) {
-      return ( < div/> );
+    const editorObjId = this.props.editorObj.id;
+    if (editorObjId === -1) {
+      return ( <div className="editor-panel-off" /> );
     }
 
-    // the Editor uses its own copy of the event, edits it, and then updates the event in the store on exiting
-    const eventObj = this.state.editedEventObj;
+    const showErrorMessage = this.state.showErrorMessage;
+
+    const eventObj = this.props.eventsMap[editorObjId];
+
     const name = eventObj.name;
     const location = eventObj.location;
     const calendar = eventObj.calendar;
 
     const editingField = this.state.editingField;
 
-    const editorPosition = getEditorPosition(this.props.eventsMap[id]);
+    const editorPosition = getEditorPosition(eventObj);
     const calendarMap = this.props.calendarMap;
     const editorColor = { backgroundColor: calendarMap[calendar]["color"] };
 
@@ -73,7 +56,7 @@ export default class Editor extends React.Component {
         <div
           key={"name"}
           className="name"
-          onClick={() => this.setEditingField("name")}
+          onClick={() => this.setEditorField("name")}
         >
           <span>{name}</span>
         </div>
@@ -82,7 +65,7 @@ export default class Editor extends React.Component {
         <div
           key={"location"}
           className="location"
-          onClick={() => this.setEditingField("location")}
+          onClick={() => this.setEditorField("location")}
         >
           <span className="value">{location}</span>
         </div>
@@ -91,7 +74,7 @@ export default class Editor extends React.Component {
         <div
           key={"calendar"}
           className="calendar"
-          onClick={() => this.setEditingField("calendar")}
+          onClick={() => this.setEditorField("calendar")}
         >
           <span className="value">{calendar}</span>
           <img className="arrow-icon" src={"./assets/grey-down-arrow.png"} />
@@ -105,9 +88,8 @@ export default class Editor extends React.Component {
           autoFocus
           key={"title"}
           className="name-input"
-          onChange={(evt) => this.setEditingFieldValue("name", evt)}
-          onBlur={() => this.finishEditing()}
-          onKeyUp={(evt) => this.finishEditingOnEnter(evt)}
+          onChange={(evt) => this.updateEventObj("name", evt)}
+          onBlur={() => this.setEditorField("")}
           placeholder={name}
         />
       )],
@@ -116,9 +98,8 @@ export default class Editor extends React.Component {
           autoFocus
           key={"location"}
           className="location"
-          onChange={(evt) => this.setEditingFieldValue("location", evt)}
-          onBlur={() => this.finishEditing()}
-          onKeyUp={(evt) => this.finishEditingOnEnter(evt)}
+          onChange={(evt) => this.updateEventObj("location", evt)}
+          onBlur={() => this.setEditorField("")}
           placeholder={location}
         />
       )],
@@ -132,7 +113,7 @@ export default class Editor extends React.Component {
         <div
           key={calendar}
           className="item"
-          onClick={(evt) => this.setEditingFieldValue("calendar", evt)}
+          onClick={(evt) => this.updateEventObj("calendar", evt)}
         >
           <div className="calendar-dot" style={style}>
           </div>

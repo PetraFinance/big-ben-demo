@@ -4,16 +4,25 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import Immutable from 'immutable';
+import moment from 'moment';
 
 import configureStore from './app/store';
 import App from './app/containers/App';
 
 // Grab the state from a global variable injected into the server-generated HTML
-const preloadedState = window.__PRELOADED_STATE__;
+let preloadedState = window.__PRELOADED_STATE__;
 // recreate the Immutable JS objects
 const reducers = Object.keys(preloadedState);
 for (let reducer of reducers) {
   const state = preloadedState[reducer];
+  // convert date strings back into moment JS objects
+  if (reducer === "calendar") {
+    const eventsMap = preloadedState[reducer]["eventsMap"];
+    for (let id of Object.keys(eventsMap)) {
+      const dateString = eventsMap[id]["date"];
+      preloadedState[reducer]["eventsMap"][id]["date"] = moment(dateString);
+    }
+  }
   preloadedState[reducer] = Immutable.fromJS(state);
 }
 

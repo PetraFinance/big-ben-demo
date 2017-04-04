@@ -14,9 +14,7 @@ const wrapInCalc = (args) => {
 }
 
 export const getEventPosition = (eventObj) => {
-  let style;
-  let offset;
-  let multiplier;
+  let style, offset, multiplier;
   // Calculate the left position
   const day_column_width_percent = 13;
   const time_column_width_percent = '9% ';

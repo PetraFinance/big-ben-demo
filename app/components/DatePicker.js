@@ -1,7 +1,7 @@
 import React from 'react'
 import moment from 'moment'
 import { DayPicker } from 'react-dates'
-import { isEmpty } from '../helpers/helpers'
+import { isEmpty } from '../helpers/objects'
 
 class DatePicker extends React.Component {
   constructor(props) {
@@ -9,7 +9,10 @@ class DatePicker extends React.Component {
     this.state = {
       highlightedDOM: {},
     }
-    this.props.setActiveDate(moment());
+    const currentDate = moment();
+    console.log("Value set by datepicker");
+    console.log(currentDate);
+    this.props.setActiveDate(currentDate);
   }
 
   handleDateClick(date, target) {

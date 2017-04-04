@@ -4,8 +4,12 @@ import moment from 'moment';
 
 const defaultState = Immutable.fromJS({
   activeDate: {},
+  draggedObj: {},
+  resizeObj: {},
+  editorObj: {
+    id: -1,
+  },
   nextAvaliableId: 1,
-  editor: -1,
   eventsMap: {
     0: {
       id: 0,
@@ -13,11 +17,12 @@ const defaultState = Immutable.fromJS({
       category: "Google",
       calendar: "Innovative Design",
       location: "Dwinelle 140",
-      startTime: "7 AM",
-      endTime: "9:00 AM",
-      startValue: 7,
-      endValue: 9,
-      day: "Monday",
+      startTime: "8 AM",
+      endTime: "10 AM",
+      startValue: 8,
+      endValue: 10,
+      day: "Wednesday",
+      date: moment("2017-04-14"),
     },
   },
   calendarMap: {
@@ -41,21 +46,29 @@ const defaultState = Immutable.fromJS({
 });
 
 export default function (state = defaultState, action) {
+  let editorObj;
   switch (action.type) {
     case ActionType.ADD_EVENT:
       const id = state.get('nextAvaliableId');
       const event = Immutable.Map([[id, Immutable.Map(action.eventObj)]]);
+      editorObj = Immutable.fromJS({ id: id });
       return state.mergeIn(['eventsMap'], event)
                   .set('nextAvaliableId', id + 1)
-                  .set('editor', id);
+                  .set('editorObj', editorObj);
     case ActionType.UPDATE_EVENT:
-      return state.setIn(['eventsMap', action.eventObj.id], action.eventObj);
+      return state.setIn(['eventsMap', action.eventObj.id], Immutable.Map(action.eventObj));
     case ActionType.EDITOR_ON:
-      return state.set('editor', action.id);
+      editorObj = Immutable.fromJS({ id: action.id });
+      return state.set('editorObj', editorObj);
     case ActionType.EDITOR_OFF:
-      return state.set('editor', -1);
+      editorObj = Immutable.fromJS({ id: -1 });
+      return state.set('editorObj', editorObj);
     case ActionType.SET_ACTIVE_DATE:
       return state.set('activeDate', action.date);
+    case ActionType.SET_DRAGGED_OBJ:
+      return state.set('draggedObj', Immutable.Map(action.eventObj));
+    case ActionType.SET_RESIZE_OBJ:
+      return state.set('resizeObj', Immutable.Map(action.eventObj));
     default:
       return state;
   }

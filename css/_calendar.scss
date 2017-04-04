@@ -17,9 +17,14 @@
   .item {
     display: flex;
     width: 13%;
+    font-size: 0.85rem;
 
     justify-content: center;
     align-items: center;
+  }
+  .active {
+    font-weight: bold;
+    color: #03A9F4;
   }
 }
 
@@ -86,6 +91,9 @@
       height: 35px;
       border-bottom: 1px solid $light-grey-border;
       border-left: 1px solid $grey-border;
+    }
+    .active {
+      background-color: #E1F5FE !important;
     }
   }
 }

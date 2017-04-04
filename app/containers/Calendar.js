@@ -1,19 +1,23 @@
 import { connect } from 'react-redux'
-import { addEvent, updateEvent, editorOn, editorOff } from '../actions/calendar'
+import { addEvent, updateEvent, editorOn, editorOff, setResizeObj, setDraggedObj } from '../actions/calendar'
 import Calendar from '../components/Calendar'
 
 const mapStateToProps = (state) => {
   const cpState = state.calendar.toJS();
   const calendarMap = cpState.calendarMap;
   const eventsMap = cpState.eventsMap;
-  const editor = cpState.editor;
   const activeDate = cpState.activeDate;
+  const editorObj = cpState.editorObj;
+  const draggedObj = cpState.draggedObj;
+  const resizeObj = cpState.resizeObj;
   const nextAvaliableId = cpState.nextAvaliableId;
   return {
+    resizeObj,
+    draggedObj,
+    editorObj,
     calendarMap,
     eventsMap,
     nextAvaliableId,
-    editor,
     activeDate,
   };
 };
@@ -24,6 +28,12 @@ const mapDispatchToProps = (dispatch) => ({
   },
   updateEvent: (eventObj) => {
     dispatch(updateEvent(eventObj));
+  },
+  setResizeObj: (eventObj) => {
+    dispatch(setResizeObj(eventObj));
+  },
+  setDraggedObj: (eventObj) => {
+    dispatch(setDraggedObj(eventObj));
   },
   editorOn: (id) => {
     dispatch(editorOn(id));

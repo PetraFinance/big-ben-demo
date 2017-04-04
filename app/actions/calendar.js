@@ -36,3 +36,19 @@ export function setActiveDate(date) {
     date,
   };
 }
+
+export const SET_RESIZE_OBJ = Symbol('SET_RESIZE_OBJ');
+export function setResizeObj(eventObj) {
+  return {
+    type: SET_RESIZE_OBJ,
+    eventObj
+  };
+}
+
+export const SET_DRAGGED_OBJ = Symbol('SET_DRAGGED_OBJ');
+export function setDraggedObj(eventObj) {
+  return {
+    type: SET_DRAGGED_OBJ,
+    eventObj
+  };
+}
