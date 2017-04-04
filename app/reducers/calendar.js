@@ -3,13 +3,13 @@ import Immutable from 'immutable';
 import moment from 'moment';
 
 const defaultState = Immutable.fromJS({
-  activeDate: {},
+  activeDate: moment(),
   draggedObj: {},
   resizeObj: {},
   editorObj: {
     id: -1,
   },
-  nextAvaliableId: 1,
+  nextAvaliableId: 2,
   eventsMap: {
     0: {
       id: 0,
@@ -23,6 +23,19 @@ const defaultState = Immutable.fromJS({
       endValue: 10,
       day: "Wednesday",
       date: moment("2017-04-14"),
+    },
+    1: {
+      id: 0,
+      name: "Innod Meeting",
+      category: "Google",
+      calendar: "Innovative Design",
+      location: "Dwinelle 140",
+      startTime: "9 AM",
+      endTime: "1 PM",
+      startValue: 9,
+      endValue: 13,
+      day: "Wednesday",
+      date: moment(),
     },
   },
   calendarMap: {

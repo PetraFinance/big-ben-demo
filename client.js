@@ -14,15 +14,18 @@ let preloadedState = window.__PRELOADED_STATE__;
 // recreate the Immutable JS objects
 const reducers = Object.keys(preloadedState);
 for (let reducer of reducers) {
+  let dateString;
   const state = preloadedState[reducer];
   // convert date strings back into moment JS objects
   if (reducer === "calendar") {
     const eventsMap = preloadedState[reducer]["eventsMap"];
     for (let id of Object.keys(eventsMap)) {
-      const dateString = eventsMap[id]["date"];
+      dateString = eventsMap[id]["date"];
       preloadedState[reducer]["eventsMap"][id]["date"] = moment(dateString);
     }
   }
+  dateString = preloadedState[reducer]["activeDate"];
+  preloadedState[reducer]["activeDate"] = moment(dateString);
   preloadedState[reducer] = Immutable.fromJS(state);
 }
 

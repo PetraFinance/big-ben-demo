@@ -6,24 +6,11 @@ import { isEmpty } from '../helpers/objects'
 class DatePicker extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      highlightedDOM: {},
-    }
-    const currentDate = moment();
-    console.log("Value set by datepicker");
-    console.log(currentDate);
-    this.props.setActiveDate(currentDate);
   }
 
   handleDateClick(date, target) {
     this.props.setActiveDate(date);
-    const highlightedDOM = this.state.highlightedDOM;
-    if (!isEmpty(highlightedDOM)) {
-      highlightedDOM.className =  highlightedDOM.className.replace(" active", "");
-    }
-    this.setState({ date });
-    this.setState({ highlightedDOM: target });
-    target.className += " active";
+    this.props.editorOff();
   }
 
   componentDidMount() {
@@ -45,14 +32,16 @@ class DatePicker extends React.Component {
     src="./assets/grey-back-arrow.png" /> );
     const navNext = ( <img className="arrow-icon"
     src="./assets/grey-forward-arrow.png" /> );
-
+    console.log("This is the active date");
+    console.log(this.props.activeDate);
     return (
       <div className="datepicker-container">
         <DayPicker
           navPrev={navPrev}
           navNext={navNext}
           numberOfMonths={1}
-          onDayClick={(date, evt) => this.handleDateClick(date, evt.target)}
+          onDayClick={(date) => this.handleDateClick(date)}
+          modifiers={{selected: (date) => ( date.isSame(this.props.activeDate, 'day') )}}
         />
       </div>
     );

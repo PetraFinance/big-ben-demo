@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import { setActiveDate } from '../actions/calendar'
+import { setActiveDate, editorOff } from '../actions/calendar'
 import DatePicker from '../components/DatePicker'
 
 const mapStateToProps = (state) => {
@@ -13,6 +13,9 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => ({
   setActiveDate: (date) => {
     dispatch(setActiveDate(date));
+  },
+  editorOff: () => {
+    dispatch(editorOff());
   },
 });
 

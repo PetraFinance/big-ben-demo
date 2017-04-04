@@ -16,6 +16,12 @@
     color: #616161 !important;
   }
 
+  .CalendarDay--selected {
+    background-color: $blue !important;
+    color: white !important;
+    border-radius: 50px !important;
+  }
+
   .DayPicker__week-header li small {
     font-weight: bold;
   }
@@ -31,11 +37,5 @@
     &:active {
       background-color: $light-grey !important;
     }
-  }
-
-  .active {
-    background-color: $blue;
-    color: white;
-    border-radius: 50px;
   }
 }
