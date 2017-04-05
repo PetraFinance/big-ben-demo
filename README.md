@@ -1,10 +1,4 @@
-# gatsby-starter-default
-The default Gatsby starter
-
-Install this starter (assuming Gatsby is installed) by running from your CLI:
-```
-gatsby new gatsby-example-site
-```
-## Deploy
-
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/gatsbyjs/gatsby-starter-default)
+### The "Intern" Projects
+* when cursor leaves the calendar, have drag and drop or resize flow stop
+* Add week / month button functionality
+* Make calendar drop downs collapsable 

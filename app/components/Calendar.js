@@ -20,17 +20,6 @@ export default class Calendar extends React.Component {
     this.handleEventResize = this.handleEventResize.bind(this);
     this.handleEventClick = this.handleEventClick.bind(this);
     this.handleEventDrag = this.handleEventDrag.bind(this);
-
-    this.handleMouseLeaveCalendar = this.handleMouseLeaveCalendar.bind(this);
-  }
-
-  handleMouseLeaveCalendar() {
-    if (!isEmpty(this.props.resizeObj)) {
-      this.props.setResizeObj({});
-    }
-    if (!isEmpty(this.props.draggedObj)) {
-      this.props.setDraggedObj({});
-    }
   }
 
   handleEventResize(eventObj, evt) {
@@ -292,7 +281,6 @@ export default class Calendar extends React.Component {
         <div
           id="main-calendar"
           className="main-calendar"
-          onMouseLeave={() => this.handleMouseLeaveCalendar()}
         >
           {calendarRows}
           {eventEntries}
