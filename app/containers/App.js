@@ -1,15 +1,14 @@
-import React from 'react'
-import CalendarsList from '../components/CalendarsList'
-import CalendarControls from './CalendarControls'
-import DatePicker from './DatePicker'
-import Calendar from './Calendar'
+import React from 'react';
+import CalendarsList from '../components/CalendarsList';
+import CalendarControls from './CalendarControls';
+import DatePicker from './DatePicker';
+import Calendar from './Calendar';
 
 function App() {
   return (
     <div className="app-container">
       <div className="side-panel">
-        <div className="spacer">
-        </div>
+        <div className="spacer" />
         <DatePicker />
         <CalendarsList />
       </div>

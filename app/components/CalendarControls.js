@@ -1,5 +1,5 @@
-import React from 'react'
-import moment from 'moment'
+import React from 'react';
+import moment from 'moment';
 
 export default class CalendarControls extends React.Component {
   constructor(props) {
@@ -25,8 +25,7 @@ export default class CalendarControls extends React.Component {
     this.props.setActiveDate(back);
   }
 
-  render () {
-
+  render() {
     const todayButton = (
       <div
         onClick={() => this.handleTodayButton()}
@@ -41,7 +40,7 @@ export default class CalendarControls extends React.Component {
         onClick={() => this.handleBackButton()}
         className="arrow back"
       >
-        <img src={"./assets/grey-back-arrow.png"} />
+        <img src={'./assets/grey-back-arrow.png'} />
       </div>
     );
 
@@ -50,7 +49,7 @@ export default class CalendarControls extends React.Component {
         onClick={() => this.handleAdvanceButton()}
         className="arrow forward"
       >
-        <img src={"./assets/grey-forward-arrow.png"} />
+        <img src={'./assets/grey-forward-arrow.png'} />
       </div>
     );
 
@@ -79,10 +78,15 @@ export default class CalendarControls extends React.Component {
             </div>
           </div>
           <div className="settings">
-            <img src={"./assets/settings.png"} />
+            <img src={'./assets/settings.png'} />
           </div>
         </div>
       </div>
-    )
+    );
   }
 }
+
+CalendarControls.propTypes = {
+  activeDate: React.PropTypes.object.isRequired,
+  setActiveDate: React.PropTypes.func.isRequired,
+};

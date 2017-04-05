@@ -1,6 +1,6 @@
-import { connect } from 'react-redux'
-import { setActiveDate, editorOff } from '../actions/calendar'
-import DatePicker from '../components/DatePicker'
+import { connect } from 'react-redux';
+import { setActiveDate, editorOff } from '../actions/calendar';
+import DatePicker from '../components/DatePicker';
 
 const mapStateToProps = (state) => {
   const cpState = state.calendar.toJS();

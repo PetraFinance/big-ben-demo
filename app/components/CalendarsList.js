@@ -1,16 +1,12 @@
 import React from 'react';
 
 class CalendarListItem extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render () {
+  render() {
     const colorToBorderMap = {
-      "#03A9F4": "#029BE0",
-      "#009688": "#008A7D",
-      "#F44336": "#E03D31",
-      "#39579A": "#39579A"
+      '#03A9F4': '#029BE0',
+      '#009688': '#008A7D',
+      '#F44336': '#E03D31',
+      '#39579A': '#39579A'
     }
     const color = this.props.color;
     const border = '1px solid ' + colorToBorderMap[color];
@@ -31,13 +27,17 @@ class CalendarListItem extends React.Component {
   }
 }
 
+CalendarListItem.propTypes = {
+  color: React.PropTypes.string.isRequired,
+}
+
 // A list of calendar items in the side panel
 class CalendarList extends React.Component {
   constructor(props) {
     super(props);
   }
 
-  render () {
+  render() {
     const title = this.props.title;
     const calendarList = this.props.calendarList;
     const calendarListItems = calendarList.map((calendarListItem, i) => (

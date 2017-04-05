@@ -1,5 +1,4 @@
-import React from 'react'
-import moment from 'moment'
+import moment from 'moment';
 
 const convertToPercent = (integer) => {
   return integer.toString() + '%';
@@ -14,28 +13,30 @@ const wrapInCalc = (args) => {
 }
 
 export const getEventPosition = (eventObj) => {
-  let style, offset, multiplier;
+  let style;
+  let offset;
+  let multiplier;
   // Calculate the left position
-  const day_column_width_percent = 13;
-  const time_column_width_percent = '9% ';
+  const dayColumnWidthPercent = 13;
+  const timeColumnWidthPercent = '9% ';
   const day = eventObj.day;
   multiplier = moment.weekdays().indexOf(day);
   offset = '2px';
-  if (day === "Sunday" || day === "Tuesday") {
+  if (day === 'Sunday' || day === 'Tuesday') {
     offset = '1px';
   }
 
-  style = [time_column_width_percent, convertToPercent(multiplier * day_column_width_percent), offset];
+  style = [timeColumnWidthPercent, convertToPercent(multiplier * dayColumnWidthPercent), offset];
   const left = wrapInCalc(style);
 
   // Calculate the top position
-  const half_hour_height = 36;
+  const halfHourHeight = 36;
   const calendarStartValue = 7; // currently starts at 7AM
   const startValue = eventObj.startValue;
   offset = '1px';
   multiplier = Math.abs(calendarStartValue - startValue) * 2;
 
-  style = [convertToPx(half_hour_height * multiplier), offset];
+  style = [convertToPx(halfHourHeight * multiplier), offset];
   const top = wrapInCalc(style);
 
   // Calculate height
@@ -46,7 +47,7 @@ export const getEventPosition = (eventObj) => {
   }
   offset = '-1px';
 
-  style = [convertToPx(half_hour_height * multiplier), offset];
+  style = [convertToPx(halfHourHeight * multiplier), offset];
   const height = wrapInCalc(style);
 
   const eventPosition = {
@@ -63,40 +64,40 @@ export const getEditorPosition = (eventObj) => {
   const day = eventObj.day;
 
   let left;
-  switch(day) {
-    case "Sunday":
+  switch (day) {
+    case 'Sunday':
       left = convertToPercent(23);
       break;
-    case "Monday":
+    case 'Monday':
       left = convertToPercent(36);
       break;
-    case "Tuesday":
+    case 'Tuesday':
       left = convertToPercent(49);
       break;
-    case "Wednesday":
+    case 'Wednesday':
       left = convertToPercent(62);
       break;
-    case "Thursday":
+    case 'Thursday':
       left = convertToPercent(42);
       break;
-    case "Friday":
+    case 'Friday':
       left = convertToPercent(55);
       break;
-    case "Saturday":
+    case 'Saturday':
       left = convertToPercent(68);
       break;
   }
 
   let top = eventPosition.top;
-  let eventHeight = eventPosition.height.match(/calc\((.*)\)/)[1];
+  const eventHeight = eventPosition.height.match(/calc\((.*)\)/)[1];
   if (eventObj.startValue > 15) {
-    top = top.replace(")", " - " + height + " + " + eventHeight + " )");
+    top = top.replace(')', ' - ' + height + ' + ' + eventHeight + ' )');
   }
 
   const editorPosition = {
     top,
     left,
     height,
-  }
+  };
   return editorPosition;
 }

@@ -1,34 +1,28 @@
-import React from 'react'
+import React from 'react';
 import { getEventPosition } from '../helpers/position';
 import { generateObjectId } from '../helpers/html';
 
-class Event extends React.Component {
-  constructor(props) {
-    super(props);
-  }
+export default class Event extends React.Component {
 
   render() {
-
     const eventObj = this.props.eventObj;
     const calendarMap = this.props.calendarMap;
 
-    const id = eventObj.id;
     const startTime = eventObj.startTime;
     const endTime = eventObj.endTime;
     const length = Math.abs(eventObj.endValue - eventObj.startValue) * 10;
-    const start = eventObj.startTime.replace(":", "").replace(" ", "");
     const calendar = eventObj.calendar;
 
-    const color = { backgroundColor: calendarMap[calendar]["color"] };
-    const accent = { backgroundColor: calendarMap[calendar]["accent"] };
+    const color = { backgroundColor: calendarMap[calendar].color };
+    const accent = { backgroundColor: calendarMap[calendar].accent };
     const eventEntryStyle = Object.assign(
       getEventPosition(eventObj),
-      color
+      color,
     );
 
     const timeInfo = (
       <div className="start-end-times">
-        {startTime.replace(" ", "").toLowerCase()}-{endTime.replace(" ", "").toLowerCase()}
+        {startTime.replace(' ', '').toLowerCase()}-{endTime.replace(' ', '').toLowerCase()}
       </div>
     );
     const locationInfo = (
@@ -62,7 +56,8 @@ class Event extends React.Component {
             { length > 5 ? locationInfo : (<div />)}
           </div>
         </div>
-        <div className="resizer"
+        <div
+          className="resizer"
           draggable="true"
           onMouseDown={(evt) => this.props.handleEventResize(eventObj, evt)}
         >
@@ -80,4 +75,10 @@ class Event extends React.Component {
   }
 }
 
-export default Event;
+Event.propTypes = {
+  calendarMap: React.PropTypes.object.isRequired,
+  eventObj: React.PropTypes.object.isRequired,
+  handleEventDrag: React.PropTypes.func.isRequired,
+  handleEventClick: React.PropTypes.func.isRequired,
+  handleEventResize: React.PropTypes.func.isRequired,
+};

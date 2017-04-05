@@ -1,17 +1,18 @@
-import React from 'react'
-import moment from 'moment'
-import { DayPicker } from 'react-dates'
-import { eventFire, formatDatePickerMonth } from '../helpers/html'
+import React from 'react';
+import { DayPicker } from 'react-dates';
+import { eventFire, formatDatePickerMonth } from '../helpers/html';
 
-class DatePicker extends React.Component {
+export default class DatePicker extends React.Component {
   constructor(props) {
     super(props);
     this.handleMonthClick = this.handleMonthClick.bind(this);
+    this.handleDateClick = this.handleDateClick.bind(this);
   }
 
-  handleDateClick(date, target) {
-    this.props.setActiveDate(date);
-    this.props.editorOff();
+  componentDidMount() {
+    const month = document.getElementsByClassName('js-CalendarMonth__caption')[1];
+    const updated = formatDatePickerMonth(month);
+    month.innerHTML = updated;
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -19,30 +20,29 @@ class DatePicker extends React.Component {
     const oldDate = prevProps.activeDate;
     if (!currentDate.isSame(oldDate, 'month')) {
       if (currentDate.isAfter(oldDate, 'month')) {
-        eventFire(document.getElementsByClassName("DayPickerNavigation__next")[0], "click");
+        eventFire(document.getElementsByClassName('DayPickerNavigation__next')[0], 'click');
       } else {
-        eventFire(document.getElementsByClassName("DayPickerNavigation__prev")[0], "click");
+        eventFire(document.getElementsByClassName('DayPickerNavigation__prev')[0], 'click');
       }
     }
   }
 
+  handleDateClick(date) {
+    this.props.setActiveDate(date);
+    this.props.editorOff();
+  }
+
   handleMonthClick() {
     const months = document.getElementsByClassName("js-CalendarMonth__caption");
-    for (let month of months) {
+    for (const month of months) {
       const updated = formatDatePickerMonth(month);
       month.innerHTML = updated;
     }
   }
 
-  componentDidMount() {
-    const month = document.getElementsByClassName("js-CalendarMonth__caption")[1];
-    const updated = formatDatePickerMonth(month);
-    month.innerHTML = updated;
-  }
-
   render() {
-    const navPrev = ( <img className="arrow-icon" src="./assets/grey-back-arrow.png" /> );
-    const navNext = ( <img className="arrow-icon" src="./assets/grey-forward-arrow.png" /> );
+    const navPrev = (<img className="arrow-icon" src="./assets/grey-back-arrow.png" />);
+    const navNext = (<img className="arrow-icon" src="./assets/grey-forward-arrow.png" />);
     return (
       <div className="datepicker-container">
         <DayPicker
@@ -50,14 +50,18 @@ class DatePicker extends React.Component {
           navNext={navNext}
           onPrevMonthClick={() => this.handleMonthClick()}
           onNextMonthClick={() => this.handleMonthClick()}
-          initialVisibleMonth={() => (this.props.activeDate)}
+          initialVisibleMonth={() => this.props.activeDate}
           numberOfMonths={1}
           onDayClick={(date) => this.handleDateClick(date)}
-          modifiers={{selected: (date) => ( date.isSame(this.props.activeDate, 'day') )}}
+          modifiers={{ selected: (date) => date.isSame(this.props.activeDate, 'day') }}
         />
       </div>
     );
   }
 }
 
-export default DatePicker;
+DatePicker.propTypes = {
+  activeDate: React.PropTypes.object.isRequired,
+  setActiveDate: React.PropTypes.func.isRequired,
+  editorOff: React.PropTypes.func.isRequired,
+};

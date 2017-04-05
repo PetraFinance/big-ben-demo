@@ -49,6 +49,6 @@ app.get('/', function handleRender(req, res) {
 
   // Send the rendered page back to the client
   res.send(renderFullPage(html, preloadedState));
-})
+});
 
 app.listen(port);

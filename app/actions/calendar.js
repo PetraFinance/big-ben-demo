@@ -2,7 +2,7 @@ export const ADD_EVENT = Symbol('ADD_EVENT');
 export function addEvent(eventObj) {
   return {
     type: ADD_EVENT,
-    eventObj
+    eventObj,
   };
 }
 
@@ -10,7 +10,7 @@ export const UPDATE_EVENT = Symbol('UPDATE_EVENT');
 export function updateEvent(eventObj) {
   return {
     type: UPDATE_EVENT,
-    eventObj
+    eventObj,
   };
 }
 
@@ -18,7 +18,7 @@ export const EDITOR_ON = Symbol('EDITOR_ON');
 export function editorOn(id) {
   return {
     type: EDITOR_ON,
-    id
+    id,
   };
 }
 
@@ -41,7 +41,7 @@ export const SET_RESIZE_OBJ = Symbol('SET_RESIZE_OBJ');
 export function setResizeObj(eventObj) {
   return {
     type: SET_RESIZE_OBJ,
-    eventObj
+    eventObj,
   };
 }
 
@@ -49,6 +49,6 @@ export const SET_DRAGGED_OBJ = Symbol('SET_DRAGGED_OBJ');
 export function setDraggedObj(eventObj) {
   return {
     type: SET_DRAGGED_OBJ,
-    eventObj
+    eventObj,
   };
 }

@@ -1,6 +1,6 @@
-import { connect } from 'react-redux'
-import { addEvent, updateEvent, editorOn, editorOff, setResizeObj, setDraggedObj } from '../actions/calendar'
-import Calendar from '../components/Calendar'
+import { connect } from 'react-redux';
+import { addEvent, updateEvent, editorOn, editorOff, setResizeObj, setDraggedObj } from '../actions/calendar';
+import Calendar from '../components/Calendar';
 
 const mapStateToProps = (state) => {
   const cpState = state.calendar.toJS();

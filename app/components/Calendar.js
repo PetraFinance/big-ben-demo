@@ -1,14 +1,10 @@
-import React from 'react'
-import Editor from '../containers/editor'
-import Event from '../components/event';
-
+import React from 'react';
+import moment from 'moment';
+import Editor from '../containers/Editor';
+import Event from '../components/Event';
 import { togglePointerEvents, generateObjectKey } from '../helpers/html';
 import { isEmpty } from '../helpers/objects';
-import { getEventPosition } from '../helpers/position';
 import { genTimesList, computeTimeFromValue, getWeekStartFromDate, getWeekEndFromDate, isDateBetween } from '../helpers/time';
-
-import $ from "jquery"
-import moment from 'moment'
 
 export default class Calendar extends React.Component {
 
@@ -60,7 +56,7 @@ export default class Calendar extends React.Component {
     const resizeObj = this.props.resizeObj;
     if (!isEmpty(resizeObj)) {
       const endValue = startValue + 0.5;
-      startValue = resizeObj.startValue;
+      const updatedStartValue = resizeObj.startValue;
       if (endValue < startValue) {
         return;
       }
@@ -74,7 +70,7 @@ export default class Calendar extends React.Component {
         calendar: resizeObj.calendar,
         startTime: resizeObj.startTime,
         endTime: computeTimeFromValue(endValue),
-        startValue,
+        startValue: updatedStartValue,
         endValue,
       };
       this.props.updateEvent(eventObj);
@@ -82,7 +78,6 @@ export default class Calendar extends React.Component {
     const draggedObj = this.props.draggedObj;
     if (!isEmpty(draggedObj)) {
       const endValue = startValue + Math.abs(draggedObj.startValue - draggedObj.endValue);
-      const endTime = computeTimeFromValue(endValue);
       const eventObj = {
         id: draggedObj.id,
         name: draggedObj.name,
@@ -109,10 +104,10 @@ export default class Calendar extends React.Component {
     const endValue = startValue + 0.5;
     const startTime = computeTimeFromValue(startValue);
     const endTime = computeTimeFromValue(endValue);
-    const name = "New Event";
-    const category = "Google";
-    const calendar = "Innovative Design";
-    const location = "Dwinelle 140";
+    const name = 'New Event';
+    const category = 'Google';
+    const calendar = 'Innovative Design';
+    const location = 'Dwinelle 140';
     const id = this.props.nextAvaliableId;
     const eventObj = {
       id,
@@ -130,13 +125,13 @@ export default class Calendar extends React.Component {
     this.props.addEvent(eventObj);
   }
 
-  handleCalMouseUp(day, startValue) {
-    this.shouldEndDrag(day, startValue);
+  handleCalMouseUp() {
+    this.shouldEndDrag();
     this.shouldEndResize();
   }
 
   // checks if an element should be dropped on MouseUp event
-  shouldEndDrag(day, startValue) {
+  shouldEndDrag() {
     const draggedObj = this.props.draggedObj;
     if (!isEmpty(draggedObj)) {
       this.props.setDraggedObj({});
@@ -153,8 +148,8 @@ export default class Calendar extends React.Component {
     }
   }
 
-  render () {
-    const plugins = [ "Trello", "Todoist" ];
+  render() {
+    const plugins = ['Trello', 'Todoist'];
     const integrations = plugins.map((plugin, i) => (
       <div className="row" key={generateObjectKey([i, plugin])}>
         <div className="plugin">
@@ -177,8 +172,8 @@ export default class Calendar extends React.Component {
     const momentDateObjects = [];
     const formattedDateObjects = [];
 
-    for (let i=0; i < 7; i++) {
-      let formatted = dateObj.format('ddd M/D');
+    for (let i = 0; i < 7; i += 1) {
+      const formatted = dateObj.format('ddd M/D');
       formattedDateObjects.push(formatted);
       momentDateObjects.push(dateObj);
       dateObj = dateObj.clone().add(1, 'days');
@@ -186,48 +181,50 @@ export default class Calendar extends React.Component {
 
     const days = moment.weekdays();
     const rowHeaders = days.map((day, i) => {
-      let className = "item";
+      let className = 'item';
       if (day === activeDay) {
-        className = "item active";
+        className = 'item active';
       }
       const date = formattedDateObjects[i];
       return (
-        <div className={className} key={generateObjectKey([ date ])}>
+        <div className={className} key={generateObjectKey([date])}>
           <span>{date}</span>
         </div>
       );
     });
 
     const times = genTimesList();
-    const hours = times.filter(timeObj => !timeObj.time.includes(":30"));
-    const calendarRows = hours.map((timeObj, i) => {
-      const whole_hours_jsx = days.map((day, i) => {
-        let className = "item";
+    const hours = times.filter(timeObj => !timeObj.time.includes(':30'));
+    const calendarRows = hours.map((timeObj) => {
+      const wholeHours = days.map((day, i) => {
+        let className = 'item';
         if (day === activeDay) {
-          className = "item active";
+          className = 'item active';
         }
+        const momentObj = momentDateObjects[i];
         return (
           <div
             key={generateObjectKey([day, timeObj.value])}
             className={className}
-            onMouseEnter={() => this.handleCalMouseEnter(day, momentDateObjects[i], timeObj.value)}
-            onMouseUp={() => this.handleCalMouseUp(day, timeObj.value)}
-            onClick={() => this.handleCalClick(day, momentDateObjects[i], timeObj.value)}
+            onMouseEnter={() => this.handleCalMouseEnter(day, momentObj, timeObj.value)}
+            onMouseUp={() => this.handleCalMouseUp()}
+            onClick={() => this.handleCalClick(day, momentObj, timeObj.value)}
           />
         );
       });
-      const half_hours_jsx = days.map((day, i) => {
-        let className = "item";
+      const halfHours = days.map((day, i) => {
+        let className = 'item';
         if (day === activeDay) {
-          className = "item active";
+          className = 'item active';
         }
+        const momentObj = momentDateObjects[i];
         return (
           <div
             key={generateObjectKey([day, timeObj.value + 0.5])}
             className={className}
-            onMouseEnter={() => this.handleCalMouseEnter(day, momentDateObjects[i], timeObj.value + 0.5)}
-            onMouseUp={() => this.handleCalMouseUp(day, timeObj.value + 0.5)}
-            onClick={() => this.handleCalClick(day, momentDateObjects[i], timeObj.value + 0.5)}
+            onMouseEnter={() => this.handleCalMouseEnter(day, momentObj, timeObj.value + 0.5)}
+            onMouseUp={() => this.handleCalMouseUp()}
+            onClick={() => this.handleCalClick(day, momentObj, timeObj.value + 0.5)}
           />
         );
       });
@@ -237,23 +234,22 @@ export default class Calendar extends React.Component {
             <div className="time">
               <span>{timeObj.time}</span>
             </div>
-            {whole_hours_jsx}
+            {wholeHours}
           </div>
           <div className="row half-hour">
             <div className="time" />
-            {half_hours_jsx}
+            {halfHours}
           </div>
         </div>
       );
     });
 
-    const calendarMap = this.props.calendarMap;
     const eventsMap = this.props.eventsMap;
     const packagedEvents = Object.entries(eventsMap);
 
     activeDate = this.props.activeDate.clone();
     const weekStart = getWeekStartFromDate(activeDate);
-    const weekEnd =  getWeekEndFromDate(activeDate);
+    const weekEnd = getWeekEndFromDate(activeDate);
 
     const filteredPackagedEvents = packagedEvents.filter((packagedEvent) => {
       const eventObj = packagedEvent[1];
@@ -278,7 +274,7 @@ export default class Calendar extends React.Component {
     return (
       <div className="calendar-container" >
         <div className="column-headers">
-          <div className="time"></div>
+          <div className="time" />
           {rowHeaders}
         </div>
         <div className="all-day-events">
@@ -309,3 +305,19 @@ export default class Calendar extends React.Component {
     );
   }
 }
+
+Calendar.propTypes = {
+  nextAvaliableId: React.PropTypes.number.isRequired,
+  calendarMap: React.PropTypes.object.isRequired,
+  activeDate: React.PropTypes.object.isRequired,
+  resizeObj: React.PropTypes.object.isRequired,
+  draggedObj: React.PropTypes.object.isRequired,
+  editorObj: React.PropTypes.object.isRequired,
+  eventsMap: React.PropTypes.object.isRequired,
+  editorOn: React.PropTypes.func.isRequired,
+  editorOff: React.PropTypes.func.isRequired,
+  setDraggedObj: React.PropTypes.func.isRequired,
+  updateEvent: React.PropTypes.func.isRequired,
+  addEvent: React.PropTypes.func.isRequired,
+  setResizeObj: React.PropTypes.func.isRequired,
+};
