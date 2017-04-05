@@ -25,7 +25,7 @@ const defaultState = Immutable.fromJS({
       date: moment("2017-04-14"),
     },
     1: {
-      id: 0,
+      id: 1,
       name: "Innod Meeting",
       category: "Google",
       calendar: "Innovative Design",

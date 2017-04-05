@@ -10,7 +10,6 @@ class Event extends React.Component {
   render() {
 
     const eventObj = this.props.eventObj;
-    console.log(eventObj.date);
     const calendarMap = this.props.calendarMap;
 
     const id = eventObj.id;

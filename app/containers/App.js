@@ -1,6 +1,6 @@
 import React from 'react'
 import CalendarsList from '../components/CalendarsList'
-import CalendarControls from '../components/CalendarControls'
+import CalendarControls from './CalendarControls'
 import DatePicker from './DatePicker'
 import Calendar from './Calendar'
 

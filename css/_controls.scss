@@ -1,8 +1,9 @@
 .cal-controls-container {
   height: $header-container-height;
   border-bottom: 1px solid $grey-border;
-
-  @extend .flex-row-valign;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
 
@@ -10,7 +11,9 @@
   padding-left: 1rem;
 
   flex: 1;
-  @extend .flex-row-valign;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   .month-year {
     padding: 0rem 1rem;
   }
@@ -20,15 +23,19 @@
   padding-right: 1rem;
 
   flex: 1;
-  @extend .flex-row-valign;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   justify-content: flex-end;
 }
 
 .day-control-buttons {
   border: 1px solid $grey-border;
   border-radius: 5px;
-
-  @extend .flex-row-valign;
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   .go-to-today {
     padding: 0.15rem 1rem 0.35rem 1rem;
     border-right: 1px solid $grey-border;
@@ -58,7 +65,9 @@
   border-radius: 5px;
   font-weight: bold;
 
-  @extend .flex-row-valign;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   .select-button {
     padding: 0.15rem 0.75rem 0.35rem 0.75rem;
     width: 65px;

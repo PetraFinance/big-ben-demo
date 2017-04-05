@@ -16,6 +16,12 @@ export const getWeekEndFromDate = (date) => {
   return endDate;
 }
 
+export const isDateBetween = (start, end, date) => {
+  return date.isBetween(start, end, 'month', '[]') &&
+  date.isBetween(start, end, 'day', '[]') &&
+  date.isBetween(start, end, 'year', '[]');
+}
+
 export const genTimesList = () => {
   const list = [];
   for (let i = 7; i <= 17; i+=0.5) {

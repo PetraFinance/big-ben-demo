@@ -5,7 +5,7 @@ import Event from '../components/event';
 import { togglePointerEvents, generateObjectKey } from '../helpers/html';
 import { isEmpty } from '../helpers/objects';
 import { getEventPosition } from '../helpers/position';
-import { genTimesList, computeTimeFromValue, getWeekStartFromDate, getWeekEndFromDate } from '../helpers/time';
+import { genTimesList, computeTimeFromValue, getWeekStartFromDate, getWeekEndFromDate, isDateBetween } from '../helpers/time';
 
 import $ from "jquery"
 import moment from 'moment'
@@ -24,6 +24,17 @@ export default class Calendar extends React.Component {
     this.handleEventResize = this.handleEventResize.bind(this);
     this.handleEventClick = this.handleEventClick.bind(this);
     this.handleEventDrag = this.handleEventDrag.bind(this);
+
+    this.handleMouseLeaveCalendar = this.handleMouseLeaveCalendar.bind(this);
+  }
+
+  handleMouseLeaveCalendar() {
+    if (!isEmpty(this.props.resizeObj)) {
+      this.props.setResizeObj({});
+    }
+    if (!isEmpty(this.props.draggedObj)) {
+      this.props.setDraggedObj({});
+    }
   }
 
   handleEventResize(eventObj, evt) {
@@ -159,18 +170,15 @@ export default class Calendar extends React.Component {
       </div>
     ));
 
-    const activeDate = this.props.activeDate;
-    const activeDay = activeDate.clone().format('dddd');
+    let activeDate = this.props.activeDate.clone();
+    const activeDay = activeDate.format('dddd');
     let dateObj = getWeekStartFromDate(activeDate);
 
     const momentDateObjects = [];
     const formattedDateObjects = [];
 
     for (let i=0; i < 7; i++) {
-      let formatted = dateObj.format('MM/DD');
-      if (formatted[0] === '0') {
-        formatted = formatted.slice(1);
-      }
+      let formatted = dateObj.format('ddd M/D');
       formattedDateObjects.push(formatted);
       momentDateObjects.push(dateObj);
       dateObj = dateObj.clone().add(1, 'days');
@@ -183,18 +191,15 @@ export default class Calendar extends React.Component {
         className = "item active";
       }
       const date = formattedDateObjects[i];
-      const abbr = day.slice(0, 3) + ' ' + date;
       return (
         <div className={className} key={generateObjectKey([ date ])}>
-          <span>{abbr}</span>
+          <span>{date}</span>
         </div>
       );
     });
 
     const times = genTimesList();
     const hours = times.filter(timeObj => !timeObj.time.includes(":30"));
-    console.log(activeDay);
-    console.log(days);
     const calendarRows = hours.map((timeObj, i) => {
       const whole_hours_jsx = days.map((day, i) => {
         let className = "item";
@@ -246,14 +251,14 @@ export default class Calendar extends React.Component {
     const eventsMap = this.props.eventsMap;
     const packagedEvents = Object.entries(eventsMap);
 
+    activeDate = this.props.activeDate.clone();
+    const weekStart = getWeekStartFromDate(activeDate);
+    const weekEnd =  getWeekEndFromDate(activeDate);
+
     const filteredPackagedEvents = packagedEvents.filter((packagedEvent) => {
       const eventObj = packagedEvent[1];
-      const activeDate = this.props.activeDate;
       const eventDate = eventObj.date;
-      const weekStart = getWeekStartFromDate(activeDate);
-      const weekEnd =  getWeekEndFromDate(activeDate);
-      const inBetween = eventDate.clone().isBetween(weekStart, weekEnd, null, '[]');
-      return inBetween;
+      return isDateBetween(weekStart, weekEnd, eventDate);
     });
 
     const eventEntries = filteredPackagedEvents.map((packagedEvent) => {
@@ -271,7 +276,7 @@ export default class Calendar extends React.Component {
     });
 
     return (
-      <div className="calendar-container">
+      <div className="calendar-container" >
         <div className="column-headers">
           <div className="time"></div>
           {rowHeaders}
@@ -288,7 +293,11 @@ export default class Calendar extends React.Component {
           <div className="item" />
           <div className="item" />
         </div>
-        <div id="main-calendar" className="main-calendar">
+        <div
+          id="main-calendar"
+          className="main-calendar"
+          onMouseLeave={() => this.handleMouseLeaveCalendar()}
+        >
           {calendarRows}
           {eventEntries}
           <Editor />

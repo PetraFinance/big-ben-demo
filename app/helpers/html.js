@@ -1,10 +1,41 @@
 import React from 'react'
+import moment from 'moment';
 import $ from 'jquery'
 
-// every event has its id number to be its id in the DOM for easy access
-export const getEventEntryDOM = (id) => {
-  const eventEntryDOM = document.getElementById(id.toString());
-  return eventEntryDOM;
+// The jankiest of methods to make the month bold and the year normal
+// Could consider forking the Airbnb react dates and managing own version
+export const formatDatePickerMonth = (monthDOM) => {
+  const content = monthDOM.innerHTML;
+  if (content.includes("modified")) {
+    return content;
+  }
+  let re, date, month, year;
+  let reactId = "";
+  if (content.includes("reactid")) {
+    re = /\<strong (.*)\>(.*)\<\/strong>/;
+    reactId = content.match(re)[1];
+    date = content.match(re)[2];
+    month = date.split(" ")[0];
+    year = date.split(" ")[1];
+  } else {
+    re = /\>(.*)\<\/strong>/;
+    date = content.match(re)[1];
+    month = date.split(" ")[0];
+    year = date.split(" ")[1];
+  }
+  const updatedHTML = '<strong ' + reactId + ' class="modified">' + month + ' </strong>' + year;
+  return updatedHTML;
+}
+
+// http://stackoverflow.com/questions/2705583/how-to-simulate-a-click-with-javascript
+export const eventFire = (el, etype) => {
+  if (el.fireEvent) {
+    el.fireEvent('on' + etype);
+  } else {
+    var evObj = document.createEvent('Events');
+    evObj.initEvent(etype, true, false);
+    el.dispatchEvent(evObj);
+  }
 }
 
 export const togglePointerEvents = (eventsMap, eventsOn) => {
