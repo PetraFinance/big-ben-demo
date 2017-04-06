@@ -38,19 +38,19 @@
   align-items: center;
 
   .dot-container {
-    padding-right: 5px;
-
-    flex: 0 0 25px;
+    flex: 0 0 10px;
     justify-content: center;
     align-items: center;
 
     .dot {
+      cursor: pointer;
       width: 10px;
       height: 10px;
       border-radius: 50px;
     }
   }
   .title {
+    margin-left: 20px;
     font-size: 0.85rem;
     font-family: $font-stack;
   }

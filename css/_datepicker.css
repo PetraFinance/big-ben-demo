@@ -4,7 +4,7 @@
   width: 100%;
 
   .arrow-icon {
-    height: 15px;
+    height: 12px;
     width: auto;
   }
 
@@ -27,7 +27,7 @@
   }
 
   .CalendarMonth__caption {
-    font-size: 1rem;
+    font-size: 0.9rem;
     margin-bottom: 15px !important;
   }
 

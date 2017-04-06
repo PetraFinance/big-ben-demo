@@ -248,10 +248,20 @@ export default class Calendar extends React.Component {
 
     const eventEntries = filteredPackagedEvents.map((packagedEvent) => {
       const eventObj = packagedEvent[1];
+      const calendarMap = this.props.calendarMap;
+      const visible = calendarMap[eventObj.category][eventObj.calendar].visible;
+      if (!visible) {
+        return (
+          <div
+            key={generateObjectKey([eventObj.id, eventObj.name])}
+            className="hidden-event-placeholder"
+          />
+        );
+      }
       return (
         <Event
           key={generateObjectKey([eventObj.id, eventObj.name])}
-          calendarMap={this.props.calendarMap}
+          calendarMap={calendarMap}
           handleEventClick={this.handleEventClick}
           handleEventDrag={this.handleEventDrag}
           handleEventResize={this.handleEventResize}

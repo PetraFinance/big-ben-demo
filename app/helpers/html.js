@@ -41,17 +41,6 @@ export const formatDatePickerMonth = (monthDOM) => {
   return updatedHTML;
 };
 
-// http://stackoverflow.com/questions/2705583/how-to-simulate-a-click-with-javascript
-export const eventFire = (el, etype) => {
-  if (el.fireEvent) {
-    el.fireEvent('on' + etype);
-  } else {
-    const evObj = document.createEvent('Events');
-    evObj.initEvent(etype, true, false);
-    el.dispatchEvent(evObj);
-  }
-};
-
 export const togglePointerEvents = (eventsMap, eventsOn) => {
   let cssValue = 'none';
   if (eventsOn) {

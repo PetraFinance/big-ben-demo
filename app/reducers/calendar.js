@@ -39,21 +39,29 @@ const defaultState = Immutable.fromJS({
     },
   },
   calendarMap: {
-    'Innovative Design': {
-      color: '#009688',
-      accent: '#008A7D',
+    'Google': {
+      'Innovative Design': {
+        color: '#009688',
+        accent: '#008A7D',
+        visible: true,
+      },
+      'IEEE': {
+        color: '#F44336',
+        accent: '#E03D31',
+        visible: true,
+      },
+      'School': {
+        color: '#03A9F4',
+        accent: '#029BE0',
+        visible: true,
+      },
     },
-    'IEEE': {
-      color: '#F44336',
-      accent: '#E03D31',
-    },
-    'School': {
-      color: '#03A9F4',
-      accent: '#029BE0',
-    },
-    'Events I\'m Attending': {
-      color: '#39579A',
-      accent: '#39579A',
+    'Facebook': {
+      'Events I\'m Attending': {
+        color: '#39579A',
+        accent: '#39579A',
+        visible: true,
+      },
     },
   },
 });
@@ -82,6 +90,9 @@ export default function (state = defaultState, action) {
       return state.set('draggedObj', Immutable.Map(action.eventObj));
     case ActionType.SET_RESIZE_OBJ:
       return state.set('resizeObj', Immutable.Map(action.eventObj));
+    case ActionType.TOGGLE_CALENDAR_VISIBILITY:
+      const visible = state.getIn(['calendarMap', action.category, action.calendar, 'visible']);
+      return state.setIn(['calendarMap', action.category, action.calendar, 'visible'], !visible);
     default:
       return state;
   }

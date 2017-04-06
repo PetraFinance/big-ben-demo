@@ -1,5 +1,5 @@
 import React from 'react';
-import CalendarsList from '../components/CalendarsList';
+import CalendarList from './CalendarList';
 import CalendarControls from './CalendarControls';
 import DatePicker from './DatePicker';
 import Calendar from './Calendar';
@@ -10,7 +10,7 @@ function App() {
       <div className="side-panel">
         <div className="spacer" />
         <DatePicker />
-        <CalendarsList />
+        <CalendarList />
       </div>
       <div className="calendar-panel">
         <CalendarControls />

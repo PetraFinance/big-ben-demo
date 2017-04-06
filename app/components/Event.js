@@ -11,10 +11,11 @@ export default class Event extends React.Component {
     const startTime = eventObj.startTime;
     const endTime = eventObj.endTime;
     const length = Math.abs(eventObj.endValue - eventObj.startValue) * 10;
+    const category = eventObj.category;
     const calendar = eventObj.calendar;
 
-    const color = { backgroundColor: calendarMap[calendar].color };
-    const accent = { backgroundColor: calendarMap[calendar].accent };
+    const color = { backgroundColor: calendarMap[category][calendar].color };
+    const accent = { backgroundColor: calendarMap[category][calendar].accent };
     const eventEntryStyle = Object.assign(
       getEventPosition(eventObj),
       color,

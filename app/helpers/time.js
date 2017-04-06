@@ -1,4 +1,5 @@
-// takes in a moment object
+import moment from 'moment';
+
 export const getWeekStartFromDate = (date) => {
   const dow = date.day();
   const startDate = date.clone().subtract(dow, 'days');
@@ -18,6 +19,15 @@ export const isDateBetween = (start, end, date) => {
   date.isBetween(start, end, 'day', '[]') &&
   date.isBetween(start, end, 'year', '[]');
 };
+
+export const isNotSameDay = (a, b) => {
+  return !a.isSame(b, 'day') || !a.isSame(b, 'month') || !a.isSame(b, 'year');
+}
+
+export const isToday = (a) => {
+  const today = moment();
+  return a.isSame(today, 'day') && a.isSame(today, 'month') && a.isSame(today, 'year');
+}
 
 export const genTimesList = () => {
   const list = [];

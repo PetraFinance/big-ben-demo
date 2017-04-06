@@ -1,0 +1,103 @@
+import React from 'react';
+
+class Calendar extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleToggle = this.handleToggle.bind(this);
+  }
+
+  handleToggle() {
+    this.props.editorOff();
+    this.props.toggleCalendarVisibility(this.props.category, this.props.calendarName);
+  }
+
+  render() {
+    let backgroundColor = this.props.color;
+    if (!this.props.visible) {
+      backgroundColor = '#FAFAFA';
+    }
+    const style = {
+      backgroundColor,
+      border: '2px solid ' + this.props.accent,
+    };
+    return (
+      <div className="calendar-list-item">
+        <div className="dot-container">
+          <div
+            onClick={() => this.handleToggle()}
+            style={style}
+            className="dot"
+          />
+        </div>
+        <span className="title">
+          {this.props.calendarName}
+        </span>
+      </div>
+    );
+  }
+}
+
+class CalendarCategory extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    const category = this.props.category;
+    const calendars = this.props.calendars;
+    const calendarNames = Object.keys(calendars);
+
+    const calendarEntries = calendarNames.map((calendarName, i) => (
+      <Calendar
+        key={i}
+        calendarName={calendarName}
+        category={category}
+        color={calendars[calendarName].color}
+        accent={calendars[calendarName].accent}
+        visible={calendars[calendarName].visible}
+        toggleCalendarVisibility={this.props.toggleCalendarVisibility}
+      />
+    ));
+    return (
+      <div className="calendar-list">
+        <div className="calendar-list-header">
+          <span>{category}</span>
+          <div className="arrow-img">
+            <img src={"../../assets/grey-down-arrow.png"} />
+          </div>
+        </div>
+        <div className="calendar-list-items">
+          {calendarEntries}
+        </div>
+      </div>
+    );
+  }
+}
+
+// The calendar list in the sidepanel
+export default class CalendarList extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render () {
+    const calendarMap = this.props.calendarMap;
+    const calendarCategories = Object.keys(calendarMap);
+
+    const calendarsList = calendarCategories.map((category) => {
+      return (
+        <CalendarCategory
+          key={category}
+          category={category}
+          calendars={calendarMap[category]}
+          toggleCalendarVisibility={this.props.toggleCalendarVisibility}
+        />
+      );
+    });
+    return (
+      <div className="calendar-list-container">
+        {calendarsList}
+      </div>
+    )
+  }
+}

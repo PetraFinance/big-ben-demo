@@ -37,11 +37,12 @@ export default class Editor extends React.Component {
     const eventObj = this.props.eventsMap[editorObjId];
     const name = eventObj.name;
     const location = eventObj.location;
+    const category = eventObj.category;
     const calendar = eventObj.calendar;
     const editingField = this.state.editingField;
     const editorPosition = getEditorPosition(eventObj);
     const calendarMap = this.props.calendarMap;
-    const editorColor = { backgroundColor: calendarMap[calendar].color };
+    const editorColor = { backgroundColor: calendarMap[category][calendar].color };
 
     const form = {
       name: [(
@@ -97,23 +98,26 @@ export default class Editor extends React.Component {
       )],
     };
 
-    const calendarsJSX = [];
-    const calendars = Object.keys(calendarMap);
-    for (const calendarItem of calendars) {
-      const style = { backgroundColor: calendarMap[calendarItem].color };
-      const jsx = (
-        <div
-          key={calendarItem}
-          className="item"
-          onClick={(evt) => this.updateEventObj('calendar', evt)}
-        >
-          <div className="calendar-dot" style={style} />
-          <div className="name">
-            {calendarItem}
+    const calendarList = [];
+    const calendarCategories = Object.keys(calendarMap);
+    for (const category of calendarCategories) {
+      const calendars = Object.keys(calendarMap[category]);
+      for (const calendar of calendars) {
+        const style = { backgroundColor: calendarMap[category][calendar].color };
+        const calendarJSX = (
+          <div
+            key={calendar}
+            className="item"
+            onClick={(evt) => this.updateEventObj('calendar', evt)}
+          >
+            <div className="calendar-dot" style={style} />
+            <div className="name">
+              {calendar}
+            </div>
           </div>
-        </div>
-      );
-      calendarsJSX.push(jsx);
+        );
+        calendarList.push(calendarJSX);
+      }
     }
 
     const mainEditor = (
@@ -147,7 +151,7 @@ export default class Editor extends React.Component {
             key={'calendar'}
             className="calendar-input"
           >
-            {calendarsJSX}
+            {calendarList}
           </div>
         </div>
       );

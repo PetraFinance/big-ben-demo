@@ -52,3 +52,12 @@ export function setDraggedObj(eventObj) {
     eventObj,
   };
 }
+
+export const TOGGLE_CALENDAR_VISIBILITY = Symbol('TOGGLE_CALENDAR_VISIBILITY');
+export function toggleCalendarVisibility(category, calendar) {
+  return {
+    type: TOGGLE_CALENDAR_VISIBILITY,
+    category,
+    calendar,
+  }
+}
