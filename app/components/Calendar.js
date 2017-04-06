@@ -176,7 +176,11 @@ export default class Calendar extends React.Component {
       }
       const date = formattedDateObjects[i];
       return (
-        <div className={className} key={generateObjectKey([date])}>
+        <div
+          onClick={() => this.props.setActiveDate(momentDateObjects[i])}
+          className={className}
+          key={generateObjectKey([date])}
+        >
           <span>{date}</span>
         </div>
       );

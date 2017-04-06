@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { addEvent, updateEvent, editorOn, editorOff, setResizeObj, setDraggedObj } from '../actions/calendar';
+import { addEvent, updateEvent, editorOn, editorOff, setResizeObj, setDraggedObj, setActiveDate } from '../actions/calendar';
 import Calendar from '../components/Calendar';
 
 const mapStateToProps = (state) => {
@@ -23,6 +23,9 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
+  setActiveDate: (date) => {
+    dispatch(setActiveDate(date));
+  },
   addEvent: (eventObj) => {
     dispatch(addEvent(eventObj));
   },

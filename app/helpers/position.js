@@ -75,7 +75,7 @@ export const getEditorPosition = (eventObj) => {
       left = convertToPercent(49);
       break;
     case 'Wednesday':
-      left = convertToPercent(62);
+      left = convertToPercent(29);
       break;
     case 'Thursday':
       left = convertToPercent(42);
