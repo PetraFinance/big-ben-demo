@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { toggleCalendarVisibility } from '../actions/calendar';
+import { toggleCalendarVisibility, editorOff } from '../actions/calendar';
 import CalendarList from '../components/CalendarList';
 
 const mapStateToProps = (state) => {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { DayPicker } from 'react-dates';
 import { formatDatePickerMonth } from '../helpers/html';
-import { isToday, isNotSameDay } from '../helpers/time';
+import { isNotSameDay } from '../helpers/time';
 
 export default class DatePicker extends React.Component {
   constructor(props) {
@@ -37,7 +37,9 @@ export default class DatePicker extends React.Component {
     const newDate = this.props.activeDate;
     const navPrev = (<img className="arrow-icon" src="./assets/grey-back-arrow.png" />);
     const navNext = (<img className="arrow-icon" src="./assets/grey-forward-arrow.png" />);
-    if (isNotSameDay(newDate, oldDate)) {
+    const visibleMonth = document.getElementsByClassName('js-CalendarMonth__caption')[1].innerHTML;
+    const newDateMonth = newDate.format('MMMM');
+    if (isNotSameDay(newDate, oldDate) || !visibleMonth.includes(newDateMonth)) {
       this.setState({
         datePicker: () => <DayPicker
           onPrevMonthClick={() => this.clickArrowButtons()}

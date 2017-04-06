@@ -40,6 +40,14 @@ class Calendar extends React.Component {
 class CalendarCategory extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      collapsed: false,
+    }
+  }
+
+  toggleCollapse() {
+    const value = this.state.collapsed;
+    this.setState({ collapsed: !value });
   }
 
   render() {
@@ -56,6 +64,7 @@ class CalendarCategory extends React.Component {
         accent={calendars[calendarName].accent}
         visible={calendars[calendarName].visible}
         toggleCalendarVisibility={this.props.toggleCalendarVisibility}
+        editorOff={this.props.editorOff}
       />
     ));
     return (
@@ -91,6 +100,7 @@ export default class CalendarList extends React.Component {
           category={category}
           calendars={calendarMap[category]}
           toggleCalendarVisibility={this.props.toggleCalendarVisibility}
+          editorOff={this.props.editorOff}
         />
       );
     });

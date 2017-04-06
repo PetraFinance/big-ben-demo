@@ -57,7 +57,7 @@ const defaultState = Immutable.fromJS({
       },
     },
     'Facebook': {
-      'Events I\'m Attending': {
+      "Events I'm Attending": {
         color: '#39579A',
         accent: '#39579A',
         visible: true,
