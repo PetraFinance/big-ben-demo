@@ -55,6 +55,12 @@ export default class CalendarControls extends React.Component {
 
     const month = this.props.activeDate.format('MMMM');
     const year = this.props.activeDate.format('YYYY');
+    const format = this.props.calendarViewType;
+
+    let weekMonthButtons = ["select-week-active", "select-month"];
+    if (format === "month") {
+      weekMonthButtons = ["select-week", "select-month-active"];
+    }
 
     return (
       <div className="cal-controls-container">
@@ -70,10 +76,10 @@ export default class CalendarControls extends React.Component {
         </div>
         <div className="right-side">
           <div className="week-month-buttons">
-            <div className="select-week">
+            <div className={weekMonthButtons[0]}>
               <span>Week</span>
             </div>
-            <div className="select-month">
+            <div className={weekMonthButtons[1]}>
               <span>Month</span>
             </div>
           </div>

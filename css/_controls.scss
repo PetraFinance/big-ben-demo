@@ -63,10 +63,8 @@
 }
 
 .week-month-buttons {
-  border: 1px solid $grey-border;
-  border-radius: 5px;
+  cursor: pointer;
   font-weight: bold;
-
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -79,20 +77,43 @@
       font-size: 0.75rem;
     }
   }
+  .select-week-active {
+    @extend .select-button;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border: 1px solid $blue-border;
+    background-color: $blue;
+    border-right: 0.5px solid $blue-border;
+    color: white;
+  }
   .select-week {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border: 1px solid $grey-border;
     border-right: 0.5px solid $grey-border;
-
     @extend .select-button;
   }
+  .select-month-active {
+    @extend .select-button;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border: 1px solid $blue-border;
+    background-color: $blue;
+    border-left: 0.5px solid $blue-border;
+    color: white;
+  }
   .select-month {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border: 1px solid $grey-border;
     border-left: 0.5px solid $grey-border;
-
     @extend .select-button;
   }
 }
 
 .settings {
   margin-left: 2rem;
+  margin-right: 1rem;
   height: 30px;
   img {
     width: auto;

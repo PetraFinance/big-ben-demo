@@ -5,8 +5,10 @@ import CalendarControls from '../components/CalendarControls';
 const mapStateToProps = (state) => {
   const cpState = state.calendar.toJS();
   const activeDate = cpState.activeDate;
+  const calendarViewType = cpState.calendarViewType;
   return {
     activeDate,
+    calendarViewType,
   };
 };
 

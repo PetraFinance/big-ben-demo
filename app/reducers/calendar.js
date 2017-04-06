@@ -4,6 +4,7 @@ import moment from 'moment';
 
 const defaultState = Immutable.fromJS({
   activeDate: moment(),
+  calendarViewType: "week",
   draggedObj: {},
   resizeObj: {},
   editorObj: {
