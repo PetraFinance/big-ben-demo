@@ -8,7 +8,7 @@ function App() {
   return (
     <div className="app-container">
       <div className="side-panel">
-        <div className="spacer" />
+        <div className="side-panel-header" />
         <DatePicker />
         <CalendarList />
       </div>

@@ -16,12 +16,19 @@ html {
 }
 
 .side-panel {
-  margin-top: $header-container-height;
-  height: calc(100vh - $header-container-height);
-  border-top: 1px solid $grey-border;
+  height: calc(100vh - #{$header-container-height});
   background-color: $light-grey;
 
   flex: 0 0 215px;
+}
+
+.side-panel-header {
+  background-color: $white;
+  border-bottom: 1px solid $grey-border;
+  height: $header-container-height;
+  position: relative;
+  z-index: 10;
+  box-shadow: $box-shadow;
 }
 
 .calendar-panel {
