@@ -24,9 +24,16 @@
       img {
         width: auto;
         height: 10px;
+        transition: transform 0.2s linear;
       }
     }
   }
+}
+
+.calendar-list-items {
+  -webkit-transition: max-height 0.5s cubic-bezier(0, 1.05, 0, 1);
+  -moz-transition: max-height 0.5s cubic-bezier(0, 1.05, 0, 1);
+  transition: max-height 0.5s cubic-bezier(0, 1.05, 0, 1);
 }
 
 .calendar-list-item {

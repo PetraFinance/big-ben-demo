@@ -40,6 +40,7 @@ class Calendar extends React.Component {
 class CalendarCategory extends React.Component {
   constructor(props) {
     super(props);
+    this.toggleCollapse = this.toggleCollapse.bind(this);
     this.state = {
       collapsed: false,
     }
@@ -67,15 +68,28 @@ class CalendarCategory extends React.Component {
         editorOff={this.props.editorOff}
       />
     ));
+
+    let calendarListItems = { 'maxHeight': '300px', };
+    let calendarList = {};
+    let arrowStyle = {};
+    if (this.state.collapsed) {
+      calendarListItems = { 'maxHeight': '0px', 'overflow': 'hidden' };
+      calendarList = { 'marginBottom': '0rem' };
+      arrowStyle = { 'transform': 'rotate(180deg)' };
+    }
+
     return (
-      <div className="calendar-list">
+      <div style={calendarList} className="calendar-list">
         <div className="calendar-list-header">
           <span>{category}</span>
-          <div className="arrow-img">
-            <img src={"../../assets/grey-down-arrow.png"} />
+          <div
+            className="arrow-img"
+            onClick={() => this.toggleCollapse()}
+          >
+            <img style={arrowStyle} src={"../../assets/grey-down-arrow.png"} />
           </div>
         </div>
-        <div className="calendar-list-items">
+        <div style={calendarListItems} className="calendar-list-items">
           {calendarEntries}
         </div>
       </div>
