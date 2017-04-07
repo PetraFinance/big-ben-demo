@@ -32,10 +32,11 @@ export default class Editor extends React.Component {
             }
           }
         }
-        eventObj[field] = calendarInput;
-        eventObj["category"] = eventObjCategory;
+        eventObj['calendar'] = calendarInput;
+        eventObj['category'] = eventObjCategory;
         this.props.updateEvent(eventObj);
         this.setEditorField('');
+        break;
       default:
         eventObj[field] = evt.target.value;
         this.props.updateEvent(eventObj);

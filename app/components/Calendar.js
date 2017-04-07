@@ -256,6 +256,8 @@ export default class Calendar extends React.Component {
 
     const eventEntries = eventsList.map((eventObj) => {
       const calendarMap = this.props.calendarMap;
+      console.log(calendarMap);
+      console.log(eventObj);
       const visible = calendarMap[eventObj.category][eventObj.calendar].visible;
       if (!visible) {
         return (
@@ -268,7 +270,6 @@ export default class Calendar extends React.Component {
       return (
         <Event
           key={genUniqueIdentifier([eventObj.id, eventObj.name])}
-          overlappingEvents={0}
           calendarMap={calendarMap}
           handleEventClick={this.handleEventClick}
           handleEventDrag={this.handleEventDrag}
