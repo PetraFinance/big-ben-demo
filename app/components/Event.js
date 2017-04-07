@@ -1,6 +1,6 @@
 import React from 'react';
 import { getEventPosition } from '../helpers/position';
-import { generateObjectId } from '../helpers/html';
+import { genObjectId } from '../helpers/html';
 
 export default class Event extends React.Component {
 
@@ -34,7 +34,7 @@ export default class Event extends React.Component {
 
     return (
       <div
-        id={generateObjectId(eventObj)}
+        id={genObjectId(eventObj)}
         className="event-entry"
         style={eventEntryStyle}
       >

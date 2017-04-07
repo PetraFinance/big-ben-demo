@@ -43,7 +43,7 @@ export default class Editor extends React.Component {
 
   render () {
     const editorObjId = this.props.editorObj.id;
-    if (editorObjId === -1) {
+    if (editorObjId === '-1') {
       return (<div className="editor-panel-off" />);
     }
 

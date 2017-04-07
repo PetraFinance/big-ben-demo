@@ -8,12 +8,11 @@ const defaultState = Immutable.fromJS({
   draggedObj: {},
   resizeObj: {},
   editorObj: {
-    id: -1,
+    id: '-1',
   },
-  nextAvaliableId: 2,
   eventsMap: {
-    0: {
-      id: 0,
+    '0': {
+      id: '0',
       name: 'Innod Meeting',
       category: 'Google',
       calendar: 'Innovative Design',
@@ -25,8 +24,8 @@ const defaultState = Immutable.fromJS({
       day: 'Wednesday',
       date: moment('2017-04-14'),
     },
-    1: {
-      id: 1,
+    '1': {
+      id: '1',
       name: 'Innod Meeting',
       category: 'Google',
       calendar: 'Innovative Design',
@@ -71,19 +70,18 @@ export default function (state = defaultState, action) {
   let editorObj;
   switch (action.type) {
     case ActionType.ADD_EVENT:
-      const id = state.get('nextAvaliableId');
-      const event = Immutable.Map([[id, Immutable.Map(action.eventObj)]]);
-      editorObj = Immutable.fromJS({ id: id });
-      return state.mergeIn(['eventsMap'], event)
-                  .set('nextAvaliableId', id + 1)
-                  .set('editorObj', editorObj);
+      const eventObj = action.eventObj;
+      const id = eventObj.id;
+      const event = Immutable.Map([[id, Immutable.Map(eventObj)]]);
+      console.log(event.toJS());
+      return state.mergeIn(['eventsMap'], event);
     case ActionType.UPDATE_EVENT:
       return state.setIn(['eventsMap', action.eventObj.id], Immutable.Map(action.eventObj));
     case ActionType.EDITOR_ON:
       editorObj = Immutable.fromJS({ id: action.id });
       return state.set('editorObj', editorObj);
     case ActionType.EDITOR_OFF:
-      editorObj = Immutable.fromJS({ id: -1 });
+      editorObj = Immutable.fromJS({ id: '-1' });
       return state.set('editorObj', editorObj);
     case ActionType.SET_ACTIVE_DATE:
       return state.set('activeDate', action.date);

@@ -2,7 +2,7 @@ import React from 'react';
 import moment from 'moment';
 import Editor from '../containers/Editor';
 import Event from '../components/Event';
-import { togglePointerEvents, generateObjectKey } from '../helpers/html';
+import { togglePointerEvents, genUniqueIdentifier } from '../helpers/html';
 import { isEmpty } from '../helpers/objects';
 import { genTimesList, computeTimeFromValue, getWeekStartFromDate, getWeekEndFromDate, isDateBetween } from '../helpers/time';
 
@@ -85,7 +85,7 @@ export default class Calendar extends React.Component {
   }
 
   handleCalClick(day, date, startValue) {
-    if (this.props.editorObj.id !== -1) {
+    if (this.props.editorObj.id !== '-1') {
       this.props.editorOff();
       return;
     }
@@ -97,7 +97,8 @@ export default class Calendar extends React.Component {
     const category = 'Google';
     const calendar = 'Innovative Design';
     const location = 'Dwinelle 140';
-    const id = this.props.nextAvaliableId;
+    const numEvents = Object.keys(this.props.eventsMap);
+    const id = (parseInt(numEvents[numEvents.length - 1]) + 1).toString();
     const eventObj = {
       id,
       name,
@@ -112,6 +113,7 @@ export default class Calendar extends React.Component {
       endValue,
     };
     this.props.addEvent(eventObj);
+    this.props.editorOn(eventObj.id);
   }
 
   handleCalMouseUp() {
@@ -140,7 +142,7 @@ export default class Calendar extends React.Component {
   render() {
     const plugins = ['Trello', 'Todoist'];
     const integrations = plugins.map((plugin, i) => (
-      <div className="row" key={generateObjectKey([i, plugin])}>
+      <div className="row" key={genUniqueIdentifier([i, plugin])}>
         <div className="plugin">
           <span>{plugin}</span>
         </div>
@@ -179,7 +181,7 @@ export default class Calendar extends React.Component {
         <div
           onClick={() => this.props.setActiveDate(momentDateObjects[i])}
           className={className}
-          key={generateObjectKey([date])}
+          key={genUniqueIdentifier([date, i])}
         >
           <span>{date}</span>
         </div>
@@ -197,7 +199,7 @@ export default class Calendar extends React.Component {
         const momentObj = momentDateObjects[i];
         return (
           <div
-            key={generateObjectKey([day, timeObj.value])}
+            key={genUniqueIdentifier([day, timeObj.value, i])}
             className={className}
             onMouseEnter={() => this.handleCalMouseEnter(day, momentObj, timeObj.value)}
             onMouseUp={() => this.handleCalMouseUp()}
@@ -213,7 +215,7 @@ export default class Calendar extends React.Component {
         const momentObj = momentDateObjects[i];
         return (
           <div
-            key={generateObjectKey([day, timeObj.value + 0.5])}
+            key={genUniqueIdentifier([day, timeObj.value + 0.5, i])}
             className={className}
             onMouseEnter={() => this.handleCalMouseEnter(day, momentObj, timeObj.value + 0.5)}
             onMouseUp={() => this.handleCalMouseUp()}
@@ -222,7 +224,7 @@ export default class Calendar extends React.Component {
         );
       });
       return (
-        <div key={generateObjectKey([timeObj.value, timeObj.value + 0.5])}>
+        <div key={genUniqueIdentifier([timeObj.value, timeObj.value + 0.5])}>
           <div className="row">
             <div className="time">
               <span>{timeObj.time}</span>
@@ -257,14 +259,14 @@ export default class Calendar extends React.Component {
       if (!visible) {
         return (
           <div
-            key={generateObjectKey([eventObj.id, eventObj.name])}
+            key={genUniqueIdentifier([eventObj.id, eventObj.name])}
             className="hidden-event-placeholder"
           />
         );
       }
       return (
         <Event
-          key={generateObjectKey([eventObj.id, eventObj.name])}
+          key={genUniqueIdentifier([eventObj.id, eventObj.name])}
           calendarMap={calendarMap}
           handleEventClick={this.handleEventClick}
           handleEventDrag={this.handleEventDrag}
@@ -293,7 +295,6 @@ export default class Calendar extends React.Component {
           <div className="item" />
         </div>
         <div
-          id="main-calendar"
           className="main-calendar"
         >
           {calendarRows}
@@ -309,7 +310,6 @@ export default class Calendar extends React.Component {
 }
 
 Calendar.propTypes = {
-  nextAvaliableId: React.PropTypes.number.isRequired,
   calendarMap: React.PropTypes.object.isRequired,
   activeDate: React.PropTypes.object.isRequired,
   resizeObj: React.PropTypes.object.isRequired,

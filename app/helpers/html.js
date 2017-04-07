@@ -5,13 +5,13 @@ export const getEventEntryDOM = (id) => {
   return eventEntryDOM;
 };
 
-export const generateObjectId = (eventObj) => {
-  const params = [eventObj.id, eventObj.startTime, eventObj.endTime, eventObj.day, eventObj.name];
-  const noSpaces = params.map(item => item.toString().replace(' ', ''));
-  return noSpaces.join('');
-};
+export const genUniqueIdentifier = (args) => (args.join(''));
 
-export const generateObjectKey = (args) => (args.join(" "));
+export const genObjectId = (eventObj) => {
+  const params = [eventObj.id, eventObj.date.toISOString()];
+  const noSpaces = params.map(item => item.toString().replace(' ', ''));
+  return genUniqueIdentifier(noSpaces);
+};
 
 // The jankiest of methods to make the month bold and the year normal
 // Could consider forking the Airbnb react dates and managing own version
@@ -49,7 +49,7 @@ export const togglePointerEvents = (eventsMap, eventsOn) => {
   const indices = Object.keys(eventsMap);
   for (const index of indices) {
     const eventObj = eventsMap[index];
-    const id = generateObjectId(eventObj);
+    const id = genObjectId(eventObj);
     const eventEntryDOM = getEventEntryDOM(id);
     $(eventEntryDOM).css("pointer-events", cssValue);
   }

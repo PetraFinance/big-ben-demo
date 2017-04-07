@@ -57,7 +57,7 @@ class CalendarCategory extends React.Component {
 
     const calendarEntries = calendarNames.map((calendarName, i) => (
       <Calendar
-        key={i}
+        key={calendarName}
         calendarName={calendarName}
         category={category}
         color={calendars[calendarName].color}

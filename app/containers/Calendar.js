@@ -10,14 +10,12 @@ const mapStateToProps = (state) => {
   const editorObj = cpState.editorObj;
   const draggedObj = cpState.draggedObj;
   const resizeObj = cpState.resizeObj;
-  const nextAvaliableId = cpState.nextAvaliableId;
   return {
     resizeObj,
     draggedObj,
     editorObj,
     calendarMap,
     eventsMap,
-    nextAvaliableId,
     activeDate,
   };
 };
