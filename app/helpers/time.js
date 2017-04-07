@@ -1,12 +1,36 @@
 import moment from 'moment';
 
-export const getWeekStartFromDate = (date) => {
+/**
+ * Checks if two dates are in the same week
+ * param {momentObj} a
+ * param {momentObj} b
+ * return {boolean} true if happen in the same week
+ */
+export const sameWeek = (a, b) => {
+  const start = getWeekStartDate(b);
+  const end  = getWeekEndDate(b);
+  return a.isBetween(start, end, 'month', '[]') &&
+  a.isBetween(start, end, 'day', '[]') &&
+  a.isBetween(start, end, 'year', '[]');
+};
+
+/**
+ * Gets the first day of the week (Sunday) given a date
+ * param {momentObj} date
+ * return {momentObj} first day of the week
+ */
+export const getWeekStartDate = (date) => {
   const dow = date.day();
   const startDate = date.clone().subtract(dow, 'days');
   return startDate;
 };
 
-export const getWeekEndFromDate = (date) => {
+/**
+ * Gets the last day of the week (Saturday) given a date
+ * param {momentObj} date
+ * return {momentObj} last day of the week
+ */
+const getWeekEndDate = (date) => {
   let dow = date.day();
   // 6 because a week is 0-indexed
   dow = 6 - dow;
@@ -14,14 +38,25 @@ export const getWeekEndFromDate = (date) => {
   return endDate;
 };
 
-export const isDateBetween = (start, end, date) => {
-  return date.isBetween(start, end, 'month', '[]') &&
-  date.isBetween(start, end, 'day', '[]') &&
-  date.isBetween(start, end, 'year', '[]');
-};
 
-export const isNotSameDay = (a, b) => {
-  return !a.isSame(b, 'day') || !a.isSame(b, 'month') || !a.isSame(b, 'year');
+/**
+ * Checks if two events happen on the same day at the same time
+ * param {eventObj} a
+ * param {eventObj} b
+ * return {boolean} true if same day and time, else false
+ */
+export const isSameDayAndTime = (a, b) => {
+  const sameDay = isSameDay(a.date, b.date);
+  const x1 = a.startValue;
+  const x2 = a.endValue;
+  const y1 = b.startValue;
+  const y2 = b.endValue;
+  const sameTime = (x1 <= y2 && y1 <= x2);
+  return sameTime && sameDay;
+}
+
+export const isSameDay = (a, b) => {
+  return a.isSame(b, 'day') || a.isSame(b, 'month') || a.isSame(b, 'year');
 }
 
 export const isToday = (a) => {
@@ -32,9 +67,9 @@ export const isToday = (a) => {
 export const genTimesList = () => {
   const list = [];
   for (let i = 7; i <= 17; i += 0.5) {
-    const time = computeTimeFromValue(i);
+    const time = computeTimeFromInt(i);
     const nextValue = i + 0.5;
-    const nextTime = computeTimeFromValue(nextValue);
+    const nextTime = computeTimeFromInt(nextValue);
     const timeObj = {
       time,
       value: i,
@@ -46,7 +81,7 @@ export const genTimesList = () => {
   return list;
 };
 
-export const computeTimeFromValue = (timeValue) => {
+export const computeTimeFromInt = (timeValue) => {
   let suffix;
   if (timeValue < 12) {
     suffix = ' AM';

@@ -61,3 +61,10 @@ export function toggleCalendarVisibility(category, calendar) {
     calendar,
   }
 }
+
+export const TOGGLE_CALENDAR_MODE = Symbol('TOGGLE_CALENDAR_MODE');
+export function toggleCalendarMode() {
+  return {
+    type: TOGGLE_CALENDAR_MODE,
+  }
+}

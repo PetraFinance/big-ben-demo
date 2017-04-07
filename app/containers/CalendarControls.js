@@ -1,14 +1,14 @@
 import { connect } from 'react-redux';
-import { setActiveDate, editorOff } from '../actions/calendar';
+import { setActiveDate, editorOff, toggleCalendarMode } from '../actions/calendar';
 import CalendarControls from '../components/CalendarControls';
 
 const mapStateToProps = (state) => {
   const cpState = state.calendar.toJS();
   const activeDate = cpState.activeDate;
-  const calendarViewType = cpState.calendarViewType;
+  const calendarViewMode = cpState.calendarViewMode;
   return {
     activeDate,
-    calendarViewType,
+    calendarViewMode,
   };
 };
 
@@ -18,6 +18,9 @@ const mapDispatchToProps = (dispatch) => ({
   },
   editorOff: () => {
     dispatch(editorOff());
+  },
+  toggleCalendarMode: () => {
+    dispatch(toggleCalendarMode());
   },
 });
 

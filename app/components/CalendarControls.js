@@ -1,5 +1,6 @@
 import React from 'react';
 import moment from 'moment';
+import { sameWeek } from '../helpers/time';
 
 export default class CalendarControls extends React.Component {
   constructor(props) {
@@ -11,18 +12,23 @@ export default class CalendarControls extends React.Component {
   handleTodayButton() {
     const today = moment();
     this.props.setActiveDate(today);
+    if (!sameWeek(today, this.props.activeDate)) {
+      this.props.editorOff();
+    }
   }
 
   handleAdvanceButton() {
     const activeDate = this.props.activeDate.clone();
     const advanced = activeDate.add(7, 'days');
     this.props.setActiveDate(advanced);
+    this.props.editorOff();
   }
 
   handleBackButton() {
     const activeDate = this.props.activeDate.clone();
     const back = activeDate.subtract(7, 'days');
     this.props.setActiveDate(back);
+    this.props.editorOff();
   }
 
   render() {
@@ -55,10 +61,10 @@ export default class CalendarControls extends React.Component {
 
     const month = this.props.activeDate.format('MMMM');
     const year = this.props.activeDate.format('YYYY');
-    const format = this.props.calendarViewType;
+    const viewMode = this.props.calendarViewMode;
 
     let weekMonthButtons = ["select-week-active", "select-month"];
-    if (format === "month") {
+    if (viewMode === "month") {
       weekMonthButtons = ["select-week", "select-month-active"];
     }
 
@@ -76,10 +82,16 @@ export default class CalendarControls extends React.Component {
         </div>
         <div className="right-side">
           <div className="week-month-buttons">
-            <div className={weekMonthButtons[0]}>
+            <div
+              onClick={() => this.props.toggleCalendarMode()}
+              className={weekMonthButtons[0]}
+            >
               <span>Week</span>
             </div>
-            <div className={weekMonthButtons[1]}>
+            <div
+              onClick={() => this.props.toggleCalendarMode()}
+              className={weekMonthButtons[1]}
+            >
               <span>Month</span>
             </div>
           </div>

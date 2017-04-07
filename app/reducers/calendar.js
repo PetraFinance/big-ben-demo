@@ -4,7 +4,7 @@ import moment from 'moment';
 
 const defaultState = Immutable.fromJS({
   activeDate: moment(),
-  calendarViewType: "week",
+  calendarViewMode: "week",
   draggedObj: {},
   resizeObj: {},
   editorObj: {
@@ -92,6 +92,13 @@ export default function (state = defaultState, action) {
     case ActionType.TOGGLE_CALENDAR_VISIBILITY:
       const visible = state.getIn(['calendarMap', action.category, action.calendar, 'visible']);
       return state.setIn(['calendarMap', action.category, action.calendar, 'visible'], !visible);
+    case ActionType.TOGGLE_CALENDAR_MODE:
+      const viewMode = state.get('calendarViewMode');
+      let updatedViewMode = "week";
+      if (viewMode === updatedViewMode) {
+        updatedViewMode = "month";
+      }
+      return state.set('calendarViewMode', updatedViewMode);
     default:
       return state;
   }

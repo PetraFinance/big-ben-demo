@@ -10,6 +10,7 @@ const mapStateToProps = (state) => {
   const editorObj = cpState.editorObj;
   const draggedObj = cpState.draggedObj;
   const resizeObj = cpState.resizeObj;
+  const calendarViewMode = cpState.calendarViewMode;
   return {
     resizeObj,
     draggedObj,
@@ -17,6 +18,7 @@ const mapStateToProps = (state) => {
     calendarMap,
     eventsMap,
     activeDate,
+    calendarViewMode,
   };
 };
 

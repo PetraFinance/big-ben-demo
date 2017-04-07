@@ -18,26 +18,27 @@ export default class Editor extends React.Component {
   updateEventObj(field, evt) {
     const editorObjId = this.props.editorObj.id;
     const eventObj = this.props.eventsMap[editorObjId];
-    if (field === 'calendar') {
-      const calendarInput = $(evt.target).text();
-      let eventObjCategory = '';
-      const calendarMap = this.props.calendarMap;
-      const categories = Object.keys(calendarMap);
-      for (const category of categories) {
-        const calendars = Object.keys(calendarMap[category]);
-        for (const calendar of calendars) {
-          if (calendar === calendarInput) {
-            eventObjCategory = category;
+    switch(field) {
+      case 'calendar':
+        const calendarInput = $(evt.target).text();
+        let eventObjCategory = '';
+        const calendarMap = this.props.calendarMap;
+        const categories = Object.keys(calendarMap);
+        for (const category of categories) {
+          const calendars = Object.keys(calendarMap[category]);
+          for (const calendar of calendars) {
+            if (calendar === calendarInput) {
+              eventObjCategory = category;
+            }
           }
         }
-      }
-      eventObj[field] = calendarInput;
-      eventObj["category"] = eventObjCategory;
-      this.props.updateEvent(eventObj);
-      this.setEditorField('');
-    } else {
-      eventObj[field] = evt.target.value;
-      this.props.updateEvent(eventObj);
+        eventObj[field] = calendarInput;
+        eventObj["category"] = eventObjCategory;
+        this.props.updateEvent(eventObj);
+        this.setEditorField('');
+      default:
+        eventObj[field] = evt.target.value;
+        this.props.updateEvent(eventObj);
     }
   }
 

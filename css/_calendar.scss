@@ -1,7 +1,16 @@
-.calendar-container {
+.calendar-container-week {
   display: flex;
   height: calc(100% - 55px);
   flex-flow: column;
+}
+
+.calendar-container-month {
+  display: flex;
+  height: calc(100% - 55px);
+  justify-content: center;
+  align-items: center;
+  font-family: $font-stack;
+  font-weight: bold;
 }
 
 .column-headers {

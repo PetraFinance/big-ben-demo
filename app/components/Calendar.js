@@ -4,7 +4,7 @@ import Editor from '../containers/Editor';
 import Event from '../components/Event';
 import { togglePointerEvents, genUniqueIdentifier } from '../helpers/html';
 import { isEmpty } from '../helpers/objects';
-import { genTimesList, computeTimeFromValue, getWeekStartFromDate, getWeekEndFromDate, isDateBetween } from '../helpers/time';
+import { genTimesList, computeTimeFromInt, getWeekStartDate, sameWeek } from '../helpers/time';
 
 export default class Calendar extends React.Component {
 
@@ -58,7 +58,7 @@ export default class Calendar extends React.Component {
         location: resizeObj.location,
         calendar: resizeObj.calendar,
         startTime: resizeObj.startTime,
-        endTime: computeTimeFromValue(endValue),
+        endTime: computeTimeFromInt(endValue),
         startValue: updatedStartValue,
         endValue,
       };
@@ -73,8 +73,8 @@ export default class Calendar extends React.Component {
         category: draggedObj.category,
         location: draggedObj.location,
         calendar: draggedObj.calendar,
-        startTime: computeTimeFromValue(startValue),
-        endTime: computeTimeFromValue(endValue),
+        startTime: computeTimeFromInt(startValue),
+        endTime: computeTimeFromInt(endValue),
         startValue,
         endValue,
         day,
@@ -91,8 +91,8 @@ export default class Calendar extends React.Component {
     }
     // create a new event
     const endValue = startValue + 0.5;
-    const startTime = computeTimeFromValue(startValue);
-    const endTime = computeTimeFromValue(endValue);
+    const startTime = computeTimeFromInt(startValue);
+    const endTime = computeTimeFromInt(endValue);
     const name = 'New Event';
     const category = 'Google';
     const calendar = 'Innovative Design';
@@ -158,7 +158,7 @@ export default class Calendar extends React.Component {
 
     let activeDate = this.props.activeDate.clone();
     const activeDay = activeDate.format('dddd');
-    let dateObj = getWeekStartFromDate(activeDate);
+    let dateObj = getWeekStartDate(activeDate);
 
     const momentDateObjects = [];
     const formattedDateObjects = [];
@@ -239,21 +239,22 @@ export default class Calendar extends React.Component {
       );
     });
 
-    const eventsMap = this.props.eventsMap;
-    const packagedEvents = Object.entries(eventsMap);
-
     activeDate = this.props.activeDate.clone();
-    const weekStart = getWeekStartFromDate(activeDate);
-    const weekEnd = getWeekEndFromDate(activeDate);
 
-    const filteredPackagedEvents = packagedEvents.filter((packagedEvent) => {
-      const eventObj = packagedEvent[1];
+    const eventsMap = this.props.eventsMap;
+    const idList = Object.keys(eventsMap);
+    const eventsList = [];
+
+    for (const id of idList) {
+      const eventObj = eventsMap[id];
       const eventDate = eventObj.date;
-      return isDateBetween(weekStart, weekEnd, eventDate);
-    });
+      if (!sameWeek(eventDate, activeDate)) {
+        continue;
+      }
+      eventsList.push(eventObj);
+    }
 
-    const eventEntries = filteredPackagedEvents.map((packagedEvent) => {
-      const eventObj = packagedEvent[1];
+    const eventEntries = eventsList.map((eventObj) => {
       const calendarMap = this.props.calendarMap;
       const visible = calendarMap[eventObj.category][eventObj.calendar].visible;
       if (!visible) {
@@ -267,6 +268,7 @@ export default class Calendar extends React.Component {
       return (
         <Event
           key={genUniqueIdentifier([eventObj.id, eventObj.name])}
+          overlappingEvents={0}
           calendarMap={calendarMap}
           handleEventClick={this.handleEventClick}
           handleEventDrag={this.handleEventDrag}
@@ -276,8 +278,8 @@ export default class Calendar extends React.Component {
       );
     });
 
-    return (
-      <div className="calendar-container" >
+    const weekViewMode = (
+      <div className="calendar-container-week" >
         <div className="column-headers">
           <div className="time" />
           {rowHeaders}
@@ -304,6 +306,18 @@ export default class Calendar extends React.Component {
         <div className="integrations-calendar">
           {integrations}
         </div>
+      </div>
+    );
+
+    const monthViewMode = (
+      <div className="calendar-container-month">
+        <p>Coming soon.</p>
+      </div>
+    );
+
+    return (
+      <div style={{'height': '100%', 'width': '100%'}}>
+        { this.props.calendarViewMode === "week" ? weekViewMode : monthViewMode }
       </div>
     );
   }
