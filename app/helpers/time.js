@@ -55,18 +55,33 @@ export const isSameDayAndTime = (a, b) => {
   return sameTime && sameDay;
 }
 
+/**
+ * Checks if two dates are the same day, time is disregarded
+ * param {momentObj} a
+ * param {momentObj} b
+ * return {boolean} true if the same day
+ */
 export const isSameDay = (a, b) => {
-  return a.isSame(b, 'day') || a.isSame(b, 'month') || a.isSame(b, 'year');
+  return a.isSame(b, 'day') && a.isSame(b, 'month') && a.isSame(b, 'year');
 }
 
+/**
+ * Checks if the date passed in is today
+ * param {momentObj} a
+ * return {boolean} true if the date is today
+ */
 export const isToday = (a) => {
   const today = moment();
-  return a.isSame(today, 'day') && a.isSame(today, 'month') && a.isSame(today, 'year');
+  return isSameDay(a, today);
 }
 
+/**
+ * Creates a list of different times during the day
+ * return {list[string]} list of times of the day as strings
+ */
 export const genTimesList = () => {
   const list = [];
-  for (let i = 7; i <= 17; i += 0.5) {
+  for (let i = 0; i <= 23; i += 0.5) {
     const time = computeTimeFromInt(i);
     const nextValue = i + 0.5;
     const nextTime = computeTimeFromInt(nextValue);
@@ -81,6 +96,10 @@ export const genTimesList = () => {
   return list;
 };
 
+/**
+ * Parses an integer and gives the corresponding time of day
+ * return {String} the time of day
+ */
 export const computeTimeFromInt = (timeValue) => {
   let suffix;
   if (timeValue < 12) {

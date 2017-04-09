@@ -19,7 +19,7 @@ export const getEventPosition = (eventObj) => {
   // Calculate the left position
   const dayColumnWidthPercent = 13;
   const timeColumnWidthPercent = '9% ';
-  const day = eventObj.day;
+  const day = eventObj.date.format('dddd');
   multiplier = moment.weekdays().indexOf(day);
   offset = '2px';
   if (day === 'Sunday' || day === 'Tuesday') {
@@ -31,7 +31,7 @@ export const getEventPosition = (eventObj) => {
 
   // Calculate the top position
   const halfHourHeight = 36;
-  const calendarStartValue = 7; // currently starts at 7AM
+  const calendarStartValue = 0;
   const startValue = eventObj.startValue;
   offset = '1px';
   multiplier = Math.abs(calendarStartValue - startValue) * 2;
@@ -61,7 +61,7 @@ export const getEventPosition = (eventObj) => {
 export const getEditorPosition = (eventObj) => {
   const eventPosition = getEventPosition(eventObj);
   const height = '215px';
-  const day = eventObj.day;
+  const day = eventObj.date.format('dddd');
 
   let left;
   switch (day) {

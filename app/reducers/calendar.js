@@ -2,6 +2,8 @@ import * as ActionType from '../actions/calendar';
 import Immutable from 'immutable';
 import moment from 'moment';
 
+// the startTime and endTime keys in eventObjs are slightly redundant,
+// can be removed at some point
 const defaultState = Immutable.fromJS({
   activeDate: moment(),
   calendarViewMode: "week",
@@ -15,14 +17,13 @@ const defaultState = Immutable.fromJS({
       id: '0',
       name: 'Innod Meeting',
       category: 'Google',
-      calendar: 'Innovative Design',
+      calendar: 'School',
       location: 'Dwinelle 140',
       startTime: '8 AM',
       endTime: '10 AM',
       startValue: 8,
       endValue: 10,
-      day: 'Wednesday',
-      date: moment('2017-04-14'),
+      date: moment('2017-04-15'),
     },
     '1': {
       id: '1',
@@ -34,7 +35,6 @@ const defaultState = Immutable.fromJS({
       endTime: '1 PM',
       startValue: 9,
       endValue: 13,
-      day: 'Wednesday',
       date: moment(),
     },
   },

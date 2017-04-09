@@ -1,10 +1,12 @@
 import React from 'react';
 import moment from 'moment';
+import _ from 'lodash';
 import Editor from '../containers/Editor';
 import Event from '../components/Event';
-import { togglePointerEvents, genUniqueIdentifier } from '../helpers/html';
+import { togglePointerEvents, genUniqueIdentifier, genObjectId } from '../helpers/html';
 import { isEmpty } from '../helpers/objects';
 import { genTimesList, computeTimeFromInt, getWeekStartDate, sameWeek } from '../helpers/time';
+import { getEventPosition } from '../helpers/position';
 
 export default class Calendar extends React.Component {
 
@@ -20,6 +22,12 @@ export default class Calendar extends React.Component {
     this.handleEventResize = this.handleEventResize.bind(this);
     this.handleEventClick = this.handleEventClick.bind(this);
     this.handleEventDrag = this.handleEventDrag.bind(this);
+  }
+
+  componentDidMount() {
+    const calendar = document.getElementById('main-calendar-week');
+    const earliestEvent = document.getElementById('calendar-week-scroll-anchor');
+    calendar.scrollTop = earliestEvent.offsetTop - 35;
   }
 
   handleEventResize(eventObj, evt) {
@@ -42,6 +50,7 @@ export default class Calendar extends React.Component {
   }
 
   handleCalMouseEnter(day, date, startValue) {
+    // handle the logic if an event is being resized
     const resizeObj = this.props.resizeObj;
     if (!isEmpty(resizeObj)) {
       const endValue = startValue + 0.5;
@@ -51,7 +60,6 @@ export default class Calendar extends React.Component {
       }
       const eventObj = {
         id: resizeObj.id,
-        day: resizeObj.day,
         date: resizeObj.date,
         name: resizeObj.name,
         category: resizeObj.category,
@@ -62,24 +70,55 @@ export default class Calendar extends React.Component {
         startValue: updatedStartValue,
         endValue,
       };
+      this.props.setResizeObj(resizeObj);
       this.props.updateEvent(eventObj);
     }
+
+    // handle the logic if an event is being dragged
     const draggedObj = this.props.draggedObj;
     if (!isEmpty(draggedObj)) {
-      const endValue = startValue + Math.abs(draggedObj.startValue - draggedObj.endValue);
+
+      const calendar = document.getElementById('main-calendar-week');
+      const eventObjDOM = document.getElementById(genObjectId(draggedObj));
+      // check if you need to scroll the container up
+      const eventDistToTop = eventObjDOM.offsetTop;
+      const calendarDistToTop = calendar.scrollTop;
+      const distanceToTop = eventDistToTop - calendarDistToTop;
+      const timeAdjust = draggedObj.startValue - startValue;
+      if (distanceToTop < 70 && (timeAdjust === 0.5 || timeAdjust === 1)) {
+        calendar.scrollTop = calendar.scrollTop - 37;
+      }
+
+      // check if you need to scroll the container down
+      const visibleCalendarHeight = 18 * 37;
+      const visibleCalendarBottomPosition = calendarDistToTop + visibleCalendarHeight;
+      const eventHeight = eventObjDOM.offsetHeight;
+      const eventBottomPosition = eventDistToTop + eventHeight;
+      const distanceToBottom = visibleCalendarBottomPosition - eventBottomPosition;
+      if (distanceToBottom < 70 && (timeAdjust === -0.5 || timeAdjust === -1)) {
+        calendar.scrollTop = calendar.scrollTop + 74;
+      }
+
+      let checkedStartValue = startValue;
+      let endValue = startValue + Math.abs(draggedObj.startValue - draggedObj.endValue);
+      if (endValue > 24) {
+        checkedStartValue = draggedObj.startValue;
+        endValue = draggedObj.endValue;
+      }
+
       const eventObj = {
         id: draggedObj.id,
         name: draggedObj.name,
         category: draggedObj.category,
         location: draggedObj.location,
         calendar: draggedObj.calendar,
-        startTime: computeTimeFromInt(startValue),
+        startTime: computeTimeFromInt(checkedStartValue),
         endTime: computeTimeFromInt(endValue),
-        startValue,
+        startValue: checkedStartValue,
         endValue,
-        day,
         date,
       };
+      this.props.setDraggedObj(eventObj);
       this.props.updateEvent(eventObj);
     }
   }
@@ -87,6 +126,14 @@ export default class Calendar extends React.Component {
   handleCalClick(day, date, startValue) {
     if (this.props.editorObj.id !== '-1') {
       this.props.editorOff();
+      return;
+    }
+    if (!isEmpty(this.props.draggedObj)) {
+      this.props.setDraggedObj({});
+      return;
+    }
+    if (!isEmpty(this.props.resizeObj)) {
+      this.props.setResizeObj({});
       return;
     }
     // create a new event
@@ -102,7 +149,6 @@ export default class Calendar extends React.Component {
     const eventObj = {
       id,
       name,
-      day,
       date,
       category,
       calendar,
@@ -243,7 +289,7 @@ export default class Calendar extends React.Component {
 
     const eventsMap = this.props.eventsMap;
     const idList = Object.keys(eventsMap);
-    const eventsList = [];
+    let eventsList = [];
 
     for (const id of idList) {
       const eventObj = eventsMap[id];
@@ -254,16 +300,29 @@ export default class Calendar extends React.Component {
       eventsList.push(eventObj);
     }
 
+    eventsList = _.sortBy(eventsList, ['startValue']);
+
+    let scrollAnchor;
     const eventEntries = eventsList.map((eventObj) => {
       const calendarMap = this.props.calendarMap;
-      console.log(calendarMap);
-      console.log(eventObj);
       const visible = calendarMap[eventObj.category][eventObj.calendar].visible;
       if (!visible) {
         return (
           <div
             key={genUniqueIdentifier([eventObj.id, eventObj.name])}
             className="hidden-event-placeholder"
+          />
+        );
+      }
+      if (!scrollAnchor) {
+        const anchorPosition = getEventPosition(eventObj);
+
+        scrollAnchor = (
+          <div
+            key="anchor"
+            id="calendar-week-scroll-anchor"
+            className="calendar-week-scroll-anchor"
+            style={anchorPosition}
           />
         );
       }
@@ -278,6 +337,7 @@ export default class Calendar extends React.Component {
         />
       );
     });
+    eventEntries.push(scrollAnchor);
 
     const weekViewMode = (
       <div className="calendar-container-week" >
@@ -298,6 +358,7 @@ export default class Calendar extends React.Component {
           <div className="item" />
         </div>
         <div
+          id="main-calendar-week"
           className="main-calendar"
         >
           {calendarRows}

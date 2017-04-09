@@ -1,7 +1,8 @@
 import $ from 'jquery';
 
-export const getEventEntryDOM = (id) => {
-  const eventEntryDOM = document.getElementById(id.toString());
+export const getEventEntryDOM = (eventObj) => {
+  const id = genObjectId(eventObj);
+  const eventEntryDOM = document.getElementById(id);
   return eventEntryDOM;
 };
 
@@ -13,8 +14,7 @@ export const genObjectId = (eventObj) => {
   return genUniqueIdentifier(noSpaces);
 };
 
-// The jankiest of methods to make the month bold and the year normal
-// Could consider forking the Airbnb react dates and managing own version
+// The jankiest of methods to make the month bold and the year un-bold in the datepicker
 export const formatDatePickerMonth = (monthDOM) => {
   const content = monthDOM.innerHTML;
   if (content.includes('modified')) {
@@ -49,8 +49,7 @@ export const togglePointerEvents = (eventsMap, eventsOn) => {
   const indices = Object.keys(eventsMap);
   for (const index of indices) {
     const eventObj = eventsMap[index];
-    const id = genObjectId(eventObj);
-    const eventEntryDOM = getEventEntryDOM(id);
+    const eventEntryDOM = getEventEntryDOM(eventObj);
     $(eventEntryDOM).css("pointer-events", cssValue);
   }
 };
