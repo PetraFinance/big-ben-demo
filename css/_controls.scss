@@ -1,5 +1,5 @@
 .cal-controls-container {
-  height: $header-container-height;
+  height: $controls-container-height;
   border-bottom: 1px solid $grey-border;
   display: flex;
   flex-direction: row;
@@ -7,10 +7,8 @@
   box-shadow: $box-shadow;
 }
 
-
 .left-side {
   padding-left: 1rem;
-
   flex: 1;
   display: flex;
   flex-direction: row;
@@ -18,12 +16,17 @@
   .month-year {
     padding: 0rem 1rem;
     font-size: 0.9rem;
+    .month {
+      font-weight: bold;
+    }
+    .year {
+      font-weight: normal;
+    }
   }
 }
 
 .right-side {
   padding-right: 1rem;
-
   flex: 1;
   display: flex;
   flex-direction: row;
@@ -54,10 +57,10 @@
       height: 10px;
     }
   }
-  .back, {
+  .back {
     border-right: none;
   }
-  .forward, {
+  .forward {
     border-left: none;
   }
 }
@@ -69,7 +72,7 @@
   flex-direction: row;
   align-items: center;
   .select-button {
-    padding: 0.15rem 0.75rem 0.35rem 0.75rem;
+    padding: 0.15rem 0.2rem 0.35rem 0.2rem;
     width: 65px;
     text-align: center;
     span {

@@ -13,20 +13,18 @@
   font-weight: bold;
 }
 
-.column-headers {
+.calendar-column-headers {
   display: flex;
   flex-direction: row;
-  padding: 0.5rem 0rem;
+  padding: 1rem 0rem 0rem;
   border-bottom: 1px solid $grey-border;
-
-  flex: 0 0 35px;
+  flex: 0 0 25px;
   align-items: center;
-  .item {
+  .column-header-item {
     display: flex;
-    width: 13%;
+    width: $column-width;
     font-size: 0.85rem;
     cursor: pointer;
-
     justify-content: center;
     align-items: center;
   }
@@ -36,32 +34,39 @@
   }
 }
 
-.time {
-  width: 9%;
+.time-column {
+  width: 70px;
   height: 35px;
   color: #37474F;
-  font-size: 0.8rem;
+  font-size: 10px;
   opacity: 0.6;
 }
 
 .all-day-events {
   display: flex;
-  flex-direction: row;
+  flex: 1 0 auto;
   border-bottom: 1px solid $grey-border;
   background-color: white;
   box-shadow: $box-shadow;
   z-index: 5;
-  flex: 0 0 auto;
-  align-items: center;
-
-  .time {
+  // height: 100%;
+  // max-height: 70px;
+  // overflow: auto;
+  // &::-webkit-scrollbar {
+  //   display: none;
+  // }
+  .row-label {
     display: flex;
     justify-content: center;
     align-items: center;
+    span {
+      position: fixed;
+    }
   }
-  .item {
-    width: 13%;
-    height: 35px;
+  .all-day-item {
+    display: flex;
+    flex-direction: column;
+    width: $column-width;
     border-left: 1px solid $grey-border;
   }
 }
@@ -80,13 +85,12 @@
   &::-webkit-scrollbar {
     display: none;
   }
-
   .row {
     display: flex;
     flex-direction: row;
     height: 100%;
     align-items: center;
-    .time {
+    .time-column {
       display: flex;
       align-items: flex-start;
       justify-content: flex-end;
@@ -96,13 +100,13 @@
       }
     }
     .item {
-      width: 13%;
+      width: $column-width;
       height: 35px;
       border-bottom: 1px solid $light-grey-border;
       border-left: 1px solid $grey-border;
     }
     .active {
-      background-color: #E1F5FE !important;
+      background-color: $column-highlight !important;
     }
   }
 }
@@ -110,25 +114,25 @@
 .integrations-calendar {
   overflow-y: auto;
   flex: 0 0 auto;
-  .row {
+  .integrations-row {
     display: flex;
     flex-direction: row;
     height: 100%;
 
     align-items: center;
-    .plugin {
-      display: flex;
-      width: 9%;
-      height: 45px;
+    .integration-name {
+      width: 70px;
+      height: 35px;
       color: #37474F;
       font-size: 0.8rem;
       opacity: 0.6;
 
+      display: flex;
       justify-content: center;
       align-items: center;
     }
-    .item {
-      width: 13%;
+    .integration-item {
+      width: $column-width;
       height: 45px;
       border-bottom: 1px solid $light-grey-border;
       border-left: 1px solid $grey-border;

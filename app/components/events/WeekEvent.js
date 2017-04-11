@@ -1,8 +1,11 @@
 import React from 'react';
-import { getEventPosition } from '../helpers/position';
-import { genObjectId } from '../helpers/html';
+import { getEventPosition } from '../../helpers/position';
+import { genObjectId } from '../../helpers/html';
 
-export default class Event extends React.Component {
+export default class WeekEvent extends React.Component {
+  constructor(props) {
+    super(props);
+  }
 
   render() {
     const eventObj = this.props.eventObj;
@@ -76,7 +79,7 @@ export default class Event extends React.Component {
   }
 }
 
-Event.propTypes = {
+WeekEvent.propTypes = {
   calendarMap: React.PropTypes.object.isRequired,
   eventObj: React.PropTypes.object.isRequired,
   handleEventDrag: React.PropTypes.func.isRequired,

@@ -12,42 +12,41 @@ const wrapInCalc = (args) => {
   return 'calc(' + args.join(' + ') + ')';
 }
 
+const makeNegative = (value) => {
+  return '-' + value;
+}  // Calculate the top position
+
+
 export const getEventPosition = (eventObj) => {
+  const TIME_COLUMN_WIDTH = '70px';
+  const DAY_COLUMN_WIDTH = '((100% - 70px) / 7)';
+  const HALF_HOUR_HEIGHT = 36;
+
   let style;
   let offset;
   let multiplier;
-  // Calculate the left position
-  const dayColumnWidthPercent = 13;
-  const timeColumnWidthPercent = '9% ';
+
   const day = eventObj.date.format('dddd');
   multiplier = moment.weekdays().indexOf(day);
   offset = '2px';
-  if (day === 'Sunday' || day === 'Tuesday') {
-    offset = '1px';
-  }
-
-  style = [timeColumnWidthPercent, convertToPercent(multiplier * dayColumnWidthPercent), offset];
+  style = [TIME_COLUMN_WIDTH, multiplier.toString() + ' * ' + DAY_COLUMN_WIDTH, offset];
   const left = wrapInCalc(style);
 
-  // Calculate the top position
   const halfHourHeight = 36;
   const calendarStartValue = 0;
   const startValue = eventObj.startValue;
   offset = '1px';
   multiplier = Math.abs(calendarStartValue - startValue) * 2;
-
-  style = [convertToPx(halfHourHeight * multiplier), offset];
+  style = [convertToPx(HALF_HOUR_HEIGHT * multiplier), offset];
   const top = wrapInCalc(style);
 
-  // Calculate height
   const endValue = eventObj.endValue;
   multiplier = Math.abs(endValue - startValue) * 2;
   if (multiplier < 1) {
     multiplier = 1;
   }
   offset = '-1px';
-
-  style = [convertToPx(halfHourHeight * multiplier), offset];
+  style = [convertToPx(HALF_HOUR_HEIGHT * multiplier), offset];
   const height = wrapInCalc(style);
 
   const eventPosition = {
@@ -60,31 +59,35 @@ export const getEventPosition = (eventObj) => {
 
 export const getEditorPosition = (eventObj) => {
   const eventPosition = getEventPosition(eventObj);
-  const height = '215px';
   const day = eventObj.date.format('dddd');
 
-  let left;
+  const height = '215px';
+  const TIME_COLUMN_WIDTH = '70px';
+  const EVENT_EDITOR_WIDTH = '300px';
+  const DAY_COLUMN_WIDTH = '((100% - 70px) / 7)';
+
+  let left = '0px';
   switch (day) {
     case 'Sunday':
-      left = convertToPercent(23);
+      left = wrapInCalc([TIME_COLUMN_WIDTH, '1 * ' + DAY_COLUMN_WIDTH]);
       break;
     case 'Monday':
-      left = convertToPercent(36);
+      left = wrapInCalc([TIME_COLUMN_WIDTH, '2 * ' + DAY_COLUMN_WIDTH]);
       break;
     case 'Tuesday':
-      left = convertToPercent(49);
+      left = wrapInCalc([TIME_COLUMN_WIDTH, '3 * ' + DAY_COLUMN_WIDTH]);
       break;
     case 'Wednesday':
-      left = convertToPercent(29);
+      left = wrapInCalc([TIME_COLUMN_WIDTH, '4 * ' + DAY_COLUMN_WIDTH]);
       break;
     case 'Thursday':
-      left = convertToPercent(42);
+      left = wrapInCalc(['99.5%', makeNegative(EVENT_EDITOR_WIDTH), '-3 * ' + DAY_COLUMN_WIDTH]);
       break;
     case 'Friday':
-      left = convertToPercent(55);
+      left = wrapInCalc(['99.5%', makeNegative(EVENT_EDITOR_WIDTH), '-2 * ' + DAY_COLUMN_WIDTH]);
       break;
     case 'Saturday':
-      left = convertToPercent(68);
+      left = wrapInCalc(['99.5%', makeNegative(EVENT_EDITOR_WIDTH), '-1 * ' + DAY_COLUMN_WIDTH]);
       break;
   }
 

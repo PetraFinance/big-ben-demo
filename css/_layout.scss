@@ -18,16 +18,15 @@ html {
 .side-panel {
   height: 100vh;
   background-color: $light-grey;
-
-  flex: 0 0 215px;
+  width: $side-panel-width;
 }
 
 .side-panel-header {
   background-color: $white;
   border-bottom: 1px solid $grey-border;
-  height: $header-container-height;
+  height: $controls-container-height;
   position: relative;
-  z-index: 10;
+  z-index: 5;
   box-shadow: $box-shadow;
 }
 
@@ -35,6 +34,5 @@ html {
   height: 100vh;
   border-left: 1px solid $grey-border;
   background-color: $white;
-
   flex: 1;
 }

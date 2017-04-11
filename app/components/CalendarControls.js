@@ -77,7 +77,7 @@ export default class CalendarControls extends React.Component {
             {advanceButton}
           </div>
           <div className="month-year">
-            <span className="bold">{month} </span><span>{year}</span>
+            <span className="month">{month} </span><span className="year">{year}</span>
           </div>
         </div>
         <div className="right-side">

@@ -82,12 +82,12 @@ class CalendarCategory extends React.Component {
       <div style={calendarList} className="calendar-list">
         <div className="calendar-list-header">
           <span>{category}</span>
-          <div
+          <img
             className="arrow-img"
             onClick={() => this.toggleCollapse()}
-          >
-            <img style={arrowStyle} src={"../../assets/grey-down-arrow.png"} />
-          </div>
+            style={arrowStyle}
+            src={"../../assets/grey-down-arrow.png"}
+          />
         </div>
         <div style={calendarListItems} className="calendar-list-items">
           {calendarEntries}

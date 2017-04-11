@@ -32,7 +32,6 @@ export const getWeekStartDate = (date) => {
  */
 const getWeekEndDate = (date) => {
   let dow = date.day();
-  // 6 because a week is 0-indexed
   dow = 6 - dow;
   const endDate = date.clone().add(dow, 'days');
   return endDate;
@@ -79,7 +78,7 @@ export const isToday = (a) => {
  * Creates a list of different times during the day
  * return {list[string]} list of times of the day as strings
  */
-export const genTimesList = () => {
+export const genTimesOfDay = () => {
   const list = [];
   for (let i = 0; i <= 23; i += 0.5) {
     const time = computeTimeFromInt(i);

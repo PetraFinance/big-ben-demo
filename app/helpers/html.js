@@ -1,20 +1,38 @@
 import $ from 'jquery';
 
+/**
+ * Given an eventObj, gets the HTML if it exists DOM
+ * param {eventObj} eventObj
+ * return {html} the HTML representation of eventObj
+ */
 export const getEventEntryDOM = (eventObj) => {
   const id = genObjectId(eventObj);
   const eventEntryDOM = document.getElementById(id);
   return eventEntryDOM;
 };
 
+/**
+ * Joins a set of arguments
+ * param {array} args
+ * return {string} the arguments concatenated with no spaces
+ */
 export const genUniqueIdentifier = (args) => (args.join(''));
 
+/**
+ * Creates a unique identifer for an eventObj
+ * param {array} eventObj
+ * return {string} the uid for the eventObj
+ */
 export const genObjectId = (eventObj) => {
   const params = [eventObj.id, eventObj.date.toISOString()];
   const noSpaces = params.map(item => item.toString().replace(' ', ''));
   return genUniqueIdentifier(noSpaces);
 };
 
-// The jankiest of methods to make the month bold and the year un-bold in the datepicker
+/**
+ * Used to override the month style in the datepicker
+ * Uses a "modified" class to tell whether to modify the DOM or not
+ */
 export const formatDatePickerMonth = (monthDOM) => {
   const content = monthDOM.innerHTML;
   if (content.includes('modified')) {
@@ -41,6 +59,12 @@ export const formatDatePickerMonth = (monthDOM) => {
   return updatedHTML;
 };
 
+
+/**
+ * Toggles pointer events CSS for all events
+ * param {array[eventObj]} eventsMap
+ * param {boolean} eventsOn
+ */
 export const togglePointerEvents = (eventsMap, eventsOn) => {
   let cssValue = 'none';
   if (eventsOn) {
