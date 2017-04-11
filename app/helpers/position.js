@@ -61,7 +61,6 @@ export const getEditorPosition = (eventObj) => {
   const eventPosition = getEventPosition(eventObj);
   const day = eventObj.date.format('dddd');
 
-  const height = '215px';
   const TIME_COLUMN_WIDTH = '70px';
   const EVENT_EDITOR_WIDTH = '300px';
   const DAY_COLUMN_WIDTH = '((100% - 70px) / 7)';
@@ -100,7 +99,6 @@ export const getEditorPosition = (eventObj) => {
   const editorPosition = {
     top,
     left,
-    height,
   };
   return editorPosition;
 }

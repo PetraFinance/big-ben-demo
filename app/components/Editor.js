@@ -16,31 +16,7 @@ export default class Editor extends React.Component {
   }
 
   updateEventObj(field, evt) {
-    const editorObjId = this.props.editorObj.id;
-    const eventObj = this.props.eventsMap[editorObjId];
-    switch(field) {
-      case 'calendar':
-        const calendarInput = $(evt.target).text();
-        let eventObjCategory = '';
-        const calendarMap = this.props.calendarMap;
-        const categories = Object.keys(calendarMap);
-        for (const category of categories) {
-          const calendars = Object.keys(calendarMap[category]);
-          for (const calendar of calendars) {
-            if (calendar === calendarInput) {
-              eventObjCategory = category;
-            }
-          }
-        }
-        eventObj['calendar'] = calendarInput;
-        eventObj['category'] = eventObjCategory;
-        this.props.updateEvent(eventObj);
-        this.setEditorField('');
-        break;
-      default:
-        eventObj[field] = evt.target.value;
-        this.props.updateEvent(eventObj);
-    }
+    return true;
   }
 
   render () {
@@ -59,119 +35,48 @@ export default class Editor extends React.Component {
     const calendarMap = this.props.calendarMap;
     const editorColor = { backgroundColor: calendarMap[category][calendar].color };
 
-    const form = {
-      name: [(
-        <div
-          key={'name'}
-          className="name"
-          onClick={() => this.setEditorField('name')}
-        >
-          <span>{name}</span>
-        </div>
-      )],
-      location: [(
-        <div
-          key={'location'}
-          className="location"
-          onClick={() => this.setEditorField('location')}
-        >
-          <span className="value">{location}</span>
-        </div>
-      )],
-      calendar: [(
-        <div
-          key={'calendar'}
-          className="calendar"
-          onClick={() => this.setEditorField('calendar')}
-        >
-          <span className="value">{calendar}</span>
-          <img className="arrow-icon" src="./assets/grey-down-arrow.png" />
-        </div>
-      )],
-    };
-
-    const editableForm = {
-      name: [(
-        <input
-          autoFocus
-          key={'title'}
-          className="name-input"
-          onChange={(evt) => this.updateEventObj('name', evt)}
-          onBlur={() => this.setEditorField('')}
-          placeholder={name}
-        />
-      )],
-      location: [(
-        <input
-          autoFocus
-          key={'location'}
-          className="location"
-          onChange={(evt) => this.updateEventObj('location', evt)}
-          onBlur={() => this.setEditorField('')}
-          placeholder={location}
-        />
-      )],
-    };
-
-    const calendarList = [];
-    const calendarCategories = Object.keys(calendarMap);
-    for (const category of calendarCategories) {
-      const calendars = Object.keys(calendarMap[category]);
-      for (const calendar of calendars) {
-        const style = { backgroundColor: calendarMap[category][calendar].color };
-        const calendarJSX = (
-          <div
-            key={calendar}
-            className="item"
-            onClick={(evt) => this.updateEventObj('calendar', evt)}
-          >
-            <div className="calendar-dot" style={style} />
-            <div className="name">
-              {calendar}
-            </div>
-          </div>
-        );
-        calendarList.push(calendarJSX);
-      }
-    }
-
-    const mainEditor = (
+    return (
       <div className="editor-panel" style={editorPosition}>
-        <div className="top-bar" style={editorColor} />
-        <div className="header">
+        <div className="editor-highlight" style={editorColor} />
+        <div className="editor-header">
           <div className="dot-container">
             <div className="dot" style={editorColor} />
           </div>
-          {editingField === 'name' ? editableForm.name : form.name}
+          <div className="event-name">{eventObj.name}</div>
         </div>
-        <div className="info">
-          <div className="item">
-            <img className="icon" src="./assets/calendar-icon.png" />
-            <span className="field">Calendar</span>
-            {form.calendar}
+        <div className="event-info">
+          <div className="event-time-container">
+            <div className="icon-container">
+              <img className="icon" src="./assets/calendar-icon.png" />
+            </div>
+            <div className="event-time">
+              <div className="date">{eventObj.date.format('dddd, MMMM Do, YYYY')}</div>
+              <div className="time">{eventObj.startTime + " - " + eventObj.endTime}</div>
+              <div className="repeat">Repeat Weekly: Tues, Thurs</div>
+            </div>
           </div>
-          <div className="item">
-            <img className="icon" src="./assets/location-icon.png" />
-            <span className="field">Location</span>
-            { editingField === 'location' ? editableForm.location : form.location}
+          <div className="event-location-container">
+            <div className="icon-container">
+              <img className="icon" src="./assets/location-icon.png" />
+            </div>
+            <div className="event-location">{eventObj.location}</div>
+          </div>
+        </div>
+        <div className="editor-google-maps" />
+        <div className="editor-buttons-container">
+          <div className="delete-container">
+            <div className="delete-button">
+              Delete
+            </div>
+          </div>
+          <div className="edit-container">
+            <div className="edit-button">
+              Edit
+            </div>
           </div>
         </div>
       </div>
     );
-
-    if (editingField === 'calendar') {
-      return (
-        <div className="editor-panel" style={editorPosition}>
-          <div
-            key={'calendar'}
-            className="calendar-input"
-          >
-            {calendarList}
-          </div>
-        </div>
-      );
-    }
-    return mainEditor;
   }
 }
 
