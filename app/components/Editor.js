@@ -6,13 +6,83 @@ export default class Editor extends React.Component {
 
   constructor(props) {
     super(props);
+    const eventsMap = this.props.eventsMap;
+    const editorObjId = this.props.editorObj;
+    const eventObj = eventsMap[editorObjId];
     this.state = {
-      editingField: '',
+      eventObj,
+      loadedGoogleMaps: false,
     }
   }
 
-  setEditorField(field) {
-    this.setState({ editingField: field });
+  componentWillUpdate(nextProps, nextState) {
+    const currentId = this.props.editorObj.id;
+    const newId = nextProps.editorObj.id;
+    if (newId !== currentId) {
+      const eventsMap = nextProps.eventsMap;
+      const editorObjId = nextProps.editorObj.id;
+      const eventObj = eventsMap[editorObjId]
+      this.setState({ eventObj, })
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const editorObjId = this.props.editorObj.id;
+    if (editorObjId === '-1') {
+      return;
+    }
+
+    const loadMap = () => {
+      const location = this.state.eventObj.location;
+      const geocoder = new google.maps.Geocoder();
+      geocoder.geocode({'address': location}, (results, status) => {
+        if (status === 'OK') {
+          const map = new google.maps.Map(document.getElementById('editor-google-maps'), {
+            zoom: 12,
+            center: results[0].geometry.location,
+            mapTypeControl: false
+          });
+          var marker = new google.maps.Marker({
+            map,
+            position: results[0].geometry.location
+          });
+        } else {
+          console.log("Could not geocode address");
+        }
+      });
+    }
+
+    $.loadScript = function (url, callback) {
+      $.ajax({
+          url: url,
+          dataType: 'script',
+          success: callback,
+          async: true
+      });
+    }
+
+    if (!this.state.loadedGoogleMaps) {
+      $.loadScript('https://maps.googleapis.com/maps/api/js?key=AIzaSyBGlKlVCw6Y_OTJXAtdo7qD1eSNr58itnk', loadMap);
+      this.setState({ loadedGoogleMaps: true });
+    } else {
+      const location = this.state.eventObj.location;
+      const geocoder = new google.maps.Geocoder();
+      geocoder.geocode({'address': location}, (results, status) => {
+        if (status === 'OK') {
+          const map = new google.maps.Map(document.getElementById('editor-google-maps'), {
+            zoom: 12,
+            center: results[0].geometry.location,
+            mapTypeControl: false
+          });
+          var marker = new google.maps.Marker({
+            map,
+            position: results[0].geometry.location
+          });
+        } else {
+          console.log("Could not geocode address");
+        }
+      });
+    }
   }
 
   updateEventObj(field, evt) {
@@ -62,7 +132,7 @@ export default class Editor extends React.Component {
             <div className="event-location">{eventObj.location}</div>
           </div>
         </div>
-        <div className="editor-google-maps" />
+        <div id="editor-google-maps" className="editor-google-maps" />
         <div className="editor-buttons-container">
           <div className="delete-container">
             <div className="delete-button">
