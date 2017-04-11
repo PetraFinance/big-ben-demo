@@ -38,7 +38,7 @@ export default class Editor extends React.Component {
       geocoder.geocode({'address': location}, (results, status) => {
         if (status === 'OK') {
           const map = new google.maps.Map(document.getElementById('editor-google-maps'), {
-            zoom: 12,
+            zoom: 16,
             center: results[0].geometry.location,
             mapTypeControl: false
           });

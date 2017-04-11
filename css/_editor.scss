@@ -70,16 +70,16 @@
     }
   }
   .event-time, .event-location {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     line-height: 1.2rem;
     .date {
-      font-weight: bold;
+      font-weight: 600;
     }
   }
 }
 
 .editor-google-maps {
-  height: 200px;
+  height: 150px;
 }
 
 .editor-buttons-container {
