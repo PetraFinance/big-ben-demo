@@ -1,3 +1,5 @@
+const WriteFilePlugin = require('write-file-webpack-plugin');
+
 const config = {
 	entry: './client.js',
   output: {
@@ -17,7 +19,10 @@ const config = {
         }
       }
     ]
-  }
+  },
+  plugins: [
+    new WriteFilePlugin(),
+  ],
 };
 
 module.exports = config;

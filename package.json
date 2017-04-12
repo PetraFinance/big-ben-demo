@@ -41,6 +41,7 @@
     "react-addons-shallow-compare": "^15.4.2",
     "react-dates": "^8.2.1",
     "webpack": "^2.3.3",
-    "webpack-dev-server": "^2.4.2"
+    "webpack-dev-server": "^2.4.2",
+    "write-file-webpack-plugin": "^4.0.0"
   }
 }
