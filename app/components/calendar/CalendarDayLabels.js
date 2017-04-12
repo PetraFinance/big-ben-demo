@@ -12,9 +12,9 @@ export default class DayColumnHeaders extends React.Component {
 
   render() {
 
-    let activeDate = this.props.activeDate.clone();
-    const activeDay = activeDate.format('dddd');
-    let dateObj = getWeekStartDate(activeDate);
+    let selectedDate = this.props.selectedDate.clone();
+    const activeDay = selectedDate.format('dddd');
+    let dateObj = getWeekStartDate(selectedDate);
 
     const momentDateObjects = [];
     const formattedDateObjects = [];
@@ -35,7 +35,7 @@ export default class DayColumnHeaders extends React.Component {
       const date = formattedDateObjects[i];
       return (
         <div
-          onClick={() => this.props.setActiveDate(momentDateObjects[i])}
+          onClick={() => this.props.setSelectedDate(momentDateObjects[i])}
           className={className}
           key={genUniqueIdentifier([date, i])}
         >

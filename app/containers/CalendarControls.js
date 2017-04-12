@@ -1,20 +1,21 @@
+import moment from 'moment';
 import { connect } from 'react-redux';
-import { setActiveDate, editorOff, toggleCalendarMode } from '../actions/calendar';
+import { setSelectedDate, editorOff, toggleCalendarMode } from '../actions/calendar';
 import CalendarControls from '../components/CalendarControls';
 
 const mapStateToProps = (state) => {
   const cpState = state.calendar.toJS();
-  const activeDate = cpState.activeDate;
+  const selectedDate = cpState.selectedDate.clone();
   const calendarViewMode = cpState.calendarViewMode;
   return {
-    activeDate,
+    selectedDate,
     calendarViewMode,
   };
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  setActiveDate: (date) => {
-    dispatch(setActiveDate(date));
+  setSelectedDate: (date) => {
+    dispatch(setSelectedDate(date));
   },
   editorOff: () => {
     dispatch(editorOff());

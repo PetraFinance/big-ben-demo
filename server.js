@@ -46,7 +46,6 @@ app.get('/', function handleRender(req, res) {
 
   // Grab the initial state from our Redux store
   const preloadedState = store.getState();
-
   // Send the rendered page back to the client
   res.send(renderFullPage(html, preloadedState));
 });

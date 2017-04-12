@@ -1,24 +1,21 @@
 import React from 'react';
 import $ from 'jquery';
+import { isEmpty } from '../helpers/objects';
 import { getEditorPosition } from '../helpers/position';
 
 export default class Editor extends React.Component {
 
   constructor(props) {
     super(props);
-    const eventsMap = this.props.eventsMap;
-    const editorObjId = this.props.editorObj;
-    const eventObj = eventsMap[editorObjId];
     this.state = {
-      eventObj,
-      loadedGoogleMaps: false,
+      eventObj: {}
     }
   }
 
   componentWillUpdate(nextProps, nextState) {
     const currentId = this.props.editorObj.id;
     const newId = nextProps.editorObj.id;
-    if (newId !== currentId) {
+    if (newId !== currentId && newId !== '-1') {
       const eventsMap = nextProps.eventsMap;
       const editorObjId = nextProps.editorObj.id;
       const eventObj = eventsMap[editorObjId]
@@ -26,67 +23,39 @@ export default class Editor extends React.Component {
     }
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    const editorObjId = this.props.editorObj.id;
-    if (editorObjId === '-1') {
-      return;
-    }
-
-    const loadMap = () => {
-      const location = this.state.eventObj.location;
-      const geocoder = new google.maps.Geocoder();
-      geocoder.geocode({'address': location}, (results, status) => {
-        if (status === 'OK') {
-          const map = new google.maps.Map(document.getElementById('editor-google-maps'), {
-            zoom: 16,
-            center: results[0].geometry.location,
-            mapTypeControl: false
-          });
-          var marker = new google.maps.Marker({
-            map,
-            position: results[0].geometry.location
-          });
-        } else {
-          console.log("Could not geocode address");
-        }
-      });
-    }
-
-    $.loadScript = function (url, callback) {
+  componentDidMount() {
+    $.loadScript = function (url) {
       $.ajax({
           url: url,
           dataType: 'script',
-          success: callback,
           async: true
       });
     }
-
-    if (!this.state.loadedGoogleMaps) {
-      $.loadScript('https://maps.googleapis.com/maps/api/js?key=AIzaSyBGlKlVCw6Y_OTJXAtdo7qD1eSNr58itnk', loadMap);
-      this.setState({ loadedGoogleMaps: true });
-    } else {
-      const location = this.state.eventObj.location;
-      const geocoder = new google.maps.Geocoder();
-      geocoder.geocode({'address': location}, (results, status) => {
-        if (status === 'OK') {
-          const map = new google.maps.Map(document.getElementById('editor-google-maps'), {
-            zoom: 12,
-            center: results[0].geometry.location,
-            mapTypeControl: false
-          });
-          var marker = new google.maps.Marker({
-            map,
-            position: results[0].geometry.location
-          });
-        } else {
-          console.log("Could not geocode address");
-        }
-      });
-    }
+    $.loadScript('https://maps.googleapis.com/maps/api/js?key=AIzaSyBGlKlVCw6Y_OTJXAtdo7qD1eSNr58itnk');
   }
 
-  updateEventObj(field, evt) {
-    return true;
+  componentDidUpdate(prevProps, prevState) {
+    const editorObjId = this.props.editorObj.id;
+    if (editorObjId === '-1' || !google || isEmpty(this.state.eventObj)) {
+      return;
+    }
+    const location = this.state.eventObj.location;
+    const geocoder = new google.maps.Geocoder();
+    geocoder.geocode({'address': location}, (results, status) => {
+      if (status === 'OK') {
+        const map = new google.maps.Map(document.getElementById('editor-google-maps'), {
+          zoom: 16,
+          center: results[0].geometry.location,
+          mapTypeControl: false
+        });
+        var marker = new google.maps.Marker({
+          map,
+          position: results[0].geometry.location
+        });
+      } else {
+        console.log("Could not geocode address");
+      }
+    });
   }
 
   render () {
@@ -100,7 +69,6 @@ export default class Editor extends React.Component {
     const location = eventObj.location;
     const category = eventObj.category;
     const calendar = eventObj.calendar;
-    const editingField = this.state.editingField;
     const editorPosition = getEditorPosition(eventObj);
     const calendarMap = this.props.calendarMap;
     const editorColor = { backgroundColor: calendarMap[category][calendar].color };
@@ -120,8 +88,8 @@ export default class Editor extends React.Component {
               <img className="icon" src="./assets/calendar-icon.png" />
             </div>
             <div className="event-time">
-              <div className="date">{eventObj.date.format('dddd, MMMM Do, YYYY')}</div>
-              <div className="time">{eventObj.startTime + " - " + eventObj.endTime}</div>
+              <div className="date">{eventObj.start.format('dddd, MMMM Do, YYYY')}</div>
+              <div className="time">{eventObj.start.format('h:mm A-') + eventObj.end.format('h:mm A')}</div>
               <div className="repeat">Repeat Weekly: Tues, Thurs</div>
             </div>
           </div>

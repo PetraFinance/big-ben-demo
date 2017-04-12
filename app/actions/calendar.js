@@ -29,10 +29,10 @@ export function editorOff() {
   };
 }
 
-export const SET_ACTIVE_DATE = Symbol('SET_ACTIVE_DATE');
-export function setActiveDate(date) {
+export const SET_SELECTED_DATE = Symbol('SET_SELECTED_DATE');
+export function setSelectedDate(date) {
   return {
-    type: SET_ACTIVE_DATE,
+    type: SET_SELECTED_DATE,
     date,
   };
 }

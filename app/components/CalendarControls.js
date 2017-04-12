@@ -11,23 +11,23 @@ export default class CalendarControls extends React.Component {
 
   handleTodayButton() {
     const today = moment();
-    this.props.setActiveDate(today);
-    if (!sameWeek(today, this.props.activeDate)) {
+    this.props.setSelectedDate(today);
+    if (!sameWeek(today, this.props.selectedDate)) {
       this.props.editorOff();
     }
   }
 
   handleAdvanceButton() {
-    const activeDate = this.props.activeDate.clone();
-    const advanced = activeDate.add(7, 'days');
-    this.props.setActiveDate(advanced);
+    const selectedDate = this.props.selectedDate.clone();
+    const advanced = selectedDate.add(7, 'days');
+    this.props.setSelectedDate(advanced);
     this.props.editorOff();
   }
 
   handleBackButton() {
-    const activeDate = this.props.activeDate.clone();
-    const back = activeDate.subtract(7, 'days');
-    this.props.setActiveDate(back);
+    const selectedDate = this.props.selectedDate.clone();
+    const back = selectedDate.subtract(7, 'days');
+    this.props.setSelectedDate(back);
     this.props.editorOff();
   }
 
@@ -59,8 +59,8 @@ export default class CalendarControls extends React.Component {
       </div>
     );
 
-    const month = this.props.activeDate.format('MMMM');
-    const year = this.props.activeDate.format('YYYY');
+    const month = this.props.selectedDate.format('MMMM');
+    const year = this.props.selectedDate.format('YYYY');
     const viewMode = this.props.calendarViewMode;
 
     let weekMonthButtons = ["select-week-active", "select-month"];
@@ -105,6 +105,6 @@ export default class CalendarControls extends React.Component {
 }
 
 CalendarControls.propTypes = {
-  activeDate: React.PropTypes.object.isRequired,
-  setActiveDate: React.PropTypes.func.isRequired,
+  selectedDate: React.PropTypes.object.isRequired,
+  setSelectedDate: React.PropTypes.func.isRequired,
 };

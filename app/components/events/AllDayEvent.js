@@ -19,17 +19,6 @@ export default class AllDayEvent extends React.Component {
     const color = { backgroundColor: calendarMap[category][calendar].color };
     const accent = { backgroundColor: calendarMap[category][calendar].accent };
 
-    const timeInfo = (
-      <div className="start-end-times">
-        {startTime.replace(' ', '').toLowerCase()}-{endTime.replace(' ', '').toLowerCase()}
-      </div>
-    );
-    const locationInfo = (
-      <div className="location">
-        {eventObj.location}
-      </div>
-    );
-
     return (
       <div
         id={genObjectId(eventObj)}

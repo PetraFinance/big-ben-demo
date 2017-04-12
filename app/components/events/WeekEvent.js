@@ -8,27 +8,26 @@ export default class WeekEvent extends React.Component {
   }
 
   render() {
-    const eventObj = this.props.eventObj;
     const calendarMap = this.props.calendarMap;
+    const eventObj = this.props.eventObj;
 
-    const startTime = eventObj.startTime;
-    const endTime = eventObj.endTime;
-    const length = Math.abs(eventObj.endValue - eventObj.startValue) * 10;
+    const start = eventObj.start;
+    const end = eventObj.end;
+    const lengthInMinutes = end.diff(start, 'minutes');
+
     const category = eventObj.category;
     const calendar = eventObj.calendar;
 
     const color = { backgroundColor: calendarMap[category][calendar].color };
     const accent = { backgroundColor: calendarMap[category][calendar].accent };
-    const eventEntryStyle = Object.assign(
-      getEventPosition(eventObj),
-      color,
-    );
+    const eventEntryStyle = Object.assign(getEventPosition(eventObj), color);
 
     const timeInfo = (
       <div className="start-end-times">
-        {startTime.replace(' ', '').toLowerCase()}-{endTime.replace(' ', '').toLowerCase()}
+        {start.format('h:mma-') + end.format('h:mma')}
       </div>
     );
+
     const locationInfo = (
       <div className="location">
         {eventObj.location}
@@ -56,8 +55,8 @@ export default class WeekEvent extends React.Component {
             <div className="title">
               {eventObj.name}
             </div>
-            { length > 5 ? timeInfo : (<div />)}
-            { length > 5 ? locationInfo : (<div />)}
+            { lengthInMinutes > 30 ? timeInfo : (<div />)}
+            { lengthInMinutes > 30 ? locationInfo : (<div />)}
           </div>
         </div>
         <div

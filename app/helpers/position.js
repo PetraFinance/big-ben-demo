@@ -25,26 +25,22 @@ export const getEventPosition = (eventObj) => {
   let style;
   let offset;
   let multiplier;
+  const startDate = eventObj.start.clone();
+  const endDate = eventObj.end.clone();
+  const startOfDay = startDate.clone().hours(0).minutes(0).seconds(0);
 
-  const day = eventObj.date.format('dddd');
-  multiplier = moment.weekdays().indexOf(day);
+  multiplier = startDate.day();
   offset = '2px';
   style = [TIME_COLUMN_WIDTH, multiplier.toString() + ' * ' + DAY_COLUMN_WIDTH, offset];
   const left = wrapInCalc(style);
 
-  const halfHourHeight = 36;
-  const calendarStartValue = 0;
-  const startValue = eventObj.startValue;
+  multiplier = startDate.diff(startOfDay, 'minutes') / 30;
   offset = '1px';
-  multiplier = Math.abs(calendarStartValue - startValue) * 2;
   style = [convertToPx(HALF_HOUR_HEIGHT * multiplier), offset];
   const top = wrapInCalc(style);
 
-  const endValue = eventObj.endValue;
-  multiplier = Math.abs(endValue - startValue) * 2;
-  if (multiplier < 1) {
-    multiplier = 1;
-  }
+  multiplier = endDate.diff(startDate, 'minutes') / 30;
+  if (multiplier < 1) { multiplier = 1; }
   offset = '-1px';
   style = [convertToPx(HALF_HOUR_HEIGHT * multiplier), offset];
   const height = wrapInCalc(style);
@@ -58,12 +54,13 @@ export const getEventPosition = (eventObj) => {
 }
 
 export const getEditorPosition = (eventObj) => {
-  const eventPosition = getEventPosition(eventObj);
-  const day = eventObj.date.format('dddd');
-
   const TIME_COLUMN_WIDTH = '70px';
   const EVENT_EDITOR_WIDTH = '300px';
   const DAY_COLUMN_WIDTH = '((100% - 70px) / 7)';
+
+  const eventPosition = getEventPosition(eventObj);
+  const top = eventPosition.top;
+  const day = eventObj.start.format('dddd');
 
   let left = '0px';
   switch (day) {
@@ -88,12 +85,6 @@ export const getEditorPosition = (eventObj) => {
     case 'Saturday':
       left = wrapInCalc(['99.5%', makeNegative(EVENT_EDITOR_WIDTH), '-1 * ' + DAY_COLUMN_WIDTH]);
       break;
-  }
-
-  let top = eventPosition.top;
-  const eventHeight = eventPosition.height.match(/calc\((.*)\)/)[1];
-  if (eventObj.startValue > 15) {
-    top = top.replace(')', ' - ' + height + ' + ' + eventHeight + ' )');
   }
 
   const editorPosition = {

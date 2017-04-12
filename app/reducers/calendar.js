@@ -2,10 +2,8 @@ import * as ActionType from '../actions/calendar';
 import Immutable from 'immutable';
 import moment from 'moment';
 
-// the startTime and endTime keys in eventObjs are slightly redundant,
-// can be removed at some point
 const defaultState = Immutable.fromJS({
-  activeDate: moment(),
+  selectedDate: moment(),
   calendarViewMode: "week",
   draggedObj: {},
   resizeObj: {},
@@ -19,64 +17,9 @@ const defaultState = Immutable.fromJS({
       category: 'Google',
       calendar: 'School',
       location: 'Pimental Hall',
-      startTime: '8 AM',
-      endTime: '10 AM',
-      startValue: 8,
-      endValue: 10,
-      allDay: false,
-      date: moment('2017-04-15'),
-    },
-    '1': {
-      id: '1',
-      name: 'Innod Meeting',
-      category: 'Google',
-      calendar: 'Innovative Design',
-      location: '140 Dwinelle Hall',
-      startTime: '9 AM',
-      endTime: '1 PM',
-      startValue: 9,
-      endValue: 13,
-      allDay: false,
-      date: moment(),
-    },
-    '2': {
-      id: '2',
-      name: 'IEEE Meeting',
-      category: 'Google',
-      calendar: 'IEEE',
-      location: '140 Dwinelle Hall',
-      startTime: '2 PM',
-      endTime: '3 PM',
-      startValue: 14,
-      endValue: 15,
-      allDay: true,
-      date: moment(),
-    },
-    '3': {
-      id: '3',
-      name: 'Random',
-      category: 'Google',
-      calendar: 'School',
-      location: 'Dwinelle 140',
-      startTime: '2 PM',
-      endTime: '3 PM',
-      startValue: 14,
-      endValue: 15,
-      allDay: true,
-      date: moment(),
-    },
-    '4': {
-      id: '4',
-      name: 'Random',
-      category: 'Google',
-      calendar: 'School',
-      location: 'Dwinelle 140',
-      startTime: '2 PM',
-      endTime: '3 PM',
-      startValue: 14,
-      endValue: 15,
-      allDay: true,
-      date: moment(),
+      start: moment('2017-04-13 09:00'),
+      end: moment('2017-04-13 11:30'),
+      isAllDayEvent: false,
     },
   },
   calendarMap: {
@@ -114,7 +57,6 @@ export default function (state = defaultState, action) {
       const eventObj = action.eventObj;
       const id = eventObj.id;
       const event = Immutable.Map([[id, Immutable.Map(eventObj)]]);
-      console.log(event.toJS());
       return state.mergeIn(['eventsMap'], event);
     case ActionType.UPDATE_EVENT:
       return state.setIn(['eventsMap', action.eventObj.id], Immutable.Map(action.eventObj));
@@ -124,8 +66,8 @@ export default function (state = defaultState, action) {
     case ActionType.EDITOR_OFF:
       editorObj = Immutable.fromJS({ id: '-1' });
       return state.set('editorObj', editorObj);
-    case ActionType.SET_ACTIVE_DATE:
-      return state.set('activeDate', action.date);
+    case ActionType.SET_SELECTED_DATE:
+      return state.set('selectedDate', action.date);
     case ActionType.SET_DRAGGED_OBJ:
       return state.set('draggedObj', Immutable.Map(action.eventObj));
     case ActionType.SET_RESIZE_OBJ:

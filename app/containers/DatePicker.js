@@ -1,18 +1,19 @@
+import moment from 'moment';
 import { connect } from 'react-redux';
-import { setActiveDate, editorOff } from '../actions/calendar';
+import { setSelectedDate, editorOff } from '../actions/calendar';
 import DatePicker from '../components/DatePicker';
 
 const mapStateToProps = (state) => {
   const cpState = state.calendar.toJS();
-  const activeDate = cpState.activeDate;
+  const selectedDate = cpState.selectedDate.clone();
   return {
-    activeDate,
+    selectedDate,
   };
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  setActiveDate: (date) => {
-    dispatch(setActiveDate(date));
+  setSelectedDate: (date) => {
+    dispatch(setSelectedDate(date));
   },
   editorOff: () => {
     dispatch(editorOff());

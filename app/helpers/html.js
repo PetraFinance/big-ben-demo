@@ -24,8 +24,8 @@ export const genUniqueIdentifier = (args) => (args.join(''));
  * return {string} the uid for the eventObj
  */
 export const genObjectId = (eventObj) => {
-  const params = [eventObj.id, eventObj.date.toISOString()];
-  const noSpaces = params.map(item => item.toString().replace(' ', ''));
+  const params = [eventObj.id, eventObj.start.toISOString(), eventObj.end.toISOString()];
+  const noSpaces = params.map(item => item.replace(' ', ''));
   return genUniqueIdentifier(noSpaces);
 };
 

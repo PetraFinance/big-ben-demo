@@ -21,7 +21,7 @@ export const sameWeek = (a, b) => {
  */
 export const getWeekStartDate = (date) => {
   const dow = date.day();
-  const startDate = date.clone().subtract(dow, 'days');
+  const startDate = date.subtract(dow, 'days');
   return startDate;
 };
 
@@ -33,7 +33,7 @@ export const getWeekStartDate = (date) => {
 const getWeekEndDate = (date) => {
   let dow = date.day();
   dow = 6 - dow;
-  const endDate = date.clone().add(dow, 'days');
+  const endDate = date.add(dow, 'days');
   return endDate;
 };
 

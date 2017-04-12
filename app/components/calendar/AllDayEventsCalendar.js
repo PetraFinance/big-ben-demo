@@ -10,14 +10,13 @@ export default class AllDayEventsCalendar extends React.Component {
   render() {
     const eventsMap = this.props.eventsMap;
     const calendarMap = this.props.calendarMap;
-    const activeDate = this.props.activeDate;
-    const idList = Object.keys(eventsMap);
+    const selectedDate = this.props.selectedDate;
+    const ids = Object.keys(eventsMap);
     let allDayEventsList = [];
-
-    for (const id of idList) {
+    for (let id of ids) {
       const eventObj = eventsMap[id];
-      const eventDate = eventObj.date;
-      if (!sameWeek(eventDate, activeDate) || !eventObj.allDay) {
+      const eventStartDate = eventObj.start;
+      if (!sameWeek(eventStartDate, selectedDate) || !eventObj.isAllDayEvent) {
         continue;
       }
       allDayEventsList.push(eventObj);
@@ -27,10 +26,9 @@ export default class AllDayEventsCalendar extends React.Component {
     const allDayEventsMap = [];
     let mostEvents = 1;
     let eventCounter = 0;
-
     for (const day of weekdays) {
       const dayEvents = allDayEventsList.filter((eventObj) => {
-        const eventObjDay = eventObj.date.format('dddd');
+        const eventObjDay = eventObj.start.format('dddd');
         return (eventObjDay === day);
       }).map((eventObj) => {
         eventCounter = eventCounter + 1;
