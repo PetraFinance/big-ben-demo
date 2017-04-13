@@ -23,6 +23,7 @@ const config = {
   plugins: [
     new WriteFilePlugin(),
   ],
+  devtool: 'source-map',
 };
 
 module.exports = config;
