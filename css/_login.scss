@@ -1,0 +1,29 @@
+.login-page {
+  background-color: $light-grey;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  .info {
+    color: $off-black;
+    margin: 0rem;
+    margin-bottom: 2rem;
+  }
+  .buttons-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  .login-button {
+    background-color: #F44336;
+    color: white;
+    font-weight: bold;
+    padding: 1rem;
+  }
+  a {
+    text-decoration: none;
+  }
+}

@@ -1,15 +1,14 @@
 import * as ActionType from '../actions/calendar';
+import * as APIActionType from '../actions/api';
 import Immutable from 'immutable';
 import moment from 'moment';
 
 const defaultState = Immutable.fromJS({
   selectedDate: moment(),
-  calendarViewMode: "week",
+  calendarViewMode: 'week',
   draggedObj: {},
   resizeObj: {},
-  editorObj: {
-    id: '-1',
-  },
+  editorObj: { id: '-1' },
   eventsMap: {
     '0': {
       id: '0',
@@ -48,11 +47,25 @@ const defaultState = Immutable.fromJS({
       },
     },
   },
+  googleCalendar: {
+    isFetching: false,
+    events: {},
+  },
+  userLoggedIn: false,
 });
 
 export default function (state = defaultState, action) {
   let editorObj;
+  console.log(state);
   switch (action.type) {
+
+    case APIActionType.REQUEST_GOOGLE_CALENDAR:
+      return state.setIn(['googleCalendar', 'isFetching'], true);
+    case APIActionType.RECEIVE_GOOGLE_CALENDAR:
+      return state.setIn(['googleCalendar', 'isFetching'], false)
+                  .setIn(['googleCalendar', 'events'], action.data)
+                  .set('userLoggedIn', true);
+
     case ActionType.ADD_EVENT:
       const eventObj = action.eventObj;
       const id = eventObj.id;

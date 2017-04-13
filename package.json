@@ -11,6 +11,7 @@
     "babel-loader": "^6.4.1",
     "babel-polyfill": "^6.23.0",
     "express": "^4.15.2",
+    "follow-redirects": "^1.2.3",
     "frozen-moment": "^0.4.0",
     "immutable": "^3.8.1",
     "jquery": "^3.2.1",
@@ -21,7 +22,8 @@
     "react-redux": "^5.0.3",
     "redux": "^3.6.0",
     "redux-logger": "^2.8.2",
-    "redux-thunk": "^2.2.0"
+    "redux-thunk": "^2.2.0",
+    "whatwg-fetch": "^2.0.3"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",

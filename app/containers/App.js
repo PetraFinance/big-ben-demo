@@ -1,23 +1,18 @@
-import React from 'react';
-import CalendarList from './CalendarList';
-import CalendarControls from './CalendarControls';
-import DatePicker from './DatePicker';
-import Calendar from './Calendar';
+import { connect } from 'react-redux';
+import { fetchGoogleCalendar } from '../actions/api';
+import App from '../components/App';
 
-function App() {
-  return (
-    <div className="app-container">
-      <div className="side-panel">
-        <div className="side-panel-header" />
-        <DatePicker />
-        <CalendarList />
-      </div>
-      <div className="calendar-panel">
-        <CalendarControls />
-        <Calendar />
-      </div>
-    </div>
-  );
-}
+const mapStateToProps = (state) => {
+  const userLoggedIn = state.calendar.get('userLoggedIn');
+  return {
+    userLoggedIn,
+  };
+};
 
-export default App;
+const mapDispatchToProps = (dispatch) => ({
+  fetchGoogleCalendar: () => {
+    dispatch(fetchGoogleCalendar());
+  },
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
