@@ -8,11 +8,14 @@ import Login from './Login';
 export default class App extends React.Component {
   constructor(props) {
     super(props);
+
   }
 
   render() {
 
-    this.props.fetchGoogleCalendar();
+    if (!this.props.userLoggedIn) {
+      this.props.fetchGoogleCalendar();
+    }
 
     const userLoggedIn = this.props.userLoggedIn;
     const app = (

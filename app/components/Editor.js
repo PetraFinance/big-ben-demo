@@ -1,5 +1,6 @@
 import React from 'react';
 import $ from 'jquery';
+import _ from 'lodash';
 import { isEmpty } from '../helpers/objects';
 import { getEditorPosition } from '../helpers/position';
 
@@ -7,20 +8,6 @@ export default class Editor extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      eventObj: {}
-    }
-  }
-
-  componentWillUpdate(nextProps, nextState) {
-    const currentId = this.props.editorObj.id;
-    const newId = nextProps.editorObj.id;
-    if (newId !== currentId && newId !== '-1') {
-      const eventsMap = nextProps.eventsMap;
-      const editorObjId = nextProps.editorObj.id;
-      const eventObj = eventsMap[editorObjId]
-      this.setState({ eventObj, })
-    }
   }
 
   componentDidMount() {
@@ -35,11 +22,11 @@ export default class Editor extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const editorObjId = this.props.editorObj.id;
-    if (editorObjId === '-1' || !google || isEmpty(this.state.eventObj)) {
+    const editorObj = this.props.editorObj;
+    if (isEmpty(editorObj)) {
       return;
     }
-    const location = this.state.eventObj.location;
+    const location = editorObj.location;
     const geocoder = new google.maps.Geocoder();
     geocoder.geocode({'address': location}, (results, status) => {
       if (status === 'OK') {
@@ -59,19 +46,18 @@ export default class Editor extends React.Component {
   }
 
   render () {
-    const editorObjId = this.props.editorObj.id;
-    if (editorObjId === '-1') {
+    const eventObj = this.props.editorObj;
+    if (isEmpty(eventObj)) {
       return (<div className="editor-panel-off" />);
     }
 
-    const eventObj = this.props.eventsMap[editorObjId];
     const name = eventObj.name;
     const location = eventObj.location;
-    const category = eventObj.category;
-    const calendar = eventObj.calendar;
+    const calendarGroup = eventObj.calendarGroup;
+    const calendarId = eventObj.calendarId;
     const editorPosition = getEditorPosition(eventObj);
-    const calendarMap = this.props.calendarMap;
-    const editorColor = { backgroundColor: calendarMap[category][calendar].color };
+    const eventsMap = this.props.eventsMap;
+    const editorColor = { backgroundColor: eventsMap[calendarGroup].calendarList[calendarId].color };
 
     return (
       <div className="editor-panel" style={editorPosition}>
@@ -119,7 +105,6 @@ export default class Editor extends React.Component {
 }
 
 Editor.propTypes = {
-  calendarMap: React.PropTypes.object.isRequired,
   editorObj: React.PropTypes.object.isRequired,
   eventsMap: React.PropTypes.object.isRequired,
   updateEvent: React.PropTypes.func.isRequired,

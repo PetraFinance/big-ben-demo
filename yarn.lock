@@ -2803,6 +2803,10 @@ mkdirp@0.5.x, "mkdirp@>=0.5 0", mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.0:
   dependencies:
     minimist "0.0.8"
 
+moment-recur@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/moment-recur/-/moment-recur-1.0.5.tgz#2d7d0e3f2d717b4b1f27f6272aa863c669371c61"
+
 moment@>=1.6.0, "moment@>=2.11.2 <3", moment@^2.11.2, moment@^2.18.1:
   version "2.18.1"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.18.1.tgz#c36193dd3ce1c2eed2adb7c802dbbc77a81b1c0f"
@@ -3558,6 +3562,10 @@ rimraf@2, rimraf@^2.2.8, rimraf@^2.5.1, rimraf@^2.6.1:
 ripemd160@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/ripemd160/-/ripemd160-1.0.1.tgz#93a4bbd4942bc574b69a8fa57c71de10ecca7d6e"
+
+rrule@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/rrule/-/rrule-2.2.0.tgz#f346c523bf73707dafe562c222650467b49f6d5c"
 
 run-async@^0.1.0:
   version "0.1.0"

@@ -8,77 +8,76 @@ const defaultState = Immutable.fromJS({
   calendarViewMode: 'week',
   draggedObj: {},
   resizeObj: {},
-  editorObj: { id: '-1' },
+  editorObj: {},
   eventsMap: {
-    '0': {
-      id: '0',
-      name: 'Innod Meeting',
-      category: 'Google',
-      calendar: 'School',
-      location: 'Pimental Hall',
-      start: moment('2017-04-13 09:00'),
-      end: moment('2017-04-13 11:30'),
-      isAllDayEvent: false,
+    'Petra': {
+      calendarList: {
+        'You': {
+          name: 'You',
+          color: '#03A9F4',
+          highlight: '#029BE0',
+          visible: true,
+          eventsMap: {
+            '0': {
+              id: '0',
+              calendarId: 'You',
+              calendarGroup: 'Petra',
+              name: 'Innod Meeting',
+              location: '140 Dwinelle Hall',
+              start: moment('2017-04-13 09:00'),
+              end: moment('2017-04-13 11:30'),
+              allDayEvent: false,
+            }
+          },
+        },
+      },
     },
-  },
-  calendarMap: {
     'Google': {
-      'Innovative Design': {
-        color: '#009688',
-        accent: '#008A7D',
-        visible: true,
-      },
-      'IEEE': {
-        color: '#F44336',
-        accent: '#E03D31',
-        visible: true,
-      },
-      'School': {
-        color: '#03A9F4',
-        accent: '#029BE0',
-        visible: true,
-      },
+      calendarList: {},
+      profile: {},
+      isFetching: false,
     },
-    'Facebook': {
-      "Events I'm Attending": {
-        color: '#39579A',
-        accent: '#39579A',
-        visible: true,
-      },
-    },
-  },
-  googleCalendar: {
-    isFetching: false,
-    events: {},
   },
   userLoggedIn: false,
 });
 
 export default function (state = defaultState, action) {
   let editorObj;
-  console.log(state);
-  switch (action.type) {
+  let eventObj;
+  let id;
+  let path;
+  let calendarGroup;
+  let calendarId;
+  console.log(state.toJS());
 
+  switch (action.type) {
     case APIActionType.REQUEST_GOOGLE_CALENDAR:
-      return state.setIn(['googleCalendar', 'isFetching'], true);
+      return state.setIn(['eventsMap', 'Google', 'isFetching'], true);
     case APIActionType.RECEIVE_GOOGLE_CALENDAR:
-      return state.setIn(['googleCalendar', 'isFetching'], false)
-                  .setIn(['googleCalendar', 'events'], action.data)
+      return state.setIn(['eventsMap', 'Google', 'isFetching'], false)
                   .set('userLoggedIn', true);
+    case APIActionType.RECEIVE_GOOGLE_CALENDAR_PROFILE:
+      return state.setIn(['eventsMap', 'Google', 'profile'], action.profile);
+    case APIActionType.RECEIVE_GOOGLE_CALENDAR_LIST_ENTRY:
+      return state.setIn(['eventsMap', 'Google', 'calendarList', action.id], Immutable.fromJS(action.entry));
 
     case ActionType.ADD_EVENT:
-      const eventObj = action.eventObj;
-      const id = eventObj.id;
-      const event = Immutable.Map([[id, Immutable.Map(eventObj)]]);
-      return state.mergeIn(['eventsMap'], event);
+      eventObj = action.eventObj;
+      id = eventObj.id;
+      path = ['eventsMap', 'Petra', 'calendarList', 'You', 'eventsMap', id];
+      return state.mergeIn(path, Immutable.fromJS(eventObj));
     case ActionType.UPDATE_EVENT:
-      return state.setIn(['eventsMap', action.eventObj.id], Immutable.Map(action.eventObj));
+      eventObj = action.eventObj;
+      id = eventObj.id;
+      calendarGroup = eventObj.calendarGroup;
+      calendarId = eventObj.calendarId;
+      path = ['eventsMap', calendarGroup, 'calendarList', calendarId, 'eventsMap', id]
+      return state.setIn(path, Immutable.fromJS(eventObj));
     case ActionType.EDITOR_ON:
-      editorObj = Immutable.fromJS({ id: action.id });
+      editorObj = Immutable.fromJS(action.eventObj);
       return state.set('editorObj', editorObj);
     case ActionType.EDITOR_OFF:
-      editorObj = Immutable.fromJS({ id: '-1' });
-      return state.set('editorObj', editorObj);
+      return state.set('editorObj', Immutable.fromJS({}));
     case ActionType.SET_SELECTED_DATE:
       return state.set('selectedDate', action.date);
     case ActionType.SET_DRAGGED_OBJ:
@@ -86,8 +85,12 @@ export default function (state = defaultState, action) {
     case ActionType.SET_RESIZE_OBJ:
       return state.set('resizeObj', Immutable.Map(action.eventObj));
     case ActionType.TOGGLE_CALENDAR_VISIBILITY:
-      const visible = state.getIn(['calendarMap', action.category, action.calendar, 'visible']);
-      return state.setIn(['calendarMap', action.category, action.calendar, 'visible'], !visible);
+      calendarGroup = action.calendarGroup;
+      calendarId = action.calendarId;
+      console.log(calendarId);
+      path = ['eventsMap', calendarGroup, 'calendarList', calendarId, 'visible'];
+      const visible = state.getIn(path);
+      return state.setIn(path, !visible);
     case ActionType.TOGGLE_CALENDAR_MODE:
       const viewMode = state.get('calendarViewMode');
       let updatedViewMode = "week";

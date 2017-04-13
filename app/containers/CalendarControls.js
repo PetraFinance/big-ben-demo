@@ -7,9 +7,12 @@ const mapStateToProps = (state) => {
   const cpState = state.calendar.toJS();
   const selectedDate = cpState.selectedDate.clone();
   const calendarViewMode = cpState.calendarViewMode;
+  const userProfile = cpState.eventsMap.Google.profile;
+  console.log(userProfile);
   return {
     selectedDate,
     calendarViewMode,
+    userProfile,
   };
 };
 

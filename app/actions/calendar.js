@@ -15,10 +15,10 @@ export function updateEvent(eventObj) {
 }
 
 export const EDITOR_ON = Symbol('EDITOR_ON');
-export function editorOn(id) {
+export function editorOn(eventObj) {
   return {
     type: EDITOR_ON,
-    id,
+    eventObj,
   };
 }
 
@@ -54,11 +54,11 @@ export function setDraggedObj(eventObj) {
 }
 
 export const TOGGLE_CALENDAR_VISIBILITY = Symbol('TOGGLE_CALENDAR_VISIBILITY');
-export function toggleCalendarVisibility(category, calendar) {
+export function toggleCalendarVisibility(calendarGroup, calendarId) {
   return {
     type: TOGGLE_CALENDAR_VISIBILITY,
-    category,
-    calendar,
+    calendarGroup,
+    calendarId,
   }
 }
 

@@ -8,18 +8,18 @@ export default class WeekEvent extends React.Component {
   }
 
   render() {
-    const calendarMap = this.props.calendarMap;
+    const eventsMap = this.props.eventsMap;
     const eventObj = this.props.eventObj;
 
     const start = eventObj.start;
     const end = eventObj.end;
     const lengthInMinutes = end.diff(start, 'minutes');
 
-    const category = eventObj.category;
-    const calendar = eventObj.calendar;
+    const calendarGroup = eventObj.calendarGroup;
+    const calendarId = eventObj.calendarId;
 
-    const color = { backgroundColor: calendarMap[category][calendar].color };
-    const accent = { backgroundColor: calendarMap[category][calendar].accent };
+    const color = { backgroundColor: eventsMap[calendarGroup].calendarList[calendarId].color };
+    const highlight = { backgroundColor: eventsMap[calendarGroup].calendarList[calendarId].highlight };
     const eventEntryStyle = Object.assign(getEventPosition(eventObj), color);
 
     const timeInfo = (
@@ -48,7 +48,7 @@ export default class WeekEvent extends React.Component {
         >
           <div
             className="sidebar"
-            style={accent}
+            style={highlight}
           >
           </div>
           <div className="content">
@@ -66,7 +66,7 @@ export default class WeekEvent extends React.Component {
         >
           <div
             className="sidebar"
-            style={accent}
+            style={highlight}
           />
           <div
             className="filler"
@@ -79,7 +79,7 @@ export default class WeekEvent extends React.Component {
 }
 
 WeekEvent.propTypes = {
-  calendarMap: React.PropTypes.object.isRequired,
+  eventsMap: React.PropTypes.object.isRequired,
   eventObj: React.PropTypes.object.isRequired,
   handleEventDrag: React.PropTypes.func.isRequired,
   handleEventClick: React.PropTypes.func.isRequired,

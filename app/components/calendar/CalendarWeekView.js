@@ -3,7 +3,7 @@ import moment from 'frozen-moment';
 import _ from 'lodash';
 import { togglePointerEvents, genUniqueIdentifier, genObjectId } from '../../helpers/html';
 import { isEmpty } from '../../helpers/objects';
-import { genTimesOfDay, computeTimeFromInt, getWeekStartDate, sameWeek } from '../../helpers/time';
+import { genTimesOfDay, computeTimeFromInt, getWeekStartDate, isSameWeek, isSameDay } from '../../helpers/time';
 import { getEventPosition } from '../../helpers/position';
 import Editor from '../../containers/Editor';
 import WeekEvent from '../events/WeekEvent';
@@ -47,15 +47,21 @@ export default class CalendarWeekView extends React.Component {
   }
 
   handleEventClick(eventObj) {
-    const id = eventObj.id;
-    this.props.editorOn(id);
+    this.props.editorOn(eventObj);
   }
 
   handleCalMouseEnter(date) {
     // handle the logic if an event is being resized
+    date = date.freeze();
     const resizeObj = this.props.resizeObj;
     if (!isEmpty(resizeObj)) {
-      const updates = { end: date.add(30, 'minutes'), };
+      // event must be on the same day
+      const start = resizeObj.start;
+      const year = start.year();
+      const month = start.month();
+      const day = start.day();
+      const end = date.year(year).month(month).day(day).add(30, 'minutes');
+      const updates = { end };
       const updatedEventObj = Object.assign({}, resizeObj, updates);
       this.props.setResizeObj(updatedEventObj);
       this.props.updateEvent(updatedEventObj);
@@ -66,7 +72,7 @@ export default class CalendarWeekView extends React.Component {
       const eventLength = draggedObj.end.diff(draggedObj.start, 'minutes');
       const end = date.add(eventLength, 'minutes');
       const updates = {
-        start: date,
+        start: date.thaw(),
         end,
       }
       const updatedEventObj = Object.assign({}, draggedObj, updates);
@@ -76,7 +82,7 @@ export default class CalendarWeekView extends React.Component {
   }
 
   handleCalClick(date) {
-    if (this.props.editorObj.id !== '-1') {
+    if (!isEmpty(this.props.editorObj)) {
       this.props.editorOff();
       return;
     }
@@ -88,12 +94,16 @@ export default class CalendarWeekView extends React.Component {
       this.props.setResizeObj({});
       return;
     }
+
     // create a new event
-    const usedEventIds = Object.keys(this.props.eventsMap);
-    const id = (parseInt(usedEventIds[usedEventIds.length - 1]) + 1).toString();
+    const defaultCalendarList = this.props.eventsMap['Petra'].calendarList;
+    const defaultCalendar = defaultCalendarList['You'];
+    const eventIds = Object.keys(defaultCalendar.eventsMap);
+
+    const id = (parseInt(eventIds[eventIds.length - 1]) + 1).toString();
     const name = 'New Event';
-    const category = 'Google';
-    const calendar = 'Innovative Design';
+    const calendarGroup = 'Petra';
+    const calendarId = 'You';
     const location = 'Dwinelle 140';
     const start = date;
     const end = date.clone().add(30, 'minutes');
@@ -101,15 +111,15 @@ export default class CalendarWeekView extends React.Component {
     const eventObj = {
       id,
       name,
-      category,
-      calendar,
+      calendarGroup,
+      calendarId,
       location,
       start,
       end,
       isAllDayEvent,
     };
     this.props.addEvent(eventObj);
-    this.props.editorOn(eventObj.id);
+    this.props.editorOn(eventObj);
   }
 
   handleCalMouseUp() {
@@ -153,13 +163,17 @@ export default class CalendarWeekView extends React.Component {
       );
       cells.push(timeCell);
       for (let dateSourceCopy = dateSource; cells.length < 8; dateSourceCopy = dateSourceCopy.add(1, 'day')) {
+        let active = ''
+        if (isSameDay(selectedDate, dateSourceCopy)) {
+          active = 'active';
+        }
         const cell = (
           <div
             key={genUniqueIdentifier([dateSourceCopy.toISOString()])}
-            className={"item " + dateSourceCopy.format('h:mm')}
-            onMouseEnter={() => this.handleCalMouseEnter(dateSourceCopy)}
+            className={"item " + active }
+            onMouseEnter={() => this.handleCalMouseEnter(dateSourceCopy.thaw())}
             onMouseUp={() => this.handleCalMouseUp()}
-            onClick={() => this.handleCalClick(dateSourceCopy)}
+            onClick={() => this.handleCalClick(dateSourceCopy.thaw())}
           />
         )
         cells.push(cell);
@@ -171,44 +185,35 @@ export default class CalendarWeekView extends React.Component {
     }
 
     const eventsMap = this.props.eventsMap;
-    const calendarMap = this.props.calendarMap;
-    const ids = Object.keys(eventsMap);
-    let eventsList = [];
-    for (const id of ids) {
-      const eventObj = eventsMap[id];
-      const eventStartDate = eventObj.start;
-      if (!sameWeek(eventStartDate, selectedDate) || eventObj.isAllDayEvent) {
-        continue;
-      }
-      eventsList.push(eventObj);
-    }
-
-    eventsList = _.sortBy(eventsList, [(eventObj) => (parseInt(eventObj.start.format('H')))]);
-
-    const events = eventsList.map((eventObj) => {
-      const visible = calendarMap[eventObj.category][eventObj.calendar].visible;
-      if (!visible) {
-        return (
-          <div
-            key={'hidden-' + eventObj.id}
-            className="hidden-event-placeholder"
-          />
-        );
-      }
-      return (
-        <WeekEvent
-          key={genUniqueIdentifier([eventObj.id, eventObj.name])}
-          calendarMap={calendarMap}
-          handleEventClick={this.handleEventClick}
-          handleEventDrag={this.handleEventDrag}
-          handleEventResize={this.handleEventResize}
-          eventObj={eventObj}
-        />
-      );
+    const calendarGroups = Object.keys(eventsMap);
+    // iterate over the different calender groups
+    let visibleEventsList = calendarGroups.map(group => {
+      const calendars = Object.keys(eventsMap[group].calendarList);
+      const visibleCalendarLists = calendars.filter(calendar => eventsMap[group].calendarList[calendar].visible);
+      // iterate over the visible calendar lists in the group
+      return visibleCalendarLists.map(calendar => {
+        const calendarEventsMap = eventsMap[group].calendarList[calendar].eventsMap;
+        const eventIds = Object.keys(calendarEventsMap);
+        const eventsList = eventIds.map(id => calendarEventsMap[id]);
+        return eventsList.filter(event => !event.isAllDayEvent && isSameWeek(event.start, selectedDate));
+      });
     });
+    visibleEventsList = _.flattenDeep(visibleEventsList);
+    visibleEventsList = _.sortBy(visibleEventsList, [(eventObj) => (parseInt(eventObj.start.format('H')))]);
 
-    if (eventsList.length !== 0) {
-      const earliestEvent = eventsList[0];
+    const events = visibleEventsList.map((eventObj) => (
+      <WeekEvent
+        key={genUniqueIdentifier([eventObj.id, eventObj.name])}
+        eventsMap={eventsMap}
+        handleEventClick={this.handleEventClick}
+        handleEventDrag={this.handleEventDrag}
+        handleEventResize={this.handleEventResize}
+        eventObj={eventObj}
+      />
+    ));
+
+    if (visibleEventsList.length !== 0) {
+      const earliestEvent = visibleEventsList[0];
       const anchorPosition = getEventPosition(earliestEvent);
       const scrollAnchor = (
         <div
@@ -235,7 +240,6 @@ export default class CalendarWeekView extends React.Component {
 }
 
 CalendarWeekView.propTypes = {
-  calendarMap: React.PropTypes.object.isRequired,
   selectedDate: React.PropTypes.object.isRequired,
   resizeObj: React.PropTypes.object.isRequired,
   draggedObj: React.PropTypes.object.isRequired,

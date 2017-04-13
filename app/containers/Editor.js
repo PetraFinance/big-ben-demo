@@ -5,11 +5,9 @@ import Editor from '../components/Editor';
 const mapStateToProps = (state) => {
   const cpState = state.calendar.toJS();
   const editorObj = cpState.editorObj;
-  const calendarMap = cpState.calendarMap;
   const eventsMap = cpState.eventsMap;
   return {
     editorObj,
-    calendarMap,
     eventsMap,
   };
 };

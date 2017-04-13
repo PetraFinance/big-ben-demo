@@ -5,7 +5,6 @@ import Calendar from '../components/Calendar';
 
 const mapStateToProps = (state) => {
   const cpState = state.calendar.toJS();
-  const calendarMap = cpState.calendarMap;
   const eventsMap = cpState.eventsMap;
   const selectedDate = cpState.selectedDate.clone();
   const editorObj = cpState.editorObj;
@@ -16,7 +15,6 @@ const mapStateToProps = (state) => {
     resizeObj,
     draggedObj,
     editorObj,
-    calendarMap,
     eventsMap,
     selectedDate,
     calendarViewMode,
@@ -39,8 +37,8 @@ const mapDispatchToProps = (dispatch) => ({
   setDraggedObj: (eventObj) => {
     dispatch(setDraggedObj(eventObj));
   },
-  editorOn: (id) => {
-    dispatch(editorOn(id));
+  editorOn: (eventObj) => {
+    dispatch(editorOn(eventObj));
   },
   editorOff: () => {
     dispatch(editorOff());

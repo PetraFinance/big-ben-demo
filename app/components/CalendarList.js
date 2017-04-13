@@ -1,6 +1,7 @@
 import React from 'react';
+import { isEmpty } from '../helpers/objects';
 
-class Calendar extends React.Component {
+class CalendarListEntry extends React.Component {
   constructor(props) {
     super(props);
     this.handleToggle = this.handleToggle.bind(this);
@@ -8,7 +9,7 @@ class Calendar extends React.Component {
 
   handleToggle() {
     this.props.editorOff();
-    this.props.toggleCalendarVisibility(this.props.category, this.props.calendarName);
+    this.props.toggleCalendarVisibility(this.props.calendarGroup, this.props.calendarId);
   }
 
   render() {
@@ -18,7 +19,7 @@ class Calendar extends React.Component {
     }
     const style = {
       backgroundColor,
-      border: '2px solid ' + this.props.accent,
+      border: '2px solid ' + this.props.highlight,
     };
     return (
       <div className="calendar-list-item">
@@ -37,7 +38,7 @@ class Calendar extends React.Component {
   }
 }
 
-class CalendarCategory extends React.Component {
+class CalendarSublist extends React.Component {
   constructor(props) {
     super(props);
     this.toggleCollapse = this.toggleCollapse.bind(this);
@@ -52,28 +53,30 @@ class CalendarCategory extends React.Component {
   }
 
   render() {
-    const category = this.props.category;
-    const calendars = this.props.calendars;
-    const calendarNames = Object.keys(calendars);
 
-    const calendarEntries = calendarNames.map((calendarName, i) => (
-      <Calendar
-        key={calendarName}
-        calendarName={calendarName}
-        category={category}
-        color={calendars[calendarName].color}
-        accent={calendars[calendarName].accent}
-        visible={calendars[calendarName].visible}
+    const calendars = this.props.calendars;
+    const calendarIds = Object.keys(calendars);
+    const calendarGroup = this.props.calendarGroup;
+
+    const calendarListEntries = calendarIds.map((calendar, i) => (
+      <CalendarListEntry
+        key={calendar}
+        calendarGroup={calendarGroup}
+        calendarName={calendars[calendar].name}
+        calendarId={calendar}
+        color={calendars[calendar].color}
+        highlight={calendars[calendar].highlight}
+        visible={calendars[calendar].visible}
         toggleCalendarVisibility={this.props.toggleCalendarVisibility}
         editorOff={this.props.editorOff}
       />
     ));
 
-    let calendarListItems = { 'maxHeight': '300px', };
+    let calendarListEntriesStyle = { 'maxHeight': '300px', };
     let calendarList = {};
     let arrowStyle = {};
     if (this.state.collapsed) {
-      calendarListItems = { 'maxHeight': '0px', 'overflow': 'hidden' };
+      calendarListEntriesStyle = { 'maxHeight': '0px', 'overflow': 'hidden' };
       calendarList = { 'marginBottom': '0rem' };
       arrowStyle = { 'transform': 'rotate(180deg)' };
     }
@@ -81,7 +84,7 @@ class CalendarCategory extends React.Component {
     return (
       <div style={calendarList} className="calendar-list">
         <div className="calendar-list-header">
-          <span>{category}</span>
+          <span>{calendarGroup}</span>
           <img
             className="arrow-img"
             onClick={() => this.toggleCollapse()}
@@ -89,8 +92,8 @@ class CalendarCategory extends React.Component {
             src={"../../assets/grey-down-arrow.png"}
           />
         </div>
-        <div style={calendarListItems} className="calendar-list-items">
-          {calendarEntries}
+        <div style={calendarListEntriesStyle} className="calendar-list-items">
+          {calendarListEntries}
         </div>
       </div>
     );
@@ -98,29 +101,28 @@ class CalendarCategory extends React.Component {
 }
 
 // The calendar list in the sidepanel
+// This file needs a better naming scheme
 export default class CalendarList extends React.Component {
   constructor(props) {
     super(props);
   }
 
   render () {
-    const calendarMap = this.props.calendarMap;
-    const calendarCategories = Object.keys(calendarMap);
+    const eventsMap = this.props.eventsMap;
 
-    const calendarsList = calendarCategories.map((category) => {
-      return (
-        <CalendarCategory
-          key={category}
-          category={category}
-          calendars={calendarMap[category]}
-          toggleCalendarVisibility={this.props.toggleCalendarVisibility}
-          editorOff={this.props.editorOff}
-        />
-      );
-    });
+    const calendarGroups = Object.keys(eventsMap);
+    const calendars = calendarGroups.filter(group => (!isEmpty(eventsMap[group].calendarList))).map((calendarGroup) => (
+      <CalendarSublist
+        key={calendarGroup}
+        calendarGroup={calendarGroup}
+        calendars={eventsMap[calendarGroup].calendarList}
+        toggleCalendarVisibility={this.props.toggleCalendarVisibility}
+        editorOff={this.props.editorOff}
+      />
+    ));
     return (
       <div className="calendar-list-container">
-        {calendarsList}
+        {calendars}
       </div>
     )
   }

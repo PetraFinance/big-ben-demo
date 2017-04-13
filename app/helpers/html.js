@@ -70,10 +70,18 @@ export const togglePointerEvents = (eventsMap, eventsOn) => {
   if (eventsOn) {
     cssValue = '';
   }
-  const indices = Object.keys(eventsMap);
-  for (const index of indices) {
-    const eventObj = eventsMap[index];
-    const eventEntryDOM = getEventEntryDOM(eventObj);
-    $(eventEntryDOM).css("pointer-events", cssValue);
-  }
+
+  const calendarGroups = Object.keys(eventsMap);
+  let eventsList = calendarGroups.map(group => {
+    const calendars = Object.keys(eventsMap[group].calendarList);
+    calendars.map(calendar => {
+      const calendarEventsMap = eventsMap[group].calendarList[calendar].eventsMap;
+      const ids = Object.keys(calendarEventsMap);
+      ids.map(id => {
+        const eventObj = calendarEventsMap[id];
+        const eventEntryDOM = getEventEntryDOM(eventObj);
+        $(eventEntryDOM).css("pointer-events", cssValue);
+      });
+    });
+  });
 };

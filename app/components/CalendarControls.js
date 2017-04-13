@@ -1,6 +1,6 @@
 import React from 'react';
 import moment from 'moment';
-import { sameWeek } from '../helpers/time';
+import { isSameWeek } from '../helpers/time';
 
 export default class CalendarControls extends React.Component {
   constructor(props) {
@@ -12,7 +12,7 @@ export default class CalendarControls extends React.Component {
   handleTodayButton() {
     const today = moment();
     this.props.setSelectedDate(today);
-    if (!sameWeek(today, this.props.selectedDate)) {
+    if (!isSameWeek(today, this.props.selectedDate)) {
       this.props.editorOff();
     }
   }
@@ -63,6 +63,8 @@ export default class CalendarControls extends React.Component {
     const year = this.props.selectedDate.format('YYYY');
     const viewMode = this.props.calendarViewMode;
 
+    console.log(this.props.userProfile.photos);
+
     let weekMonthButtons = ["select-week-active", "select-month"];
     if (viewMode === "month") {
       weekMonthButtons = ["select-week", "select-month-active"];
@@ -96,7 +98,7 @@ export default class CalendarControls extends React.Component {
             </div>
           </div>
           <div className="settings">
-            <img src={'./assets/settings.png'} />
+            <img src={this.props.userProfile.photos[0].value} />
           </div>
         </div>
       </div>

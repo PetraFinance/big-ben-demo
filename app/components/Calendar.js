@@ -46,7 +46,6 @@ export default class Calendar extends React.Component {
 }
 
 Calendar.propTypes = {
-  calendarMap: React.PropTypes.object.isRequired,
   selectedDate: React.PropTypes.object.isRequired,
   resizeObj: React.PropTypes.object.isRequired,
   draggedObj: React.PropTypes.object.isRequired,

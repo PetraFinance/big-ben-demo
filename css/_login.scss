@@ -1,15 +1,18 @@
 .login-page {
-  background-color: $light-grey;
   height: 100vh;
   width: 100vw;
   display: flex;
-  align-items: center;
-  justify-content: center;
   flex-direction: column;
-  .info {
+  padding: 8rem;
+}
+
+.login-container {
+  width: 500px;
+  .introduction {
     color: $off-black;
     margin: 0rem;
     margin-bottom: 2rem;
+    line-height: 1.5rem;
   }
   .buttons-container {
     display: flex;
@@ -22,6 +25,7 @@
     color: white;
     font-weight: bold;
     padding: 1rem;
+    border-radius: 5px;
   }
   a {
     text-decoration: none;

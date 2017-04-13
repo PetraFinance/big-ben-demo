@@ -4,9 +4,9 @@ import CalendarList from '../components/CalendarList';
 
 const mapStateToProps = (state) => {
   const cpState = state.calendar.toJS();
-  const calendarMap = cpState.calendarMap;
+  const eventsMap = cpState.eventsMap;
   return {
-    calendarMap,
+    eventsMap,
   };
 };
 

@@ -1082,7 +1082,7 @@ html {
       border-radius: 50px; }
   .calendar-list-item .title {
     margin-left: 8px;
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; }
 
 .calendar-container-week {
@@ -1498,6 +1498,34 @@ html {
       border-radius: 5px;
       padding: 0.5rem 1rem;
       background-color: white; }
+
+.login-page {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  padding: 8rem; }
+
+.login-container {
+  width: 500px; }
+  .login-container .introduction {
+    color: #424242;
+    margin: 0rem;
+    margin-bottom: 2rem;
+    line-height: 1.5rem; }
+  .login-container .buttons-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start; }
+  .login-container .login-button {
+    background-color: #F44336;
+    color: white;
+    font-weight: bold;
+    padding: 1rem;
+    border-radius: 5px; }
+  .login-container a {
+    text-decoration: none; }
 
 html {
   font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; }

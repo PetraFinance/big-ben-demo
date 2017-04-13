@@ -1,67 +1,56 @@
 import React from 'react';
 import moment from 'moment';
+import _ from 'lodash';
 import { genUniqueIdentifier } from '../../helpers/html';
 import { getEventPosition } from '../../helpers/position';
-import { sameWeek } from '../../helpers/time';
+import { isSameWeek } from '../../helpers/time';
 import AllDayEvent from '../events/AllDayEvent';
 
 export default class AllDayEventsCalendar extends React.Component {
 
   render() {
     const eventsMap = this.props.eventsMap;
-    const calendarMap = this.props.calendarMap;
     const selectedDate = this.props.selectedDate;
-    const ids = Object.keys(eventsMap);
-    let allDayEventsList = [];
-    for (let id of ids) {
-      const eventObj = eventsMap[id];
-      const eventStartDate = eventObj.start;
-      if (!sameWeek(eventStartDate, selectedDate) || !eventObj.isAllDayEvent) {
-        continue;
-      }
-      allDayEventsList.push(eventObj);
-    }
+
+    const calendarGroups = Object.keys(eventsMap);
+    // iterate over the different calender groups
+    let visibleAllDayEvents = calendarGroups.map(group => {
+      const calendars = Object.keys(eventsMap[group].calendarList);
+      const visibleCalendarLists = calendars.filter(calendar => eventsMap[group].calendarList[calendar].visible);
+      // iterate over the visible calendar lists in the group
+      return visibleCalendarLists.map(calendar => {
+        const calendarEventsMap = eventsMap[group].calendarList[calendar].eventsMap;
+        const eventIds = Object.keys(calendarEventsMap);
+        const eventsList = eventIds.map(id => calendarEventsMap[id]);
+        return eventsList.filter(event => event.isAllDayEvent && isSameWeek(event.start, selectedDate));
+      });
+    });
+    visibleAllDayEvents = _.flattenDeep(visibleAllDayEvents);
 
     const weekdays = moment.weekdays();
-    const allDayEventsMap = [];
+    const eventsList = [];
     let mostEvents = 1;
-    let eventCounter = 0;
     for (const day of weekdays) {
-      const dayEvents = allDayEventsList.filter((eventObj) => {
-        const eventObjDay = eventObj.start.format('dddd');
-        return (eventObjDay === day);
-      }).map((eventObj) => {
-        eventCounter = eventCounter + 1;
-        const calendarMap = this.props.calendarMap;
-        const visible = calendarMap[eventObj.category][eventObj.calendar].visible;
-        if (!visible) {
-          return (
-            <div
-              key={genUniqueIdentifier([eventObj.id, eventObj.name])}
-              className="hidden-event-placeholder"
-            />
-          );
-        }
-        return (
-          <AllDayEvent
-            key={genUniqueIdentifier([eventObj.id, eventObj.name])}
-            calendarMap={calendarMap}
-            eventObj={eventObj}
-          />
-        );
-      });
-
-      if (eventCounter > mostEvents) {
-        mostEvents = eventCounter;
+      const currentDayEvents = visibleAllDayEvents.filter((eventObj) => (
+        eventObj.start.format('dddd') === day
+      )).map((eventObj) => (
+        <AllDayEvent
+          key={genUniqueIdentifier([eventObj.id, eventObj.name])}
+          calendarMap={calendarMap}
+          eventObj={eventObj}
+        />
+      ));
+      const numEvents = currentDayEvents.length;
+      if (numEvents > mostEvents) {
+        mostEvents = numEvents;
       }
-      eventCounter = 0;
-      allDayEventsMap.push(dayEvents);
+      eventsList.push(currentDayEvents);
     }
 
     const height = (35 * mostEvents).toString() + 'px';
     const style = { height: height };
 
-    const wrappedDayEvents = allDayEventsMap.map((eventObjs, i) => (
+    const allDayEventsRow = eventsList.map((eventObjs, i) => (
       <div style={style} key={'all-' + i} className="all-day-item">
         {eventObjs}
       </div>
@@ -72,7 +61,7 @@ export default class AllDayEventsCalendar extends React.Component {
         <div style={style} className="row-label time-column">
           <span>ALL DAY</span>
         </div>
-        {wrappedDayEvents}
+        {allDayEventsRow}
       </div>
     );
   }

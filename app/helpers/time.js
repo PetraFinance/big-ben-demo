@@ -6,7 +6,7 @@ import moment from 'moment';
  * param {momentObj} b
  * return {boolean} true if happen in the same week
  */
-export const sameWeek = (a, b) => {
+export const isSameWeek = (a, b) => {
   const start = getWeekStartDate(b);
   const end  = getWeekEndDate(b);
   return a.isBetween(start, end, 'month', '[]') &&
