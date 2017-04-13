@@ -75019,7 +75019,7 @@ var Login = function (_React$Component) {
           ),
           _react2.default.createElement(
             "a",
-            { href: "https://api.cal.trypetra.com/auth/redirect/", target: "_blank" },
+            { href: "https://api.cal.trypetra.com/auth/redirect/" },
             _react2.default.createElement(
               "div",
               { className: "buttons-container" },
