@@ -48,14 +48,14 @@ export function fetchGoogleCalendar() {
     // request the Google user profile
     fetch(`https://api.cal.trypetra.com/me`, {
       method: 'GET',
-      credentials: 'same-origin',
+      credentials: 'include',
     })
     .then(response => response.json())
     .then(profile => dispatch(receiveGoogleCalendarProfile(profile)));
 
     fetch('https://api.cal.trypetra.com/', {
       method: 'GET',
-      credentials: 'same-origin',
+      credentials: 'include',
     })
     .then(response => response.json())
     .then(json => {
@@ -69,7 +69,7 @@ export function fetchGoogleCalendar() {
         // fetch the events for the calendar
         fetch(`https://api.cal.trypetra.com/${calendarListEntryId}`, {
           method: 'GET',
-          credentials: 'same-origin',
+          credentials: 'include',
         })
         .then(response => response.json())
         .then(calendarListEntryEvents => {

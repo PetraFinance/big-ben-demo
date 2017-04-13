@@ -36362,7 +36362,7 @@ function fetchGoogleCalendar() {
     // request the Google user profile
     (0, _isomorphicFetch2.default)('https://api.cal.trypetra.com/me', {
       method: 'GET',
-      credentials: 'same-origin'
+      credentials: 'include'
     }).then(function (response) {
       return response.json();
     }).then(function (profile) {
@@ -36371,7 +36371,7 @@ function fetchGoogleCalendar() {
 
     (0, _isomorphicFetch2.default)('https://api.cal.trypetra.com/', {
       method: 'GET',
-      credentials: 'same-origin'
+      credentials: 'include'
     }).then(function (response) {
       return response.json();
     }).then(function (json) {
@@ -36384,7 +36384,7 @@ function fetchGoogleCalendar() {
         // fetch the events for the calendar
         (0, _isomorphicFetch2.default)('https://api.cal.trypetra.com/' + calendarListEntryId, {
           method: 'GET',
-          credentials: 'same-origin'
+          credentials: 'include'
         }).then(function (response) {
           return response.json();
         }).then(function (calendarListEntryEvents) {
